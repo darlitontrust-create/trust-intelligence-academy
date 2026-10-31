@@ -947,3 +947,11 @@ body.exam-open { overflow: hidden; }
 .medal-dot { width: 12px; height: 13px; }
 .exam-medal, .pb-medal { background: linear-gradient(135deg, var(--m1), var(--m2) 55%, #3a2210); }
 .save-state.warn, .save-state.warn .ic { color: var(--warn); }
+
+.link-btn { all: unset; cursor: pointer; color: var(--cyan); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.link-btn:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.cloud-cta { display: grid; gap: 10px; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(47,216,240,.3); background: rgba(47,216,240,.06); }
+.cloud-cta p { margin: 0; display: flex; gap: 8px; font-size: 13.5px; color: var(--ink-2); }
+.cloud-cta .ic { color: var(--cyan); flex: none; margin-top: 2px; }
+.cloud-cta .btn { justify-self: start; }
+@media (max-width: 640px) { .save-state { display: none; } }

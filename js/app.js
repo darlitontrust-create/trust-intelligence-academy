@@ -58,6 +58,10 @@
     }
     document.getElementById('loader').classList.add('out');
     setTimeout(function () { const l = document.getElementById('loader'); if (l) l.remove(); }, 500);
+    if (cloudUser && !cloudData && sess && sess.uid && String(sess.uid).indexOf('fb:') !== 0 && !S.peek('fb:' + cloudUser.uid)) {
+      cloudData = S.peek(sess.uid);   // veio do "Salvar na nuvem" por redirect: leva o progresso local
+      if (cloudData) cloudData.savedAt = new Date().toISOString();
+    }
     if (cloudUser) startSession('fb:' + cloudUser.uid, C.profileFrom(cloudUser), cloudData);
     else if (sess && sess.uid && String(sess.uid).indexOf('fb:') === 0 && !offline) { S.logout(); showLogin(); }
     else if (sess && sess.uid) { startSession(sess.uid); if (offline) toast('Sem conexão com a nuvem: usando a cópia salva neste navegador. Tudo será enviado quando a internet voltar.', 'warn', 6000); }
@@ -71,7 +75,12 @@
   function onStorageEvent(type) {
     if (type === 'saved') {
       const el = document.getElementById('save-state');
-      if (el) el.innerHTML = icon('shield') + (S.available ? 'Salvo ' : 'Em memória ') + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const hm = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const C = global.Cloud;
+      if (el && C && C.enabled() && !C.uid) {
+        el.innerHTML = icon('shield') + 'Salvo só neste navegador ' + hm + ' · <button class="link-btn" id="go-cloud">Salvar na nuvem</button>';
+        el.querySelector('#go-cloud').onclick = upgradeToCloud;
+      } else if (el) el.innerHTML = icon('shield') + (S.available ? 'Salvo ' : 'Em memória ') + hm;
     }
     if (type === 'restored') toast('Recuperamos seu progresso a partir da cópia de segurança.', 'warn', 5000);
   }
@@ -85,6 +94,25 @@
   if (global.Cloud) global.Cloud.on(onCloudEvent);
 
   /* ------------------------------ Sessão ------------------------------ */
+  /** Leva quem está sem login (ou com perfil local) para a conta Google, junto com o progresso. */
+  function upgradeToCloud() {
+    const C = global.Cloud;
+    C.signIn().then(function (u) {
+      if (!u) return;   // seguiu por redirect; o boot conclui a troca
+      const seed = C.profileFrom(u);
+      return C.load(u.uid).catch(function () { return null; }).then(function (data) {
+        const cur = S.state;
+        if (!data) {
+          data = JSON.parse(JSON.stringify(cur));
+          data.profile = Object.assign({}, cur.profile, { provider: 'google', email: seed.email, picture: cur.profile.picture || seed.picture });
+          data.savedAt = new Date().toISOString();
+          toast('Pronto! Seu progresso agora fica salvo na sua conta Google.', 'success', 5000);
+        } else toast('Bem-vindo(a) de volta! Carregamos o progresso salvo na sua conta.', 'success', 5000);
+        S.logout();
+        startSession('fb:' + u.uid, seed, data);
+      });
+    }).catch(function (e) { if (e.message !== 'Login cancelado.') toast(esc(e.message), 'error', 6000); });
+  }
   function showLogin() {
     document.body.classList.add('is-login');
     global.Auth.renderLogin(app, function (res) {
@@ -652,6 +680,7 @@
           '<div><dt>Acesso</dt><dd>' + esc(prov) + '</dd></div><div><dt>E-mail</dt><dd>' + esc(p.email || '—') + '</dd></div>' +
           '<div><dt>Início da jornada</dt><dd>' + fmtDate(p.createdAt) + '</dd></div>' +
           '<div><dt>Armazenamento</dt><dd>' + (global.Cloud && global.Cloud.uid ? 'Nuvem (sua conta Google) · cópia neste navegador' : S.available ? 'LocalStorage deste navegador · salvamento automático' : 'Somente memória (armazenamento bloqueado)') + '</dd></div></dl>' +
+          (global.Cloud && global.Cloud.enabled() && !global.Cloud.uid ? '<div class="cloud-cta"><p>' + icon('shield') + '<span>Seu progresso está salvo só neste navegador. Entre com Google para guardar tudo na nuvem e continuar em qualquer aparelho.</span></p><button class="btn btn-google sm" id="pf-cloud">' + icon('google') + 'Entrar com Google e salvar na nuvem</button></div>' : '') +
           '<button class="btn btn-quiet" id="pf-logout">' + icon('logout') + 'Sair</button></section>' +
         '<section class="card glass"><h2>Backup do progresso</h2><p class="muted">Copie o código para guardar sua evolução ou levá-la para outro navegador.</p>' +
           '<div class="help-row"><button class="btn btn-primary sm" id="bk-copy">' + icon('copy') + 'Copiar código de backup</button></div>' +
@@ -668,6 +697,7 @@
       const h = view.querySelector('#pf-head-av'); if (h) h.innerHTML = global.Profile.avatarHtml(st.profile);
     });
     view.querySelector('#pf-edit').onclick = function () { global.Auth.ensureProfile(st, function () { route(); }, true); };
+    const pc = view.querySelector('#pf-cloud'); if (pc) pc.onclick = upgradeToCloud;
     view.querySelector('#pf-logout').onclick = function () {
       const C = global.Cloud;
       const done = function () { S.logout(); location.hash = ''; showLogin(); };
