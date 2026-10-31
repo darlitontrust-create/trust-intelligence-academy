@@ -16,7 +16,8 @@ Cada aula tem **narração por voz** (botão "Ouvir narração"), com legenda, v
 O conteúdo pode ser reaberto pelo botão "Conteúdo" e desligado em Perfil > Preferências de estudo.
 
 ## Estrutura
-- `index.html` — página única
+- `index.html` — página única (com viewport para celular)
+- `manifest.webmanifest` — permite "Adicionar à tela inicial" no celular
 - `assets/logo.png`, `assets/logo-256.png` — logo no estilo neon da plataforma
 - `css/styles.css` — tema Dark Premium / glassmorphism
 - `css/codemirror.css` — base e tema do editor
@@ -52,9 +53,11 @@ O conteúdo pode ser reaberto pelo botão "Conteúdo" e desligado em Perfil > Pr
 O projeto já vem ligado ao Firebase `trust-intelligence-academy` (configuração em `js/cloud.js`).
 - Login: Firebase Authentication com Google. O domínio do site precisa estar em
   Authentication → Configurações → Domínios autorizados (ex.: `darlitontrust-create.github.io`).
-- Progresso: documento `users/{uid}` no Firestore, gravado ~2,5 s após cada salvamento. O LocalStorage
-  continua como cópia local e, sem internet, as gravações ficam na fila e sobem quando a conexão volta.
-  Ao entrar em outro aparelho, vale a cópia mais recente.
+- Progresso: documento `users/{uid}` no Firestore, gravado ~2,5 s após cada salvamento por uma transação
+  que UNE o progresso do aparelho com o que já está na nuvem (exercícios, provas, promoções e conquistas
+  dos dois aparelhos são somados; nada é sobrescrito). O LocalStorage continua como cópia local; sem
+  internet, o envio é refeito sozinho quando a conexão volta. Um ouvinte em tempo real traz para a tela
+  o que outro aparelho gravou.
 - Ranking: `leaderboard/{uid}` com apelido e XP por trilha (a liga fica real para quem está logado).
 - No primeiro login com Google, o progresso feito sem login naquele navegador é levado para a conta.
 - Regras do Firestore (cada aluno lê e grava só o próprio progresso):

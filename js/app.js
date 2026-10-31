@@ -58,9 +58,13 @@
     }
     document.getElementById('loader').classList.add('out');
     setTimeout(function () { const l = document.getElementById('loader'); if (l) l.remove(); }, 500);
-    if (cloudUser && !cloudData && sess && sess.uid && String(sess.uid).indexOf('fb:') !== 0 && !S.peek('fb:' + cloudUser.uid)) {
-      cloudData = S.peek(sess.uid);   // veio do "Salvar na nuvem" por redirect: leva o progresso local
-      if (cloudData) cloudData.savedAt = new Date().toISOString();
+    const mode = cloudUser && C.lastRedirectMode();
+    if (cloudUser && mode === 'upgrade' && sess && sess.uid && String(sess.uid).indexOf('fb:') !== 0) {
+      const local = S.peek(sess.uid);   // veio do "Salvar na nuvem" por redirect: une o progresso local
+      if (local) {
+        local.profile = Object.assign({}, local.profile, { provider: 'google', email: cloudUser.email || '' });
+        cloudData = cloudData ? S.mergeStates(local, cloudData) : local;
+      }
     }
     if (cloudUser) startSession('fb:' + cloudUser.uid, C.profileFrom(cloudUser), cloudData);
     else if (sess && sess.uid && String(sess.uid).indexOf('fb:') === 0 && !offline) { S.logout(); showLogin(); }
@@ -78,11 +82,23 @@
       const hm = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
       const C = global.Cloud;
       if (el && C && C.enabled() && !C.uid) {
+        C.preload();
         el.innerHTML = icon('shield') + 'Salvo só neste navegador ' + hm + ' · <button class="link-btn" id="go-cloud">Salvar na nuvem</button>';
         el.querySelector('#go-cloud').onclick = upgradeToCloud;
       } else if (el) el.innerHTML = icon('shield') + (S.available ? 'Salvo ' : 'Em memória ') + hm;
     }
     if (type === 'restored') toast('Recuperamos seu progresso a partir da cópia de segurança.', 'warn', 5000);
+    if (type === 'remote') onRemoteProgress();
+  }
+  /** Outro aparelho enviou progresso: atualiza a tela sem atrapalhar quem está digitando. */
+  let remoteToastAt = 0;
+  function onRemoteProgress() {
+    if (!document.getElementById('view')) return;
+    refreshChrome();
+    const h = (location.hash || '#temas').slice(1);
+    const busy = h.indexOf('ex-') === 0 || h === 'perfil' || document.body.classList.contains('exam-open') || document.querySelector('.modal-wrap');
+    if (!busy) route();
+    if (Date.now() - remoteToastAt > 30000) { remoteToastAt = Date.now(); toast('Progresso sincronizado com seus outros aparelhos.', 'info'); }
   }
   function onCloudEvent(type, info) {
     const el = document.getElementById('save-state'); if (!el) return;
@@ -97,17 +113,16 @@
   /** Leva quem está sem login (ou com perfil local) para a conta Google, junto com o progresso. */
   function upgradeToCloud() {
     const C = global.Cloud;
-    C.signIn().then(function (u) {
+    S.saveNow(true);
+    C.signIn({ upgrade: true }).then(function (u) {
       if (!u) return;   // seguiu por redirect; o boot conclui a troca
       const seed = C.profileFrom(u);
-      return C.load(u.uid).catch(function () { return null; }).then(function (data) {
-        const cur = S.state;
-        if (!data) {
-          data = JSON.parse(JSON.stringify(cur));
-          data.profile = Object.assign({}, cur.profile, { provider: 'google', email: seed.email, picture: cur.profile.picture || seed.picture });
-          data.savedAt = new Date().toISOString();
-          toast('Pronto! Seu progresso agora fica salvo na sua conta Google.', 'success', 5000);
-        } else toast('Bem-vindo(a) de volta! Carregamos o progresso salvo na sua conta.', 'success', 5000);
+      return C.load(u.uid).catch(function () { return null; }).then(function (cloud) {
+        const cur = S.plain();
+        cur.profile = Object.assign({}, cur.profile, { provider: 'google', email: seed.email, picture: cur.profile.picture || seed.picture });
+        // une o progresso deste navegador com o que já existe na conta (nada é perdido)
+        const data = cloud ? S.mergeStates(cur, cloud) : cur;
+        toast(cloud ? 'Juntamos o progresso deste navegador com o da sua conta.' : 'Pronto! Seu progresso agora fica salvo na sua conta Google.', 'success', 5000);
         S.logout();
         startSession('fb:' + u.uid, seed, data);
       });
@@ -115,6 +130,7 @@
   }
   function showLogin() {
     document.body.classList.add('is-login');
+    if (global.Cloud) global.Cloud.preload();
     global.Auth.renderLogin(app, function (res) {
       if (!res.cloud) return startSession(res.id, res.profile);
       const fbUid = res.id.slice(3);
@@ -202,7 +218,7 @@
     const st = S.state; if (!st || !document.getElementById('gp-bar')) return;
     const solved = G.solvedList(st).length;
     document.getElementById('gp-bar').style.width = (solved / 150 * 100) + '%';
-    document.getElementById('gp-label').innerHTML = '<b>' + solved + '</b>/150 exercícios · ' + Math.round(solved / 1.5) + '% da trilha';
+    document.getElementById('gp-label').innerHTML = '<b>' + solved + '</b>/150 exercícios<span class="hide-sm"> · ' + Math.round(solved / 1.5) + '% da trilha</span>';
     const role = G.currentRole(st);
     document.getElementById('xp-chip').innerHTML = icon('sparkle') + '<b>' + fmt(st.progress.xp) + '</b> XP';
     const av = document.getElementById('avatar');
@@ -217,6 +233,12 @@
 
   /* ------------------------------- Rotas ------------------------------- */
   global.addEventListener('hashchange', route);
+  // celular: com o teclado aberto, a barra de navegação inferior sai da frente do editor
+  (function () {
+    const isField = function (el) { return el && (el.matches('input:not([type=checkbox]):not([type=radio]):not([type=file]), textarea, select') || el.isContentEditable); };
+    document.addEventListener('focusin', function (e) { if (isField(e.target)) document.body.classList.add('kb-open'); });
+    document.addEventListener('focusout', function () { setTimeout(function () { if (!isField(document.activeElement)) document.body.classList.remove('kb-open'); }, 80); });
+  })();
   let currentCleanup = null;
   function route() {
     if (!S.state || !document.getElementById('view')) return;

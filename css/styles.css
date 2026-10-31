@@ -955,3 +955,52 @@ body.exam-open { overflow: hidden; }
 .cloud-cta .ic { color: var(--cyan); flex: none; margin-top: 2px; }
 .cloud-cta .btn { justify-self: start; }
 @media (max-width: 640px) { .save-state { display: none; } }
+
+/* =====================================================================
+   Celular: experiência otimizada
+   ===================================================================== */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { overflow-x: clip; overscroll-behavior-y: none; }
+* { -webkit-tap-highlight-color: transparent; }
+a, button, label, .tile, .exam-opt, .chip, .av-opt { touch-action: manipulation; }
+@media (max-width: 900px) {
+  body.kb-open .bottom-nav { display: none; }
+  body.kb-open .view { padding-bottom: 24px; }
+}
+@media (max-width: 640px) {
+  /* campos com 16px: o iPhone não dá zoom ao tocar para digitar */
+  .xl-input, .field input, .field textarea, .pf-add input, .pf-fields textarea, .dt-search input, .plain-editor, .CodeMirror, .modal input, .modal textarea { font-size: 16px !important; }
+  /* alvos de toque confortáveis */
+  .btn { min-height: 44px; }
+  .btn.sm { min-height: 40px; }
+  .icon-btn { min-width: 40px; min-height: 40px; }
+  .tab, .seg-b { min-height: 38px; }
+  .editor-host { height: 210px; }
+  .xl-grid-wrap { max-height: 320px; }
+  .xl-grid th, .xl-grid td { padding: 7px 9px; }
+  .exam-opt { padding: 13px 12px; min-height: 52px; }
+  .exam { border-radius: 18px; }
+  .exam-next .btn { width: 100%; justify-content: center; }
+  .top-inner { padding-block: 8px; }
+  .modal { padding: 24px 18px; }
+  .cv { gap: 12px; }
+}
+@media (max-width: 380px) {
+  .bottom-nav a { font-size: 9.5px; }
+  .xp-chip { padding-inline: 8px; }
+  .hub-card { padding: 18px; }
+}
+@media (max-width: 1180px) {
+  /* coluna única: cenário e objetivo → editor e resultado → tabelas e ajuda */
+  .ex-grid { display: flex; flex-direction: column; gap: 16px; }
+  .ex-brief, .ex-work { display: contents; }
+  .ex-brief > :first-child { order: 1; }
+  .ex-work > * { order: 2; }
+  .ex-brief > :not(:first-child) { order: 3; }
+}
+@media (max-width: 1180px) {
+  .ex-grid, .ex-brief > *, .ex-work > * { min-width: 0; max-width: 100%; }
+}
+.profile-grid .card { grid-template-columns: minmax(0, 1fr); }
+.cloud-cta .btn { white-space: normal; text-align: left; height: auto; padding-block: 9px; }
+.cert-dl dd { overflow-wrap: anywhere; }

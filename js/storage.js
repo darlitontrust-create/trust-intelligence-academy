@@ -92,6 +92,89 @@
     return st;
   }
 
+  /* ---------------------- Junção de dois aparelhos ---------------------- */
+  // Quando o mesmo aluno usa dois aparelhos, nada é descartado: os exercícios,
+  // provas, promoções e conquistas dos dois são unidos. Em campos de valor único
+  // (configurações, rascunhos, tema atual) vale o aparelho salvo mais recentemente.
+  function earliest(a, b) { if (!a) return b || null; if (!b) return a; return String(a) <= String(b) ? a : b; }
+  function latest(a, b) { if (!a) return b || null; if (!b) return a; return String(a) >= String(b) ? a : b; }
+  function sumSolved(p) { return Object.keys(p.solved || {}).reduce(function (s, k) { return s + ((p.solved[k] && p.solved[k].xp) || 0); }, 0); }
+  function mergeProgress(n, o) {
+    n = merge(defaultProgress(), JSON.parse(JSON.stringify(n || {})));
+    o = merge(defaultProgress(), JSON.parse(JSON.stringify(o || {})));
+    const out = defaultProgress();
+    const keys = function (a, b) { return Object.keys(Object.assign({}, a || {}, b || {})); };
+    keys(n.solved, o.solved).forEach(function (k) {
+      const a = n.solved[k], b = o.solved[k];
+      out.solved[k] = !a ? b : !b ? a : (a.xp !== b.xp ? (a.xp > b.xp ? a : b) : (String(a.at) <= String(b.at) ? a : b));
+    });
+    keys(n.attempts, o.attempts).forEach(function (k) { out.attempts[k] = Math.max(n.attempts[k] || 0, o.attempts[k] || 0); });
+    keys(n.revealed, o.revealed).forEach(function (k) { out.revealed[k] = !!(n.revealed[k] || o.revealed[k]); });
+    out.drafts = Object.assign({}, o.drafts, n.drafts);
+    keys(n.lessonsSeen, o.lessonsSeen).forEach(function (k) { out.lessonsSeen[k] = earliest(n.lessonsSeen[k], o.lessonsSeen[k]); });
+    keys(n.achievements, o.achievements).forEach(function (k) { out.achievements[k] = earliest(n.achievements[k], o.achievements[k]); });
+    keys(n.exams, o.exams).forEach(function (k) {
+      const a = n.exams[k] || {}, b = o.exams[k] || {};
+      const hist = (a.history || []).concat(b.history || []).filter(function (h, i, arr) { return arr.findIndex(function (x) { return x.at === h.at; }) === i; })
+        .sort(function (x, y) { return String(x.at).localeCompare(String(y.at)); }).slice(-20);
+      out.exams[k] = { attempts: Math.max(a.attempts || 0, b.attempts || 0, hist.length), best: Math.max(a.best || 0, b.best || 0),
+        score: a.score != null ? a.score : b.score, last: latest(a.last, b.last), passedAt: earliest(a.passedAt, b.passedAt), history: hist };
+    });
+    const promos = {};
+    (o.promotions || []).concat(n.promotions || []).forEach(function (p) { promos[p.key] = promos[p.key] ? { key: p.key, at: earliest(promos[p.key].at, p.at) } : p; });
+    out.promotions = Object.keys(promos).map(function (k) { return promos[k]; }).sort(function (x, y) { return String(x.at).localeCompare(String(y.at)); });
+    const hist = {};
+    (o.history || []).concat(n.history || []).forEach(function (h) { if (!hist[h.id] || String(h.at) < String(hist[h.id].at)) hist[h.id] = h; });
+    out.history = Object.keys(hist).map(function (k) { return hist[k]; }).filter(function (h) { return out.solved[h.id]; })
+      .sort(function (x, y) { return String(x.at).localeCompare(String(y.at)); });
+    const bonus = Math.max(0, (n.xp || 0) - sumSolved(n), (o.xp || 0) - sumSolved(o));
+    out.xp = sumSolved(out) + bonus;
+    out.firstTryStreak = n.firstTryStreak || 0;
+    out.lastExercise = n.lastExercise || o.lastExercise;
+    out.completedAt = earliest(n.completedAt, o.completedAt);
+    return out;
+  }
+  /** Une dois estados do mesmo aluno (de aparelhos diferentes). */
+  function mergeStates(A, B) {
+    if (!A) return B; if (!B) return A;
+    const newer = String(A.savedAt || '') >= String(B.savedAt || '') ? A : B, older = newer === A ? B : A;
+    const out = JSON.parse(JSON.stringify(newer));
+    const pn = newer.profile || {}, po = older.profile || {};
+    out.profile = Object.assign({}, po, pn);
+    Object.keys(po).forEach(function (k) {   // campos vazios no mais novo herdam do outro
+      const v = pn[k];
+      if (v === undefined || v === null || v === '' || (Array.isArray(v) && !v.length)) out.profile[k] = po[k];
+    });
+    out.profile.createdAt = earliest(pn.createdAt, po.createdAt);
+    out.tracks = {};
+    Object.keys(Object.assign({}, newer.tracks || {}, older.tracks || {})).forEach(function (k) {
+      out.tracks[k] = mergeProgress((newer.tracks || {})[k], (older.tracks || {})[k]);
+    });
+    return out;
+  }
+  /** Representação para comparar estados ignorando a hora do salvamento. */
+  function signature(st) { return st ? JSON.stringify(Object.assign({}, st, { savedAt: 0 })) : ''; }
+  function plain() { return state ? JSON.parse(JSON.stringify(state)) : null; }
+
+  /**
+   * Aplica um estado vindo de outro aparelho (já unido), sem trocar os objetos
+   * que as telas abertas estão usando. Não reenvia para a nuvem.
+   */
+  function applyRemote(remote) {
+    if (!state || !remote) return false;
+    const merged = mergeStates(plain(), remote);
+    if (signature(merged) === signature(plain())) return false;
+    Object.assign(state.profile, merged.profile);
+    Object.keys(merged.tracks).forEach(function (k) {
+      if (state.tracks[k]) { Object.keys(state.tracks[k]).forEach(function (f) { delete state.tracks[k][f]; }); Object.assign(state.tracks[k], merged.tracks[k]); }
+      else state.tracks[k] = merged.tracks[k];
+    });
+    state.settings = merged.settings || state.settings;
+    saveNow(true);
+    emit('remote');
+    return true;
+  }
+
   /* ------------------------------- Sessão ------------------------------- */
   function getSession() {
     try { return JSON.parse(read(SESSION_KEY) || read(LEGACY_PREFIX + 'session') || 'null'); } catch (e) { return null; }
@@ -119,7 +202,7 @@
       try { parsed = JSON.parse(read(keyFor(id) + ':bak') || read(LEGACY_PREFIX + 'user:' + id + ':bak') || 'null'); } catch (e) { parsed = null; }
       if (parsed) emit('restored');
     }
-    if (cloudData && cloudData.profile && (!parsed || String(cloudData.savedAt || '') >= String(parsed.savedAt || ''))) parsed = cloudData;
+    if (cloudData && cloudData.profile) parsed = parsed ? mergeStates(migrate(parsed), migrate(cloudData)) : cloudData;
     state = finalize(parsed ? merge(defaultState(), migrate(parsed)) : defaultState(profileSeed));
     if (profileSeed && parsed) {
       ['email', 'picture', 'provider'].forEach(function (k) { if (profileSeed[k]) state.profile[k] = profileSeed[k]; });
@@ -139,7 +222,7 @@
   }
 
   /** Grava imediatamente, guardando a versão anterior como backup. */
-  function saveNow() {
+  function saveNow(skipRemote) {
     if (!state || !uid) return;
     clearTimeout(timer); timer = null;
     state.savedAt = new Date().toISOString();
@@ -147,7 +230,7 @@
     if (prev) write(keyFor(uid) + ':bak', prev);
     write(keyFor(uid), JSON.stringify(state));
     emit('saved');
-    if (remote) { try { remote(state); } catch (e) { /* ignora */ } }
+    if (remote && skipRemote !== true) { try { remote(state); } catch (e) { /* ignora */ } }
   }
   /** Agenda um salvamento (debounce de 600 ms). */
   function save() { clearTimeout(timer); timer = setTimeout(saveNow, 600); }
@@ -190,7 +273,7 @@
     get state() { return state; },
     get uid() { return uid; },
     get available() { return available; },
-    getSession: getSession, load: load, peek: peek, setRemote: setRemote, save: save, saveNow: saveNow, setTrack: setTrack,
+    getSession: getSession, load: load, peek: peek, setRemote: setRemote, mergeStates: mergeStates, applyRemote: applyRemote, signature: signature, plain: plain, save: save, saveNow: saveNow, setTrack: setTrack,
     exportBackup: exportBackup, importBackup: importBackup, resetProgress: resetProgress, logout: logout, on: on,
   };
 })(window);
