@@ -128,6 +128,12 @@
   ];
   function leaderboard(st) {
     const me = { nome: st.profile.apelido || st.profile.nome || 'Você', xp: st.progress.xp, me: true };
+    const C = global.Cloud, real = C && C.uid && C.board(st.currentTrack);
+    if (real) {   // liga real: alunos da plataforma (Firebase)
+      return real.filter(function (r) { return r.uid !== C.uid; }).map(function (r) { return { nome: r.nome, xp: r.xp }; }).concat([me])
+        .sort(function (a, b) { return b.xp - a.xp || (a.me ? -1 : b.me ? 1 : 0); })
+        .map(function (p, i) { return Object.assign(p, { pos: i + 1, tier: tierOf(p.xp) }); });
+    }
     return LEAGUE.map(function (p) { return { nome: p[0], xp: p[1] }; }).concat([me])
       .sort(function (a, b) { return b.xp - a.xp || (a.me ? -1 : b.me ? 1 : 0); })
       .map(function (p, i) { return Object.assign(p, { pos: i + 1, tier: tierOf(p.xp) }); });

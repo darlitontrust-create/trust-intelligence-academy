@@ -46,9 +46,21 @@
     setLoader('Recuperando seu progresso…', 95);
     S.on(onStorageEvent);
     const sess = S.getSession();
+    const C = global.Cloud;
+    let cloudUser = null, cloudData = null, offline = false;
+    if (C && C.enabled() && ((sess && String(sess.uid).indexOf('fb:') === 0) || C.redirectPending())) {
+      setLoader('Conectando à nuvem…', 97);
+      try {
+        cloudUser = await Promise.race([C.currentUser(), new Promise(function (r) { setTimeout(function () { r('timeout'); }, 12000); })]);
+        if (cloudUser === 'timeout') { cloudUser = null; offline = true; }
+        if (cloudUser) cloudData = await C.load(cloudUser.uid).catch(function () { offline = true; return null; });
+      } catch (e) { offline = true; }
+    }
     document.getElementById('loader').classList.add('out');
     setTimeout(function () { const l = document.getElementById('loader'); if (l) l.remove(); }, 500);
-    if (sess && sess.uid) startSession(sess.uid);
+    if (cloudUser) startSession('fb:' + cloudUser.uid, C.profileFrom(cloudUser), cloudData);
+    else if (sess && sess.uid && String(sess.uid).indexOf('fb:') === 0 && !offline) { S.logout(); showLogin(); }
+    else if (sess && sess.uid) { startSession(sess.uid); if (offline) toast('Sem conexão com a nuvem: usando a cópia salva neste navegador. Tudo será enviado quando a internet voltar.', 'warn', 6000); }
     else showLogin();
   }
   function fatal(msg) {
@@ -63,14 +75,39 @@
     }
     if (type === 'restored') toast('Recuperamos seu progresso a partir da cópia de segurança.', 'warn', 5000);
   }
+  function onCloudEvent(type, info) {
+    const el = document.getElementById('save-state'); if (!el) return;
+    const hm = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    if (type === 'synced') { el.innerHTML = icon('shield') + 'Salvo na nuvem ' + hm; el.classList.remove('warn'); }
+    else if (type === 'syncing' || type === 'pending') el.innerHTML = icon('refresh') + 'Sincronizando…';
+    else if (type === 'error') { el.innerHTML = icon('shield') + 'Salvo neste aparelho · nuvem pendente'; el.classList.add('warn'); el.title = info || ''; }
+  }
+  if (global.Cloud) global.Cloud.on(onCloudEvent);
 
   /* ------------------------------ Sessão ------------------------------ */
   function showLogin() {
     document.body.classList.add('is-login');
-    global.Auth.renderLogin(app, function (res) { startSession(res.id, res.profile); });
+    global.Auth.renderLogin(app, function (res) {
+      if (!res.cloud) return startSession(res.id, res.profile);
+      const fbUid = res.id.slice(3);
+      global.Cloud.load(fbUid).catch(function () { return null; }).then(function (data) {
+        // primeiro acesso com Google: oferece trazer o progresso feito sem login neste navegador
+        const guest = !data && !S.peek(res.id) && S.peek('guest');
+        const hasGuest = guest && guest.tracks && Object.keys(guest.tracks).some(function (k) { return Object.keys(guest.tracks[k].solved || {}).length; });
+        if (hasGuest) {
+          guest.profile = Object.assign({}, guest.profile, { provider: 'google', email: res.profile.email, picture: res.profile.picture || guest.profile.picture || '' });
+          data = guest; data.savedAt = new Date().toISOString();
+          toast('Levamos para a sua conta o progresso que estava salvo neste navegador.', 'success', 6000);
+        }
+        startSession(res.id, res.profile, data);
+      });
+    });
   }
-  function startSession(uid, profileSeed) {
-    const st = S.load(uid, profileSeed);
+  function startSession(uid, profileSeed, cloudData) {
+    const isCloud = String(uid).indexOf('fb:') === 0 && global.Cloud;
+    if (isCloud) { global.Cloud.attach(uid.slice(3)); S.setRemote(function (state) { global.Cloud.queueSave(state); }); }
+    const st = S.load(uid, profileSeed, cloudData);
+    if (isCloud) { global.Cloud.queueSave(st); global.Cloud.refreshBoard(st.currentTrack); }
     document.body.classList.remove('is-login');
     global.Auth.ensureProfile(st, function () {
       mountShell();
@@ -590,7 +627,9 @@
   function renderRanking(view) {
     const st = S.state; const board = G.leaderboard(st); const tier = G.tierOf(st.progress.xp);
     const nextTier = G.TIERS.find(function (t) { return t.min > st.progress.xp; });
-    view.innerHTML = '<header class="page-h"><div><p class="eyebrow">Ranking</p><h1>Liga Trust</h1><p class="muted">Sua posição entre jogadores de referência (perfis fictícios usados como parâmetro de ritmo).</p></div></header>' +
+    const C = global.Cloud, real = C && C.uid && C.board(st.currentTrack);
+    if (C && C.uid) C.refreshBoard(st.currentTrack).then(function (b) { if (b && !real && location.hash === '#ranking') renderRanking(view); });
+    view.innerHTML = '<header class="page-h"><div><p class="eyebrow">Ranking · ' + esc(global.Tracks.active().nome) + '</p><h1>Liga Trust</h1><p class="muted">' + (real ? 'Sua posição entre os alunos da Trust Intelligence Academy nesta trilha (apelido e XP).' : 'Sua posição entre jogadores de referência (perfis fictícios usados como parâmetro de ritmo). Entre com Google para disputar com alunos reais.') + '</p></div></header>' +
       '<div class="rank-grid">' +
         '<section class="card glass"><ol class="board">' + board.map(global.Dashboard.boardRow).join('') + '</ol></section>' +
         '<section class="card glass"><header class="card-h"><h2>Faixas de XP</h2></header>' +
@@ -612,7 +651,7 @@
         '<section class="card glass"><h2>Conta</h2><dl class="cert-dl">' +
           '<div><dt>Acesso</dt><dd>' + esc(prov) + '</dd></div><div><dt>E-mail</dt><dd>' + esc(p.email || '—') + '</dd></div>' +
           '<div><dt>Início da jornada</dt><dd>' + fmtDate(p.createdAt) + '</dd></div>' +
-          '<div><dt>Armazenamento</dt><dd>' + (S.available ? 'LocalStorage deste navegador · salvamento automático' : 'Somente memória (armazenamento bloqueado)') + '</dd></div></dl>' +
+          '<div><dt>Armazenamento</dt><dd>' + (global.Cloud && global.Cloud.uid ? 'Nuvem (sua conta Google) · cópia neste navegador' : S.available ? 'LocalStorage deste navegador · salvamento automático' : 'Somente memória (armazenamento bloqueado)') + '</dd></div></dl>' +
           '<button class="btn btn-quiet" id="pf-logout">' + icon('logout') + 'Sair</button></section>' +
         '<section class="card glass"><h2>Backup do progresso</h2><p class="muted">Copie o código para guardar sua evolução ou levá-la para outro navegador.</p>' +
           '<div class="help-row"><button class="btn btn-primary sm" id="bk-copy">' + icon('copy') + 'Copiar código de backup</button></div>' +
@@ -629,7 +668,11 @@
       const h = view.querySelector('#pf-head-av'); if (h) h.innerHTML = global.Profile.avatarHtml(st.profile);
     });
     view.querySelector('#pf-edit').onclick = function () { global.Auth.ensureProfile(st, function () { route(); }, true); };
-    view.querySelector('#pf-logout').onclick = function () { S.logout(); location.hash = ''; showLogin(); };
+    view.querySelector('#pf-logout').onclick = function () {
+      const C = global.Cloud;
+      const done = function () { S.logout(); location.hash = ''; showLogin(); };
+      if (C && C.uid) { S.saveNow(); C.signOut().then(done, done); } else done();
+    };
     view.querySelector('#bk-copy').onclick = function () { copyText(S.exportBackup(), 'Código de backup copiado.'); };
     view.querySelector('#bk-restore').onclick = function () {
       try { S.importBackup(view.querySelector('#bk-in').value); toast('Progresso restaurado.', 'success'); route(); }

@@ -25,6 +25,7 @@
   let state = null;           // estado do usuário logado
   let uid = null;
   let timer = null;
+  let remote = null;          // gravação na nuvem (Cloud.queueSave), quando o login é com Google
   const listeners = [];
 
   /* --------------------- Acesso seguro ao LocalStorage --------------------- */
@@ -102,8 +103,14 @@
   /* --------------------------- Carregar / salvar --------------------------- */
   function keyFor(id) { return PREFIX + 'user:' + id; }
 
-  /** Carrega (ou cria) o estado do usuário. Restaura do backup se necessário. */
-  function load(id, profileSeed) {
+  /** Lê o estado salvo de um usuário sem ativá-lo (ou null). */
+  function peek(id) { try { return JSON.parse(read(keyFor(id)) || 'null'); } catch (e) { return null; } }
+
+  /**
+   * Carrega (ou cria) o estado do usuário. Restaura do backup se necessário.
+   * cloudData: estado vindo da nuvem; vence a cópia local se for mais recente.
+   */
+  function load(id, profileSeed, cloudData) {
     uid = id;
     let raw = read(keyFor(id)) || read(LEGACY_PREFIX + 'user:' + id);
     let parsed = null;
@@ -112,6 +119,7 @@
       try { parsed = JSON.parse(read(keyFor(id) + ':bak') || read(LEGACY_PREFIX + 'user:' + id + ':bak') || 'null'); } catch (e) { parsed = null; }
       if (parsed) emit('restored');
     }
+    if (cloudData && cloudData.profile && (!parsed || String(cloudData.savedAt || '') >= String(parsed.savedAt || ''))) parsed = cloudData;
     state = finalize(parsed ? merge(defaultState(), migrate(parsed)) : defaultState(profileSeed));
     if (profileSeed && parsed) {
       ['email', 'picture', 'provider'].forEach(function (k) { if (profileSeed[k]) state.profile[k] = profileSeed[k]; });
@@ -139,6 +147,7 @@
     if (prev) write(keyFor(uid) + ':bak', prev);
     write(keyFor(uid), JSON.stringify(state));
     emit('saved');
+    if (remote) { try { remote(state); } catch (e) { /* ignora */ } }
   }
   /** Agenda um salvamento (debounce de 600 ms). */
   function save() { clearTimeout(timer); timer = setTimeout(saveNow, 600); }
@@ -164,7 +173,8 @@
     return state;
   }
 
-  function logout() { saveNow(); setSession(null); state = null; uid = null; }
+  function logout() { saveNow(); remote = null; setSession(null); state = null; uid = null; }
+  function setRemote(fn) { remote = fn; }
 
   /* ------------------------------- Eventos ------------------------------- */
   function on(fn) { listeners.push(fn); }
@@ -180,7 +190,7 @@
     get state() { return state; },
     get uid() { return uid; },
     get available() { return available; },
-    getSession: getSession, load: load, save: save, saveNow: saveNow, setTrack: setTrack,
+    getSession: getSession, load: load, peek: peek, setRemote: setRemote, save: save, saveNow: saveNow, setTrack: setTrack,
     exportBackup: exportBackup, importBackup: importBackup, resetProgress: resetProgress, logout: logout, on: on,
   };
 })(window);

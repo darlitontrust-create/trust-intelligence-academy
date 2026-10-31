@@ -36,6 +36,7 @@ O conteúdo pode ser reaberto pelo botão "Conteúdo" e desligado em Perfil > Pr
 - `js/seed.js` — banco de exemplo da NexusMarket (gerado por `build/gen_seed.py`)
 - `js/sql-engine.js` — execução, emulação de procedures e correção
 - `js/storage.js` — LocalStorage com progresso separado por tema, salvamento automático, backup e migração da versão anterior
+- `js/cloud.js` — login com Google (Firebase) e sincronização do progresso e do ranking no Firestore
 - `js/auth.js` — login e cadastro do nome de jornada
 - `js/achievements.js` — XP, promoções, conquistas e ranking
 - `js/dashboard.js` — painel de evolução
@@ -47,9 +48,29 @@ O conteúdo pode ser reaberto pelo botão "Conteúdo" e desligado em Perfil > Pr
 2. Crie os módulos de exercícios e aulas do tema (use `exercises.js` e `lessons.js` como modelo).
 3. O progresso de cada tema fica salvo separado em `state.tracks[id]`.
 
-## Login com Google de verdade
-1. Crie um OAuth Client ID (tipo Web) no Google Cloud Console e autorize a origem do site.
-2. Cole o Client ID em `AUTH_CONFIG.googleClientId`, no topo de `js/auth.js`.
+## Login com Google e progresso na nuvem (Firebase)
+O projeto já vem ligado ao Firebase `trust-intelligence-academy` (configuração em `js/cloud.js`).
+- Login: Firebase Authentication com Google. O domínio do site precisa estar em
+  Authentication → Configurações → Domínios autorizados (ex.: `darlitontrust-create.github.io`).
+- Progresso: documento `users/{uid}` no Firestore, gravado ~2,5 s após cada salvamento. O LocalStorage
+  continua como cópia local e, sem internet, as gravações ficam na fila e sobem quando a conexão volta.
+  Ao entrar em outro aparelho, vale a cópia mais recente.
+- Ranking: `leaderboard/{uid}` com apelido e XP por trilha (a liga fica real para quem está logado).
+- No primeiro login com Google, o progresso feito sem login naquele navegador é levado para a conta.
+- Regras do Firestore (cada aluno lê e grava só o próprio progresso):
+
+      rules_version = '2';
+      service cloud.firestore {
+        match /databases/{database}/documents {
+          match /users/{uid} { allow read, write: if request.auth != null && request.auth.uid == uid; }
+          match /leaderboard/{uid} {
+            allow read: if request.auth != null;
+            allow write: if request.auth != null && request.auth.uid == uid;
+          }
+        }
+      }
+
+Dentro de visualizadores em iframe a nuvem fica desligada e o app usa só o LocalStorage.
 
 ## Narração com voz neural gravada (recomendado)
 A voz do navegador varia de aparelho para aparelho. Para todos ouvirem a mesma voz humana:

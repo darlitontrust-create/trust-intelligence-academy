@@ -61,12 +61,12 @@
         '</section>' +
         '<section class="login-card glass">' +
           '<h2>Entre na sua jornada</h2>' +
-          '<p class="hint-box">' + icon('shield') + '<span>Recomendamos utilizar Login Social para salvar sua evolução.</span></p>' +
+          '<p class="hint-box">' + icon('shield') + '<span>' + (global.Cloud && global.Cloud.enabled() ? 'Entre com Google para salvar sua evolução na nuvem e continuar de qualquer computador ou celular.' : 'Recomendamos utilizar Login Social para salvar sua evolução.') + '</span></p>' +
           '<button class="btn btn-google" id="btn-google">' + icon('google') + 'Entrar com Google</button>' +
           '<div id="gsi-slot"></div>' +
           '<div class="or"><span>ou</span></div>' +
           '<button class="btn btn-ghost" id="btn-guest">Continuar sem login</button>' +
-          '<p class="fine">Seu progresso fica salvo neste navegador. Em Perfil você pode gerar um código de backup para levar a evolução para outro dispositivo.</p>' +
+          '<p class="fine">Sem login, o progresso fica salvo só neste navegador. Em Perfil você pode gerar um código de backup para levar a evolução para outro dispositivo.</p>' +
         '</section>' +
       '</main>';
 
@@ -87,6 +87,19 @@
       onLogin({ id: 'guest', profile: { provider: 'guest' } });
     };
     root.querySelector('#btn-google').onclick = function () {
+      const C = global.Cloud;
+      if (C && C.enabled()) {
+        const btn = root.querySelector('#btn-google');
+        btn.disabled = true; btn.innerHTML = icon('google') + 'Conectando ao Google…';
+        C.signIn().then(function (u) {
+          if (!u) return;   // seguiu por redirect; a página volta logada
+          onLogin({ id: 'fb:' + u.uid, profile: C.profileFrom(u), cloud: true });
+        }).catch(function (e) {
+          btn.disabled = false; btn.innerHTML = icon('google') + 'Entrar com Google';
+          if (e.message !== 'Login cancelado.') toast(esc(e.message), 'error', 6000);
+        });
+        return;
+      }
       if (AUTH_CONFIG.googleClientId) {
         loadGoogle().then(function () {
           global.google.accounts.id.initialize({

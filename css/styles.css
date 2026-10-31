@@ -946,3 +946,4 @@ body.exam-open { overflow: hidden; }
 .medal-dot, .exam-medal, .pb-medal { clip-path: polygon(50% 0, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%); border-radius: 0; }
 .medal-dot { width: 12px; height: 13px; }
 .exam-medal, .pb-medal { background: linear-gradient(135deg, var(--m1), var(--m2) 55%, #3a2210); }
+.save-state.warn, .save-state.warn .ic { color: var(--warn); }
