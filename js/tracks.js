@@ -30,9 +30,12 @@
       summary: 'das primeiras fórmulas a PROCX, ÍNDICE e CORRESP, SOMASES, matrizes dinâmicas, LET, estatística e matemática financeira',
     },
     {
-      id: 'powerbi', status: 'em-breve', icon: 'bars', nome: 'Power BI & DAX', short: 'Power BI', tag: 'Business Intelligence',
+      id: 'powerbi', status: 'ativo', icon: 'bars', start: 'dashboard', kind: 'powerbi',
+      nome: 'Power BI & DAX', short: 'Power BI', tag: 'Business Intelligence',
       color: { a: '#ffd76a', b: '#f2a900' },            // amarelo
-      desc: 'Modelagem estrela, medidas DAX, contexto de filtro e inteligência de tempo.', facts: ['Medidas', 'Modelagem', 'Time intelligence'],
+      desc: 'Medidas DAX, CALCULATE, contexto de filtro, inteligência de tempo e rankings, com correção automática num modelo estrela.',
+      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'PBIBank',
+      summary: 'das primeiras medidas a CALCULATE, contexto de filtro, iteradores, inteligência de tempo, RANKX, curva ABC e tabelas virtuais',
     },
     {
       id: 'python', status: 'em-breve', icon: 'code', nome: 'Python para Dados', short: 'Python', tag: 'Programação',

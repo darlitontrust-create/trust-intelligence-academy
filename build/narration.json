@@ -7502,5 +7502,3619 @@
     "say": "O objetivo: Em M2: LET(v; ÚNICO(C2:C31); t; SOMASES(G2:G31; C2:C31; v; J2:J31; Entregue); ÍNDICE(v; CORRESP(MÁXIMO(t); t; 0))). Quando estiver pronto, é só clicar em Começar exercício."
    }
   ]
+ },
+ {
+  "id": "powerbi-medidas-1",
+  "chunks": [
+   {
+    "text": "Medidas: o coração do Power BI. Uma medida é um cálculo que resume dados e reage aos filtros do relatório.",
+    "say": "Medidas: o coração do Power BI. Uma medida é um cálculo que resume dados e reage aos filtros do relatório."
+   },
+   {
+    "text": "SUM(fVendas[Valor]) soma o valor das vendas que sobram depois dos filtros de cada linha do visual.",
+    "say": "SUM(fVendas[Valor]) soma o valor das vendas que sobram depois dos filtros de cada linha do visual."
+   },
+   {
+    "text": "Uma comparação que ajuda: É uma calculadora presa ao visual: cada célula aperta o botão de novo, só com os dados que a linha enxerga.",
+    "say": "Uma comparação que ajuda: É uma calculadora presa ao visual: cada célula aperta o botão de novo, só com os dados que a linha enxerga."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-medidas-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Formato: Nome da medida = expressão. Colunas são escritas como Tabela[Coluna]; medidas, só entre colchetes: [Total Vendas].",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Formato: Nome da medida igual a expressão. Colunas são escritas como Tabela[Coluna]; medidas, só entre colchetes: [Total Vendas]."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-medidas-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Total de vendas por categoria. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Total de vendas por categoria. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-medidas-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Medida não guarda resultado: ela recalcula para cada célula do visual. Segundo: Some colunas da tabela fato (fVendas), não da dimensão.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Medida não guarda resultado: ela recalcula para cada célula do visual. Segundo: Some colunas da tabela fato (fVendas), não da dimensão."
+   },
+   {
+    "text": "Terceiro: Dê nomes claros às medidas: elas aparecem para todo o time.",
+    "say": "Terceiro: Dê nomes claros às medidas: elas aparecem para todo o time."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-01",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Primeira medida: Total Vendas. A diretoria da NexusMarket quer ver o faturamento por categoria num visual de matriz.",
+    "say": "Chegou a sua vez. O desafio é: Primeira medida: Total Vendas. A diretoria da NexusMarket quer ver o faturamento por categoria num visual de matriz."
+   },
+   {
+    "text": "O objetivo: Crie a medida Total Vendas somando a coluna Valor da fVendas. O visual mostra Categoria nas linhas. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Crie a medida Total Vendas somando a coluna Valor da fVendas. O visual mostra Categoria nas linhas. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-02",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Unidades vendidas por loja. A logística quer saber quantas unidades cada loja vendeu. O objetivo: Crie Qtd Vendida somando fVendas[Qtd]. Linhas: Loja.",
+    "say": "Chegou a sua vez. O desafio é: Unidades vendidas por loja. A logística quer saber quantas unidades cada loja vendeu. O objetivo: Crie Qtd Vendida somando fVendas[Qtd]. Linhas: Loja."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-03",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Custo das mercadorias. O financeiro quer o custo das mercadorias vendidas por categoria. O objetivo: Crie Custo Total somando fVendas[Custo]. Linhas: Categoria.",
+    "say": "Chegou a sua vez. O desafio é: Custo das mercadorias. O financeiro quer o custo das mercadorias vendidas por categoria. O objetivo: Crie Custo Total somando fVendas[Custo]. Linhas: Categoria."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-agregacoes-1",
+  "chunks": [
+   {
+    "text": "Agregações: média, mínimo, máximo e contagens. Além de SUM, há AVERAGE, MIN, MAX, COUNT e COUNTROWS. DISTINCTCOUNT conta valores únicos, como clientes diferentes. Todas respeitam o contexto de filtro.",
+    "say": "Agregações: média, mínimo, máximo e contagens. Além de SUM, há AVERAGE, MIN, MAX, COUNT e COUNTROWS. DISTINCTCOUNT conta valores únicos, como clientes diferentes. Todas respeitam o contexto de filtro."
+   },
+   {
+    "text": "Uma comparação que ajuda: É olhar a mesma pilha de notas fiscais e responder perguntas diferentes: quanto somou, qual a maior, quantas notas, quantos clientes.",
+    "say": "Uma comparação que ajuda: É olhar a mesma pilha de notas fiscais e responder perguntas diferentes: quanto somou, qual a maior, quantas notas, quantos clientes."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-agregacoes-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. COUNTROWS conta linhas de uma tabela; COUNT conta valores numéricos de uma coluna.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. COUNTROWS conta linhas de uma tabela; COUNT conta valores numéricos de uma coluna."
+   },
+   {
+    "text": "Sem linhas no contexto, as agregações devolvem BLANK (vazio), não zero.",
+    "say": "Sem linhas no contexto, as agregações devolvem BLANK (vazio), não zero."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-agregacoes-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Pedidos e clientes por loja (contagem de clientes). A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Pedidos e clientes por loja (contagem de clientes). A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-agregacoes-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: O total de DISTINCTCOUNT não é a soma das linhas: um cliente pode comprar em várias lojas. Segundo: AVERAGE ignora vazios.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: O total de DISTINCTCOUNT não é a soma das linhas: um cliente pode comprar em várias lojas. Segundo: AVERAGE ignora vazios."
+   },
+   {
+    "text": "Terceiro: Para pedidos, prefira COUNTROWS(fVendas) quando cada linha é um pedido.",
+    "say": "Terceiro: Para pedidos, prefira COUNTROWS(fVendas) quando cada linha é um pedido."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-04",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Pedidos por canal. O comercial compara o volume de pedidos da loja física e do online. O objetivo: Conte as linhas da fVendas (cada linha é um pedido). Linhas: Canal.",
+    "say": "Chegou a sua vez. O desafio é: Pedidos por canal. O comercial compara o volume de pedidos da loja física e do online. O objetivo: Conte as linhas da fVendas (cada linha é um pedido). Linhas: Canal."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-05",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Preço unitário médio. O pricing quer o preço unitário médio praticado em cada categoria. O objetivo: Calcule a média de fVendas[Preço Unit]. Linhas: Categoria.",
+    "say": "Chegou a sua vez. O desafio é: Preço unitário médio. O pricing quer o preço unitário médio praticado em cada categoria. O objetivo: Calcule a média de fVendas[Preço Unit]. Linhas: Categoria."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-06",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Maior venda de cada loja. Cada gerente quer saber qual foi o maior pedido da sua loja. O objetivo: Retorne o maior valor de fVendas[Valor]. Linhas: Loja.",
+    "say": "Chegou a sua vez. O desafio é: Maior venda de cada loja. Cada gerente quer saber qual foi o maior pedido da sua loja. O objetivo: Retorne o maior valor de fVendas[Valor]. Linhas: Loja."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-07",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Menor venda por categoria. O comercial quer ver o menor pedido de cada categoria. O objetivo: Retorne o menor valor de fVendas[Valor]. Linhas: Categoria.",
+    "say": "Chegou a sua vez. O desafio é: Menor venda por categoria. O comercial quer ver o menor pedido de cada categoria. O objetivo: Retorne o menor valor de fVendas[Valor]. Linhas: Categoria."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-08",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Clientes atendidos. O CRM quer saber quantos clientes diferentes compraram em cada loja. O objetivo: Conte os valores distintos de fVendas[CodCliente]. Linhas: Loja.",
+    "say": "Chegou a sua vez. O desafio é: Clientes atendidos. O CRM quer saber quantos clientes diferentes compraram em cada loja. O objetivo: Conte os valores distintos de fVendas[CodCliente]. Linhas: Loja."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-09",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Mix de produtos por região. O marketing quer ver quantos produtos diferentes cada região do cliente comprou.",
+    "say": "Chegou a sua vez. O desafio é: Mix de produtos por região. O marketing quer ver quantos produtos diferentes cada região do cliente comprou."
+   },
+   {
+    "text": "O objetivo: Conte os produtos distintos (fVendas[CodProduto]). Linhas: Região do cliente. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Conte os produtos distintos (fVendas[CodProduto]). Linhas: Região do cliente. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-10",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Pedidos por ano com COUNT. Um analista quer conferir o número de pedidos contando a coluna Pedido. O objetivo: Use COUNT em fVendas[Pedido]. Linhas: Ano.",
+    "say": "Chegou a sua vez. O desafio é: Pedidos por ano com COUNT. Um analista quer conferir o número de pedidos contando a coluna Pedido. O objetivo: Use COUNT em fVendas[Pedido]. Linhas: Ano."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-11",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Faturamento de 2026. O CEO quer um cartão com o faturamento do ano. A página está filtrada em 2026.",
+    "say": "Chegou a sua vez. O desafio é: Faturamento de 2026. O CEO quer um cartão com o faturamento do ano. A página está filtrada em 2026."
+   },
+   {
+    "text": "O objetivo: Crie a medida de total de vendas para o cartão (sem linhas). O filtro de 2026 já está na página. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Crie a medida de total de vendas para o cartão (sem linhas). O filtro de 2026 já está na página. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-divide-1",
+  "chunks": [
+   {
+    "text": "Medidas que usam medidas e DIVIDE. Medidas podem ser combinadas: Lucro = [Total Vendas] − [Custo Total]; Margem = DIVIDE([Lucro], [Total Vendas]).",
+    "say": "Medidas que usam medidas e DIVIDE. Medidas podem ser combinadas: Lucro igual a [Total Vendas] − [Custo Total]; Margem igual a DIVIDE([Lucro], [Total Vendas])."
+   },
+   {
+    "text": "DIVIDE faz a divisão segura: se o denominador for zero ou vazio, devolve BLANK em vez de erro.",
+    "say": "DIVIDE faz a divisão segura: se o denominador for zero ou vazio, devolve BLANK em vez de erro."
+   },
+   {
+    "text": "Uma comparação que ajuda: É montar indicadores com blocos de Lego: uma vez criada, cada medida vira peça de outras.",
+    "say": "Uma comparação que ajuda: É montar indicadores com blocos de Lego: uma vez criada, cada medida vira peça de outras."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-divide-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. O 3º argumento de DIVIDE é o valor quando não dá para dividir. ROUND(valor, casas) arredonda o resultado.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. O 3º argumento de DIVIDE é o valor quando não dá para dividir. ROUND(valor, casas) arredonda o resultado."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-divide-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Margem % por categoria. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Margem sinal de porcentagem por categoria. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-divide-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Evite o operador / com denominadores que podem ser zero. Segundo: Percentuais são números de 0 a 1: formate a medida como %.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Evite o operador / com denominadores que podem ser zero. Segundo: Percentuais são números de 0 a 1: formate a medida como sinal de porcentagem ."
+   },
+   {
+    "text": "Terceiro: A margem do total não é a média das margens das linhas: é recalculada.",
+    "say": "Terceiro: A margem do total não é a média das margens das linhas: é recalculada."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-12",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Lucro bruto. O financeiro quer o lucro (vendas menos custo) por categoria. O objetivo: Subtraia a soma do custo da soma do valor. Linhas: Categoria.",
+    "say": "Chegou a sua vez. O desafio é: Lucro bruto. O financeiro quer o lucro (vendas menos custo) por categoria. O objetivo: Subtraia a soma do custo da soma do valor. Linhas: Categoria."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-13",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Lucro com medidas prontas. O modelo já tem as medidas [Total Vendas] e [Custo Total]. Reaproveitar medidas evita repetir lógica.",
+    "say": "Chegou a sua vez. O desafio é: Lucro com medidas prontas. O modelo já tem as medidas [Total Vendas] e [Custo Total]. Reaproveitar medidas evita repetir lógica."
+   },
+   {
+    "text": "O objetivo: Calcule o lucro usando [Total Vendas] - [Custo Total]. Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Calcule o lucro usando [Total Vendas] - [Custo Total]. Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-14",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Margem %. O financeiro acompanha a margem de cada categoria. O objetivo: Divida [Lucro] por [Total Vendas] com DIVIDE. Linhas: Categoria.",
+    "say": "Chegou a sua vez. O desafio é: Margem sinal de porcentagem . O financeiro acompanha a margem de cada categoria. O objetivo: Divida [Lucro] por [Total Vendas] com DIVIDE. Linhas: Categoria."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-15",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Ticket médio. O comercial mede o valor médio por pedido de cada loja. O objetivo: Divida [Total Vendas] por [Pedidos]. Linhas: Loja.",
+    "say": "Chegou a sua vez. O desafio é: Ticket médio. O comercial mede o valor médio por pedido de cada loja. O objetivo: Divida [Total Vendas] por [Pedidos]. Linhas: Loja."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-16",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Preço médio realizado. O pricing quer o preço médio efetivo por unidade de cada produto. O objetivo: Divida [Total Vendas] por [Qtd Vendida]. Linhas: Produto.",
+    "say": "Chegou a sua vez. O desafio é: Preço médio realizado. O pricing quer o preço médio efetivo por unidade de cada produto. O objetivo: Divida [Total Vendas] por [Qtd Vendida]. Linhas: Produto."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-17",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Itens por pedido. A operação quer saber quantas unidades vêm em cada pedido, por canal. O objetivo: Divida [Qtd Vendida] por [Pedidos]. Linhas: Canal.",
+    "say": "Chegou a sua vez. O desafio é: Itens por pedido. A operação quer saber quantas unidades vêm em cada pedido, por canal. O objetivo: Divida [Qtd Vendida] por [Pedidos]. Linhas: Canal."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-18",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Desconto médio por segmento. O comercial suspeita que clientes corporativos recebem mais desconto. O objetivo: Calcule a média de fVendas[Desconto].",
+    "say": "Chegou a sua vez. O desafio é: Desconto médio por segmento. O comercial suspeita que clientes corporativos recebem mais desconto. O objetivo: Calcule a média de fVendas[Desconto]."
+   },
+   {
+    "text": "Linhas: Segmento do cliente. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Segmento do cliente. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-19",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Ticket arredondado. O relatório executivo mostra o ticket médio sem centavos. O objetivo: Arredonde o ticket médio ([Total Vendas] ÷ [Pedidos]) para 0 casas.",
+    "say": "Chegou a sua vez. O desafio é: Ticket arredondado. O relatório executivo mostra o ticket médio sem centavos. O objetivo: Arredonde o ticket médio ([Total Vendas] ÷ [Pedidos]) para 0 casas."
+   },
+   {
+    "text": "Linhas: Região do cliente. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Região do cliente. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-colunas-1",
+  "chunks": [
+   {
+    "text": "Colunas calculadas e contexto de linha. Uma coluna calculada é avaliada uma vez por linha da tabela e o resultado fica guardado no modelo.",
+    "say": "Colunas calculadas e contexto de linha. Uma coluna calculada é avaliada uma vez por linha da tabela e o resultado fica guardado no modelo."
+   },
+   {
+    "text": "Nela existe contexto de linha: fVendas[Valor] é o valor da linha atual. Uma comparação que ajuda: É uma coluna nova escrita à mão em cada linha da planilha, só que com fórmula.",
+    "say": "Nela existe contexto de linha: fVendas[Valor] é o valor da linha atual. Uma comparação que ajuda: É uma coluna nova escrita à mão em cada linha da planilha, só que com fórmula."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-colunas-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Use colunas para classificar ou fatiar (aparecem em linhas, eixos, filtros). Use medidas para resultados agregados que mudam com os filtros.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Use colunas para classificar ou fatiar (aparecem em linhas, eixos, filtros). Use medidas para resultados agregados que mudam com os filtros."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-colunas-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Margem de cada pedido (coluna em fVendas). A coluna foi calculada agora mesmo em cada linha da tabela fVendas. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Margem de cada pedido (coluna em fVendas). A coluna foi calculada agora mesmo em cada linha da tabela fVendas. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-colunas-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Colunas ocupam memória: não crie colunas que poderiam ser medidas. Segundo: Coluna calculada não reage a filtros: é calculada na atualização.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Colunas ocupam memória: não crie colunas que poderiam ser medidas. Segundo: Coluna calculada não reage a filtros: é calculada na atualização."
+   },
+   {
+    "text": "Terceiro: Numa medida, fVendas[Valor] sozinho dá erro: falta o contexto de linha.",
+    "say": "Terceiro: Numa medida, fVendas[Valor] sozinho dá erro: falta o contexto de linha."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-20",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Margem de cada pedido. O time quer ver a margem linha a linha na tabela de vendas. O objetivo: Crie a coluna Margem em fVendas: Valor − Custo.",
+    "say": "Chegou a sua vez. O desafio é: Margem de cada pedido. O time quer ver a margem linha a linha na tabela de vendas. O objetivo: Crie a coluna Margem em fVendas: Valor − Custo."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-21",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Valor bruto do pedido. O financeiro quer o valor antes do desconto em cada linha. O objetivo: Crie a coluna Valor Bruto: Qtd × Preço Unit.",
+    "say": "Chegou a sua vez. O desafio é: Valor bruto do pedido. O financeiro quer o valor antes do desconto em cada linha. O objetivo: Crie a coluna Valor Bruto: Qtd × Preço Unit."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-related-1",
+  "chunks": [
+   {
+    "text": "RELATED e relacionamentos. O modelo é um esquema estrela: a fato fVendas se liga às dimensões dProduto, dCliente, dLoja e dCalendario.",
+    "say": "RELATED e relacionamentos. O modelo é um esquema estrela: a fato fVendas se liga às dimensões dProduto, dCliente, dLoja e dCalendario."
+   },
+   {
+    "text": "RELATED busca, a partir de uma linha da fato, um valor da dimensão relacionada.",
+    "say": "RELATED busca, a partir de uma linha da fato, um valor da dimensão relacionada."
+   },
+   {
+    "text": "Uma comparação que ajuda: É o PROCV do Power BI, mas sem precisar dizer onde procurar: o relacionamento já sabe o caminho.",
+    "say": "Uma comparação que ajuda: É o PROCV do Power BI, mas sem precisar dizer onde procurar: o relacionamento já sabe o caminho."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-related-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. RELATED vai do lado N (fato) para o lado 1 (dimensão). Precisa de contexto de linha: coluna calculada ou iterador.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. RELATED vai do lado N (fato) para o lado 1 (dimensão). Precisa de contexto de linha: coluna calculada ou iterador."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-related-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Categoria de cada venda (coluna em fVendas). A coluna foi calculada agora mesmo em cada linha da tabela fVendas. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Categoria de cada venda (coluna em fVendas). A coluna foi calculada agora mesmo em cada linha da tabela fVendas. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-related-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Na direção contrária (dimensão → fato) use RELATEDTABLE. Segundo: Sem relacionamento ativo, RELATED não encontra o caminho.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Na direção contrária (dimensão , depois, fato) use RELATEDTABLE. Segundo: Sem relacionamento ativo, RELATED não encontra o caminho."
+   },
+   {
+    "text": "Terceiro: Não traga para a fato colunas que já estão na dimensão sem necessidade.",
+    "say": "Terceiro: Não traga para a fato colunas que já estão na dimensão sem necessidade."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-22",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Categoria na tabela de vendas. Para uma exportação, o time quer a categoria do produto ao lado de cada venda.",
+    "say": "Chegou a sua vez. O desafio é: Categoria na tabela de vendas. Para uma exportação, o time quer a categoria do produto ao lado de cada venda."
+   },
+   {
+    "text": "O objetivo: Crie a coluna Categoria em fVendas buscando dProduto[Categoria] com RELATED. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Crie a coluna Categoria em fVendas buscando dProduto[Categoria] com RELATED. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-23",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Canal de cada venda. A auditoria quer o canal da loja em cada pedido. O objetivo: Crie a coluna Canal em fVendas com RELATED(dLoja[Canal]).",
+    "say": "Chegou a sua vez. O desafio é: Canal de cada venda. A auditoria quer o canal da loja em cada pedido. O objetivo: Crie a coluna Canal em fVendas com RELATED(dLoja[Canal])."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-logica-1",
+  "chunks": [
+   {
+    "text": "IF e SWITCH. IF testa uma condição e devolve um de dois resultados. SWITCH compara um valor com uma lista de opções. Os dois funcionam em colunas e em medidas.",
+    "say": "IF e SWITCH. IF testa uma condição e devolve um de dois resultados. SWITCH compara um valor com uma lista de opções. Os dois funcionam em colunas e em medidas."
+   },
+   {
+    "text": "Uma comparação que ajuda: É a placa de bifurcação: se a condição for verdadeira, siga por um lado; senão, pelo outro.",
+    "say": "Uma comparação que ajuda: É a placa de bifurcação: se a condição for verdadeira, siga por um lado; senão, pelo outro."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-logica-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. IF sem o 3º argumento devolve BLANK quando a condição é falsa. No SWITCH, o último argumento sem par é o \"senão\".",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. IF sem o 3º argumento devolve BLANK quando a condição é falsa. No SWITCH, o último argumento sem par é o senão."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-logica-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Tipo de cliente (coluna em dCliente). A coluna foi calculada agora mesmo em cada linha da tabela dCliente. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Tipo de cliente (coluna em dCliente). A coluna foi calculada agora mesmo em cada linha da tabela dCliente. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-logica-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Comparações de texto no DAX não diferenciam maiúsculas. Segundo: Aninhar muitos IF fica ilegível: use SWITCH.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Comparações de texto no DAX não diferenciam maiúsculas. Segundo: Aninhar muitos IF fica ilegível: use SWITCH."
+   },
+   {
+    "text": "Terceiro: Numa medida, a condição deve usar medidas ou agregações.",
+    "say": "Terceiro: Numa medida, a condição deve usar medidas ou agregações."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-24",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Faixa do pedido. O comercial classifica pedidos de R$ 2.000 ou mais como \"Alto\". O objetivo: Crie a coluna Faixa: \"Alto\" se Valor ≥ 2000; senão \"Normal\".",
+    "say": "Chegou a sua vez. O desafio é: Faixa do pedido. O comercial classifica pedidos de R$ 2.000 ou mais como Alto. O objetivo: Crie a coluna Faixa: Alto se Valor ≥ 2000; senão Normal."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-datascol-1",
+  "chunks": [
+   {
+    "text": "Datas e FORMAT em colunas. YEAR, MONTH, DAY e QUARTER extraem partes de uma data. FORMAT transforma a data em texto, como \"jan/2026\". Subtrair datas dá a diferença em dias.",
+    "say": "Datas e FORMAT em colunas. YEAR, MONTH, DAY e QUARTER extraem partes de uma data. FORMAT transforma a data em texto, como jan/2026. Subtrair datas dá a diferença em dias."
+   },
+   {
+    "text": "Uma comparação que ajuda: É etiquetar cada nota fiscal com o mês e o ano para depois agrupar.",
+    "say": "Uma comparação que ajuda: É etiquetar cada nota fiscal com o mês e o ano para depois agrupar."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-datascol-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Formatos comuns: \"dd/mm/yyyy\", \"mmm/yyyy\", \"mmmm\", \"yyyy\". Para análises por tempo, prefira as colunas da dCalendario.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Formatos comuns: dd/mm/yyyy, mmm/yyyy, mmmm, yyyy. Para análises por tempo, prefira as colunas da dCalendario."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-datascol-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Período em texto de cada venda. A coluna foi calculada agora mesmo em cada linha da tabela fVendas. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Período em texto de cada venda. A coluna foi calculada agora mesmo em cada linha da tabela fVendas. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-datascol-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: FORMAT devolve texto: ordena alfabeticamente (abr antes de jan). Segundo: Use \"Classificar por coluna\" no Power BI para ordenar meses.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: FORMAT devolve texto: ordena alfabeticamente (abr antes de jan). Segundo: Use Classificar por coluna no Power BI para ordenar meses."
+   },
+   {
+    "text": "Terceiro: Uma tabela calendário marcada habilita a inteligência de tempo.",
+    "say": "Terceiro: Uma tabela calendário marcada habilita a inteligência de tempo."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-25",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Ano do pedido. Uma tabela auxiliar precisa do ano de cada venda. O objetivo: Crie a coluna Ano Pedido com YEAR(fVendas[Data]).",
+    "say": "Chegou a sua vez. O desafio é: Ano do pedido. Uma tabela auxiliar precisa do ano de cada venda. O objetivo: Crie a coluna Ano Pedido com YEAR(fVendas[Data])."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-26",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Mês do pedido. O time quer o número do mês de cada venda. O objetivo: Crie a coluna Mês Pedido com MONTH(fVendas[Data]).",
+    "say": "Chegou a sua vez. O desafio é: Mês do pedido. O time quer o número do mês de cada venda. O objetivo: Crie a coluna Mês Pedido com MONTH(fVendas[Data])."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-concatx-1",
+  "chunks": [
+   {
+    "text": "CONCATENATEX e textos dinâmicos. CONCATENATEX junta os textos de uma tabela com um separador e pode ordenar. Com FORMAT e SELECTEDVALUE você cria títulos e resumos que mudam com os filtros.",
+    "say": "CONCATENATEX e textos dinâmicos. CONCATENATEX junta os textos de uma tabela com um separador e pode ordenar. Com FORMAT e SELECTEDVALUE você cria títulos e resumos que mudam com os filtros."
+   },
+   {
+    "text": "Uma comparação que ajuda: É montar a legenda do gráfico automaticamente, com os nomes e números certos.",
+    "say": "Uma comparação que ajuda: É montar a legenda do gráfico automaticamente, com os nomes e números certos."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-concatx-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Os argumentos 4 e 5 ordenam a lista. Formatos: \"R$ #,##0\", \"0.0%\", \"mmm/yyyy\".",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Os argumentos 4 e 5 ordenam a lista. Formatos: R$ #,##0, 0.0 por cento, mmm/yyyy."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-concatx-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Título dinâmico por loja. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Título dinâmico por loja. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-concatx-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Medidas de texto não somam: use em cartões, títulos e tooltips. Segundo: Listas longas ficam ilegíveis: combine com TOPN.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Medidas de texto não somam: use em cartões, títulos e tooltips. Segundo: Listas longas ficam ilegíveis: combine com TOPN."
+   },
+   {
+    "text": "Terceiro: FORMAT devolve texto; não use o resultado em contas.",
+    "say": "Terceiro: FORMAT devolve texto; não use o resultado em contas."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-27",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Mês e ano em texto. Um relatório mostra o período no formato \"jan/2026\". O objetivo: Crie a coluna Período com FORMAT(fVendas[Data], \"mmm/yyyy\").",
+    "say": "Chegou a sua vez. O desafio é: Mês e ano em texto. Um relatório mostra o período no formato jan/2026. O objetivo: Crie a coluna Período com FORMAT(fVendas[Data], mmm/yyyy)."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-28",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Dias para entregar. A logística mede quantos dias cada pedido levou para ser entregue. O objetivo: Crie a coluna Dias Entrega: DataEntrega − Data.",
+    "say": "Chegou a sua vez. O desafio é: Dias para entregar. A logística mede quantos dias cada pedido levou para ser entregue. O objetivo: Crie a coluna Dias Entrega: DataEntrega − Data."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-29",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Margem unitária do produto. O cadastro de produtos ganha uma coluna de margem por unidade. O objetivo: Crie em dProduto a coluna Margem Unit: Preço Lista − Custo Unit.",
+    "say": "Chegou a sua vez. O desafio é: Margem unitária do produto. O cadastro de produtos ganha uma coluna de margem por unidade. O objetivo: Crie em dProduto a coluna Margem Unit: Preço Lista − Custo Unit."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-30",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Margem % do produto. O pricing quer a margem percentual de cada produto no cadastro.",
+    "say": "Chegou a sua vez. O desafio é: Margem sinal de porcentagem do produto. O pricing quer a margem percentual de cada produto no cadastro."
+   },
+   {
+    "text": "O objetivo: Crie em dProduto a coluna Margem %: (Preço Lista − Custo Unit) ÷ Preço Lista, com DIVIDE. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Crie em dProduto a coluna Margem sinal de porcentagem : (Preço Lista − Custo Unit) ÷ Preço Lista, com DIVIDE. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-31",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Tipo de cliente. O CRM separa clientes B2B e B2C. O objetivo: Crie em dCliente a coluna Tipo: \"B2B\" se Segmento for \"Corporativo\"; senão \"B2C\".",
+    "say": "Chegou a sua vez. O desafio é: Tipo de cliente. O CRM separa clientes B2B e B2C. O objetivo: Crie em dCliente a coluna Tipo: B2B se Segmento for Corporativo; senão B2C."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-32",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Sigla da região. O mapa do relatório usa siglas de região.",
+    "say": "Chegou a sua vez. O desafio é: Sigla da região. O mapa do relatório usa siglas de região."
+   },
+   {
+    "text": "O objetivo: Crie em dCliente a coluna Sigla com SWITCH: Sudeste→SE, Sul→S, Nordeste→NE, Centro-Oeste→CO, senão N. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Crie em dCliente a coluna Sigla com SWITCH: Sudeste, depois, SE, Sul, depois, S, Nordeste, depois, NE, Centro-Oeste, depois, CO, senão N. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-texto-1",
+  "chunks": [
+   {
+    "text": "Funções de texto. O & junta textos. LEFT, RIGHT e MID recortam partes; UPPER e LOWER mudam maiúsculas; LEN conta caracteres; SUBSTITUTE troca trechos.",
+    "say": "Funções de texto. O & junta textos. LEFT, RIGHT e MID recortam partes; UPPER e LOWER mudam maiúsculas; LEN conta caracteres; SUBSTITUTE troca trechos."
+   },
+   {
+    "text": "Uma comparação que ajuda: É montar etiquetas com pedaços de outras etiquetas.",
+    "say": "Uma comparação que ajuda: É montar etiquetas com pedaços de outras etiquetas."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-texto-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Números concatenados viram texto. FORMAT controla como o número aparece no texto.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Números concatenados viram texto. FORMAT controla como o número aparece no texto."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-texto-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Sigla da marca (coluna em dProduto). A coluna foi calculada agora mesmo em cada linha da tabela dProduto. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Sigla da marca (coluna em dProduto). A coluna foi calculada agora mesmo em cada linha da tabela dProduto. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-texto-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Colunas de texto longas pesam no modelo. Segundo: Para rótulos de visual, prefira medidas de texto com FORMAT.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Colunas de texto longas pesam no modelo. Segundo: Para rótulos de visual, prefira medidas de texto com FORMAT."
+   },
+   {
+    "text": "Terceiro: Espaços extras atrapalham comparações: use TRIM.",
+    "say": "Terceiro: Espaços extras atrapalham comparações: use TRIM."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-33",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Sigla da marca. As etiquetas usam as 3 primeiras letras da marca em maiúsculas. O objetivo: Crie em dProduto a coluna Sigla Marca com UPPER(LEFT(dProduto[Marca], 3)).",
+    "say": "Chegou a sua vez. O desafio é: Sigla da marca. As etiquetas usam as 3 primeiras letras da marca em maiúsculas. O objetivo: Crie em dProduto a coluna Sigla Marca com UPPER(LEFT(dProduto[Marca], 3))."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-34",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Produto com categoria. Um filtro do relatório mostra \"Produto (Categoria)\". O objetivo: Crie em dProduto a coluna Rótulo: Produto & \" (\" & Categoria & \")\".",
+    "say": "Chegou a sua vez. O desafio é: Produto com categoria. Um filtro do relatório mostra Produto (Categoria). O objetivo: Crie em dProduto a coluna Rótulo: Produto & ( & Categoria & )."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-35",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Venda com desconto?. O comercial quer marcar as vendas que tiveram desconto. O objetivo: Crie em fVendas a coluna Com Desconto: \"Sim\" se Desconto > 0; senão \"Não\".",
+    "say": "Chegou a sua vez. O desafio é: Venda com desconto?. O comercial quer marcar as vendas que tiveram desconto. O objetivo: Crie em fVendas a coluna Com Desconto: Sim se Desconto maior que 0; senão Não."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-calculate-1",
+  "chunks": [
+   {
+    "text": "CALCULATE: mudando o contexto de filtro. CALCULATE avalia uma expressão num contexto de filtro modificado.",
+    "say": "CALCULATE: mudando o contexto de filtro. CALCULATE avalia uma expressão num contexto de filtro modificado."
+   },
+   {
+    "text": "Um filtro como dLoja[Canal] = \"Online\" substitui o filtro que existia nessa coluna e se soma aos demais filtros do visual.",
+    "say": "Um filtro como dLoja[Canal] igual a Online substitui o filtro que existia nessa coluna e se soma aos demais filtros do visual."
+   },
+   {
+    "text": "Uma comparação que ajuda: É ajustar os filtros do relatório por dentro da fórmula, só para aquela conta.",
+    "say": "Uma comparação que ajuda: É ajustar os filtros do relatório por dentro da fórmula, só para aquela conta."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-calculate-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Filtros separados por vírgula são combinados com E. O filtro sobrescreve o filtro da mesma coluna que vinha do visual.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Filtros separados por vírgula são combinados com E. O filtro sobrescreve o filtro da mesma coluna que vinha do visual."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-calculate-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Vendas online por categoria. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Vendas online por categoria. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-calculate-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Filtros booleanos não podem usar medidas: use FILTER. Segundo: Um filtro booleano só pode usar colunas de uma tabela.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Filtros booleanos não podem usar medidas: use FILTER. Segundo: Um filtro booleano só pode usar colunas de uma tabela."
+   },
+   {
+    "text": "Terceiro: Para manter o filtro do visual e combinar, use KEEPFILTERS.",
+    "say": "Terceiro: Para manter o filtro do visual e combinar, use KEEPFILTERS."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-36",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Vendas do canal online. A diretoria digital quer as vendas online em cada categoria. O objetivo: Use CALCULATE para filtrar dLoja[Canal] = \"Online\". Linhas: Categoria.",
+    "say": "Chegou a sua vez. O desafio é: Vendas do canal online. A diretoria digital quer as vendas online em cada categoria. O objetivo: Use CALCULATE para filtrar dLoja[Canal] igual a Online. Linhas: Categoria."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-37",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Vendas da categoria Casa. O gerente de Casa quer ver o desempenho da categoria em cada loja. O objetivo: Filtre dProduto[Categoria] = \"Casa\". Linhas: Loja.",
+    "say": "Chegou a sua vez. O desafio é: Vendas da categoria Casa. O gerente de Casa quer ver o desempenho da categoria em cada loja. O objetivo: Filtre dProduto[Categoria] igual a Casa. Linhas: Loja."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-38",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Vendas entregues. O financeiro só reconhece receita de pedidos entregues. O objetivo: Filtre fVendas[Status] = \"Entregue\". Linhas: Ano.",
+    "say": "Chegou a sua vez. O desafio é: Vendas entregues. O financeiro só reconhece receita de pedidos entregues. O objetivo: Filtre fVendas[Status] igual a Entregue. Linhas: Ano."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-39",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Devoluções. O pós-venda acompanha as devoluções por categoria. O objetivo: Conte os pedidos ([Pedidos]) com Status \"Devolvido\". Linhas: Categoria.",
+    "say": "Chegou a sua vez. O desafio é: Devoluções. O pós-venda acompanha as devoluções por categoria. O objetivo: Conte os pedidos ([Pedidos]) com Status Devolvido. Linhas: Categoria."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-calcmulti-1",
+  "chunks": [
+   {
+    "text": "Vários filtros, IN e percentuais. Combine filtros no mesmo CALCULATE para cruzar condições. IN { … } aceita uma lista de valores.",
+    "say": "Vários filtros, IN e percentuais. Combine filtros no mesmo CALCULATE para cruzar condições. IN { … } aceita uma lista de valores."
+   },
+   {
+    "text": "Dividindo um CALCULATE pela medida original, você obtém participações e taxas. Uma comparação que ajuda: É pedir ao relatório: \"agora só Online e só 2026\", sem mexer nos filtros da tela.",
+    "say": "Dividindo um CALCULATE pela medida original, você obtém participações e taxas. Uma comparação que ajuda: É pedir ao relatório: agora só Online e só 2026, sem mexer nos filtros da tela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-calcmulti-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Condições na mesma coluna com OU: use IN ou ||. Taxas = parte ÷ todo, com DIVIDE.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Condições na mesma coluna com OU: use IN ou ||. Taxas igual a parte ÷ todo, com DIVIDE."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-calcmulti-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Taxa de devolução por loja. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Taxa de devolução por loja. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-calcmulti-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Condições em tabelas diferentes viram filtros separados. Segundo: Um filtro de ano no CALCULATE ignora o filtro de ano da página.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Condições em tabelas diferentes viram filtros separados. Segundo: Um filtro de ano no CALCULATE ignora o filtro de ano da página."
+   },
+   {
+    "text": "Terceiro: Teste cada parte da divisão como medida separada.",
+    "say": "Terceiro: Teste cada parte da divisão como medida separada."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-40",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Online em 2026. O digital quer as vendas online de 2026 por categoria, independentemente do filtro de ano da página.",
+    "say": "Chegou a sua vez. O desafio é: Online em 2026. O digital quer as vendas online de 2026 por categoria, independentemente do filtro de ano da página."
+   },
+   {
+    "text": "O objetivo: Use dois filtros: Canal = \"Online\" e Ano = 2026. Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Use dois filtros: Canal igual a Online e Ano igual a 2026. Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-41",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Sul e Sudeste. A regional Sul-Sudeste quer seu faturamento por categoria. O objetivo: Filtre dCliente[Região] IN {\"Sul\", \"Sudeste\"}. Linhas: Categoria.",
+    "say": "Chegou a sua vez. O desafio é: Sul e Sudeste. A regional Sul-Sudeste quer seu faturamento por categoria. O objetivo: Filtre dCliente[Região] IN {Sul, Sudeste}. Linhas: Categoria."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-42",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Vendas com desconto. O comercial quer medir quanto vendeu com algum desconto. O objetivo: Filtre fVendas[Desconto] > 0. Linhas: Loja.",
+    "say": "Chegou a sua vez. O desafio é: Vendas com desconto. O comercial quer medir quanto vendeu com algum desconto. O objetivo: Filtre fVendas[Desconto] maior que 0. Linhas: Loja."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-43",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Taxa de devolução. O pós-venda quer a % de pedidos devolvidos por loja. O objetivo: Divida os pedidos devolvidos pelo total de pedidos. Linhas: Loja.",
+    "say": "Chegou a sua vez. O desafio é: Taxa de devolução. O pós-venda quer a sinal de porcentagem de pedidos devolvidos por loja. O objetivo: Divida os pedidos devolvidos pelo total de pedidos. Linhas: Loja."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-44",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Participação do online. A diretoria quer saber quanto de cada categoria já vem do online. O objetivo: Divida as vendas online pelo total de vendas. Linhas: Categoria.",
+    "say": "Chegou a sua vez. O desafio é: Participação do online. A diretoria quer saber quanto de cada categoria já vem do online. O objetivo: Divida as vendas online pelo total de vendas. Linhas: Categoria."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-metas-1",
+  "chunks": [
+   {
+    "text": "Meta x realizado com duas tabelas fato. O modelo tem duas fatos: fVendas e fMetas. As duas se ligam a dLoja e dCalendario, então um visual por loja ou por mês filtra as duas ao mesmo tempo.",
+    "say": "Meta x realizado com duas tabelas fato. O modelo tem duas fatos: fVendas e fMetas. As duas se ligam a dLoja e dCalendario, então um visual por loja ou por mês filtra as duas ao mesmo tempo."
+   },
+   {
+    "text": "Basta comparar [Total Vendas] com [Total Metas].",
+    "say": "Basta comparar [Total Vendas] com [Total Metas]."
+   },
+   {
+    "text": "Uma comparação que ajuda: São dois cadernos (vendas e metas) com as mesmas abas (lojas e meses): ao abrir uma aba, você lê os dois cadernos na mesma página.",
+    "say": "Uma comparação que ajuda: São dois cadernos (vendas e metas) com as mesmas abas (lojas e meses): ao abrir uma aba, você lê os dois cadernos na mesma página."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-metas-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Dimensões compartilhadas são o que permite comparar fatos diferentes. A meta está por mês e loja; filtros de produto não chegam nela.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Dimensões compartilhadas são o que permite comparar fatos diferentes. A meta está por mês e loja; filtros de produto não chegam nela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-metas-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Atingimento da meta por loja em 2025. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Atingimento da meta por loja em 2025. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-metas-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Não relacione fVendas com fMetas diretamente: ligue as duas às dimensões. Segundo: Um filtro de categoria não muda a meta (ela não tem produto).",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Não relacione fVendas com fMetas diretamente: ligue as duas às dimensões. Segundo: Um filtro de categoria não muda a meta (ela não tem produto)."
+   },
+   {
+    "text": "Terceiro: Defina o que é \"meta batida\" com o negócio antes de calcular.",
+    "say": "Terceiro: Defina o que é meta batida com o negócio antes de calcular."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-45",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Atingimento da meta. Cada loja tem metas mensais na fMetas. A página está filtrada em 2025. O objetivo: Divida [Total Vendas] por [Total Metas]. Linhas: Loja.",
+    "say": "Chegou a sua vez. O desafio é: Atingimento da meta. Cada loja tem metas mensais na fMetas. A página está filtrada em 2025. O objetivo: Divida [Total Vendas] por [Total Metas]. Linhas: Loja."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-46",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Quanto falta para a meta. Os gerentes querem ver a diferença em reais para a meta de 2025. O objetivo: Calcule [Total Vendas] − [Total Metas]. Linhas: Loja.",
+    "say": "Chegou a sua vez. O desafio é: Quanto falta para a meta. Os gerentes querem ver a diferença em reais para a meta de 2025. O objetivo: Calcule [Total Vendas] − [Total Metas]. Linhas: Loja."
+   },
+   {
+    "text": "Página: 2025. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Página: 2025. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-47",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Meta batida?. O painel mensal mostra se a empresa bateu a meta em cada mês de 2025. O objetivo: Retorne \"Batida\" se [Total Vendas] ≥ [Total Metas]; senão \"Abaixo\".",
+    "say": "Chegou a sua vez. O desafio é: Meta batida?. O painel mensal mostra se a empresa bateu a meta em cada mês de 2025. O objetivo: Retorne Batida se [Total Vendas] ≥ [Total Metas]; senão Abaixo."
+   },
+   {
+    "text": "Linhas: Mês Ano. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Mês Ano. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-blank-1",
+  "chunks": [
+   {
+    "text": "BLANK, COALESCE e ISBLANK. BLANK é o vazio do DAX. Agregações sem linhas devolvem BLANK e o visual esconde a linha. COALESCE devolve o primeiro valor não vazio; ISBLANK testa se algo é vazio.",
+    "say": "BLANK, COALESCE e ISBLANK. BLANK é o vazio do DAX. Agregações sem linhas devolvem BLANK e o visual esconde a linha. COALESCE devolve o primeiro valor não vazio; ISBLANK testa se algo é vazio."
+   },
+   {
+    "text": "Uma comparação que ajuda: É a diferença entre \"zero vendas\" e \"não há dado\": o BLANK diz que não houve nada para medir.",
+    "say": "Uma comparação que ajuda: É a diferença entre zero vendas e não há dado: o BLANK diz que não houve nada para medir."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-blank-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. BLANK em soma vale 0; em multiplicação, o resultado continua BLANK. Trocar BLANK por 0 faz o visual mostrar todas as linhas.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. BLANK em soma vale 0; em multiplicação, o resultado continua BLANK. Trocar BLANK por 0 faz o visual mostrar todas as linhas."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-blank-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Vendas de 2026 com zero nos meses sem venda. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Vendas de 2026 com zero nos meses sem venda. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-blank-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Zero em todas as combinações pode deixar visuais enormes e lentos. Segundo: Use COALESCE quando o negócio realmente precisa ver o zero.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Zero em todas as combinações pode deixar visuais enormes e lentos. Segundo: Use COALESCE quando o negócio realmente precisa ver o zero."
+   },
+   {
+    "text": "Terceiro: DIVIDE já devolve BLANK em vez de erro.",
+    "say": "Terceiro: DIVIDE já devolve BLANK em vez de erro."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-48",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Zero no lugar do vazio. De julho a dezembro de 2026 ainda não há vendas e o visual mostra vazio. A diretoria quer ver 0. O objetivo: Use COALESCE([Total Vendas], 0).",
+    "say": "Chegou a sua vez. O desafio é: Zero no lugar do vazio. De julho a dezembro de 2026 ainda não há vendas e o visual mostra vazio. A diretoria quer ver 0. O objetivo: Use COALESCE([Total Vendas], 0)."
+   },
+   {
+    "text": "Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-49",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Data da última venda. O comercial quer saber quando cada loja vendeu pela última vez. O objetivo: Retorne MAX(fVendas[Data]). Linhas: Loja.",
+    "say": "Chegou a sua vez. O desafio é: Data da última venda. O comercial quer saber quando cada loja vendeu pela última vez. O objetivo: Retorne MAX(fVendas[Data]). Linhas: Loja."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b1-50",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Lucro por pedido. Para fechar o nível, o financeiro quer o lucro médio por pedido em cada canal. O objetivo: Divida ([Total Vendas] − [Custo Total]) por [Pedidos].",
+    "say": "Chegou a sua vez. O desafio é: Lucro por pedido. Para fechar o nível, o financeiro quer o lucro médio por pedido em cada canal. O objetivo: Divida ([Total Vendas] − [Custo Total]) por [Pedidos]."
+   },
+   {
+    "text": "Linhas: Canal. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Canal. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-all-1",
+  "chunks": [
+   {
+    "text": "ALL e REMOVEFILTERS: percentual do total. Dentro do CALCULATE, ALL(Tabela) remove os filtros daquela tabela. Assim o denominador vira o total geral e você calcula a participação de cada linha.",
+    "say": "ALL e REMOVEFILTERS: percentual do total. Dentro do CALCULATE, ALL(Tabela) remove os filtros daquela tabela. Assim o denominador vira o total geral e você calcula a participação de cada linha."
+   },
+   {
+    "text": "Uma comparação que ajuda: É dar um passo para trás e olhar a foto inteira, mesmo estando numa linha específica.",
+    "say": "Uma comparação que ajuda: É dar um passo para trás e olhar a foto inteira, mesmo estando numa linha específica."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-all-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. REMOVEFILTERS é o mesmo que ALL dentro do CALCULATE, com nome mais claro. ALL(Tabela[Coluna]) remove o filtro só daquela coluna.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. REMOVEFILTERS é o mesmo que ALL dentro do CALCULATE, com nome mais claro. ALL(Tabela[Coluna]) remove o filtro só daquela coluna."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-all-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. % de cada categoria no total. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. sinal de porcentagem de cada categoria no total. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-all-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: ALL remove também os filtros da página daquela tabela. Segundo: Escolha a tabela certa: ALL(dLoja) não afeta filtros de produto.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: ALL remove também os filtros da página daquela tabela. Segundo: Escolha a tabela certa: ALL(dLoja) não afeta filtros de produto."
+   },
+   {
+    "text": "Terceiro: Para manter filtros da página, use ALLSELECTED.",
+    "say": "Terceiro: Para manter filtros da página, use ALLSELECTED."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-01",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: % do total por categoria. A diretoria quer a participação de cada categoria no faturamento.",
+    "say": "Chegou a sua vez. O desafio é: sinal de porcentagem do total por categoria. A diretoria quer a participação de cada categoria no faturamento."
+   },
+   {
+    "text": "O objetivo: Divida [Total Vendas] pelo total sem o filtro de produto: CALCULATE([Total Vendas], ALL(dProduto)). Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Divida [Total Vendas] pelo total sem o filtro de produto: CALCULATE([Total Vendas], ALL(dProduto)). Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-02",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: % do total por loja. Cada gerente quer saber o peso da sua loja no faturamento. O objetivo: Use ALL(dLoja) no denominador. Linhas: Loja.",
+    "say": "Chegou a sua vez. O desafio é: sinal de porcentagem do total por loja. Cada gerente quer saber o peso da sua loja no faturamento. O objetivo: Use ALL(dLoja) no denominador. Linhas: Loja."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-03",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: % por região do cliente. O marketing quer a participação de cada região do cliente. O objetivo: Use REMOVEFILTERS(dCliente) no denominador. Linhas: Região.",
+    "say": "Chegou a sua vez. O desafio é: sinal de porcentagem por região do cliente. O marketing quer a participação de cada região do cliente. O objetivo: Use REMOVEFILTERS(dCliente) no denominador. Linhas: Região."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-04",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Total geral em todas as linhas. Para conferir o denominador, o analista quer ver o total geral repetido em cada produto.",
+    "say": "Chegou a sua vez. O desafio é: Total geral em todas as linhas. Para conferir o denominador, o analista quer ver o total geral repetido em cada produto."
+   },
+   {
+    "text": "O objetivo: Use CALCULATE([Total Vendas], ALL(dProduto[Produto])). Linhas: Produto. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Use CALCULATE([Total Vendas], ALL(dProduto[Produto])). Linhas: Produto. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-allexcept-1",
+  "chunks": [
+   {
+    "text": "ALLEXCEPT e ALLSELECTED. ALLEXCEPT(Tabela, Coluna) remove os filtros da tabela, menos os da coluna informada: ótimo para \"% dentro da categoria\".",
+    "say": "ALLEXCEPT e ALLSELECTED. ALLEXCEPT(Tabela, Coluna) remove os filtros da tabela, menos os da coluna informada: ótimo para sinal de porcentagem dentro da categoria."
+   },
+   {
+    "text": "ALLSELECTED remove o filtro das linhas do visual, mas respeita os filtros da página e dos segmentadores.",
+    "say": "ALLSELECTED remove o filtro das linhas do visual, mas respeita os filtros da página e dos segmentadores."
+   },
+   {
+    "text": "Uma comparação que ajuda: ALLEXCEPT é limpar a mesa e deixar só um papel; ALLSELECTED é considerar apenas o que o usuário escolheu no filtro.",
+    "say": "Uma comparação que ajuda: ALLEXCEPT é limpar a mesa e deixar só um papel; ALLSELECTED é considerar apenas o que o usuário escolheu no filtro."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-allexcept-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. ALLSELECTED soma 100% dentro do que está selecionado. ALL ignoraria também o filtro da página.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. ALLSELECTED soma 100 por cento dentro do que está selecionado. ALL ignoraria também o filtro da página."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-allexcept-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. % de cada loja dentro do canal Online (filtro da página). A medida foi calculada agora mesmo no visual, linha a linha, e também no total.",
+    "say": "Vamos ver na prática. sinal de porcentagem de cada loja dentro do canal Online (filtro da página). A medida foi calculada agora mesmo no visual, linha a linha, e também no total."
+   },
+   {
+    "text": "Compare o código com o resultado na tabela.",
+    "say": "Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-allexcept-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: ALLSELECTED depende do visual: teste com filtros diferentes. Segundo: ALLEXCEPT mantém só os filtros das colunas listadas daquela tabela.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: ALLSELECTED depende do visual: teste com filtros diferentes. Segundo: ALLEXCEPT mantém só os filtros das colunas listadas daquela tabela."
+   },
+   {
+    "text": "Terceiro: Em matrizes com hierarquia, ALLEXCEPT é a base do \"% do pai\".",
+    "say": "Terceiro: Em matrizes com hierarquia, ALLEXCEPT é a base do sinal de porcentagem do pai."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-05",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Total da categoria. A página está filtrada em Eletrônicos. O gerente quer o total da categoria ao lado de cada produto.",
+    "say": "Chegou a sua vez. O desafio é: Total da categoria. A página está filtrada em Eletrônicos. O gerente quer o total da categoria ao lado de cada produto."
+   },
+   {
+    "text": "O objetivo: Use ALLEXCEPT(dProduto, dProduto[Categoria]). Linhas: Produto. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Use ALLEXCEPT(dProduto, dProduto[Categoria]). Linhas: Produto. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-06",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: % dentro da categoria. Na página da categoria Casa, o gerente quer o peso de cada produto dentro da categoria.",
+    "say": "Chegou a sua vez. O desafio é: sinal de porcentagem dentro da categoria. Na página da categoria Casa, o gerente quer o peso de cada produto dentro da categoria."
+   },
+   {
+    "text": "O objetivo: Divida [Total Vendas] pelo total com ALLEXCEPT(dProduto, dProduto[Categoria]). Linhas: Produto. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Divida [Total Vendas] pelo total com ALLEXCEPT(dProduto, dProduto[Categoria]). Linhas: Produto. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-07",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: % do canal selecionado. A página está filtrada no canal Online. O time quer a participação de cada loja dentro do que está selecionado.",
+    "say": "Chegou a sua vez. O desafio é: sinal de porcentagem do canal selecionado. A página está filtrada no canal Online. O time quer a participação de cada loja dentro do que está selecionado."
+   },
+   {
+    "text": "O objetivo: Divida [Total Vendas] por CALCULATE([Total Vendas], ALLSELECTED(dLoja)). Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Divida [Total Vendas] por CALCULATE([Total Vendas], ALLSELECTED(dLoja)). Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-filter-1",
+  "chunks": [
+   {
+    "text": "FILTER: filtros com condição livre. FILTER(Tabela, condição) devolve as linhas que atendem à condição, avaliada linha a linha.",
+    "say": "FILTER: filtros com condição livre. FILTER(Tabela, condição) devolve as linhas que atendem à condição, avaliada linha a linha."
+   },
+   {
+    "text": "Pode usar medidas, comparações entre colunas e combinações que um filtro simples não aceita. Uma comparação que ajuda: É uma peneira: as linhas passam uma a uma e só ficam as que cabem no critério.",
+    "say": "Pode usar medidas, comparações entre colunas e combinações que um filtro simples não aceita. Uma comparação que ajuda: É uma peneira: as linhas passam uma a uma e só ficam as que cabem no critério."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-filter-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Dentro do FILTER há contexto de linha; medidas fazem transição de contexto. Prefira filtrar dimensões ou VALUES em vez da fato inteira.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Dentro do FILTER há contexto de linha; medidas fazem transição de contexto. Prefira filtrar dimensões ou VALUES em vez da fato inteira."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-filter-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Clientes que passaram de R$ 15.000 em cada ano. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Clientes que passaram de R$ 15.000 em cada ano. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-filter-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: FILTER sobre a fato inteira pode ser lento em modelos grandes. Segundo: Condições com medidas exigem FILTER (não funcionam como filtro booleano).",
+    "say": "Agora, alguns cuidados importantes. Primeiro: FILTER sobre a fato inteira pode ser lento em modelos grandes. Segundo: Condições com medidas exigem FILTER (não funcionam como filtro booleano)."
+   },
+   {
+    "text": "Terceiro: COUNTROWS(FILTER(...)) é o jeito de contar itens que atendem a uma condição.",
+    "say": "Terceiro: COUNTROWS(FILTER(...)) é o jeito de contar itens que atendem a uma condição."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-08",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Vendas de pedidos grandes. O comercial quer o faturamento só de pedidos a partir de R$ 3.000. O objetivo: Use CALCULATE com FILTER(fVendas, fVendas[Valor] >= 3000).",
+    "say": "Chegou a sua vez. O desafio é: Vendas de pedidos grandes. O comercial quer o faturamento só de pedidos a partir de R$ 3.000. O objetivo: Use CALCULATE com FILTER(fVendas, fVendas[Valor] maior ou igual a 3000)."
+   },
+   {
+    "text": "Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-09",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Clientes VIP no ano. Clientes VIP são os que compraram mais de R$ 15.000 no período. O objetivo: Conte as linhas de FILTER(dCliente, [Total Vendas] > 15000).",
+    "say": "Chegou a sua vez. O desafio é: Clientes VIP no ano. Clientes VIP são os que compraram mais de R$ 15.000 no período. O objetivo: Conte as linhas de FILTER(dCliente, [Total Vendas] maior que 15000)."
+   },
+   {
+    "text": "Linhas: Ano. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Ano. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-10",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Produtos acima de 10 mil. O comercial quer saber quantos produtos de cada categoria passaram de R$ 10.000 em vendas.",
+    "say": "Chegou a sua vez. O desafio é: Produtos acima de 10 mil. O comercial quer saber quantos produtos de cada categoria passaram de R$ 10.000 em vendas."
+   },
+   {
+    "text": "O objetivo: Conte FILTER(VALUES(dProduto[Produto]), [Total Vendas] > 10000). Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Conte FILTER(VALUES(dProduto[Produto]), [Total Vendas] maior que 10000). Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-iteradores-1",
+  "chunks": [
+   {
+    "text": "Iteradores: SUMX e AVERAGEX. Funções terminadas em X percorrem uma tabela linha a linha, calculam uma expressão e agregam o resultado.",
+    "say": "Iteradores: SUMX e AVERAGEX. Funções terminadas em X percorrem uma tabela linha a linha, calculam uma expressão e agregam o resultado."
+   },
+   {
+    "text": "SUMX(fVendas, fVendas[Qtd] * fVendas[Preço Unit]) multiplica em cada linha e soma tudo. Uma comparação que ajuda: É conferir nota por nota com a calculadora e só no fim somar os resultados.",
+    "say": "SUMX(fVendas, fVendas[Qtd] vezes fVendas[Preço Unit]) multiplica em cada linha e soma tudo. Uma comparação que ajuda: É conferir nota por nota com a calculadora e só no fim somar os resultados."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-iteradores-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Dentro do X existe contexto de linha (pode usar RELATED). Iterar sobre VALUES de uma coluna dá médias \"por item\" (por cliente, por mês).",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Dentro do X existe contexto de linha (pode usar RELATED). Iterar sobre VALUES de uma coluna dá médias por item (por cliente, por mês)."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-iteradores-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Faturamento bruto (antes do desconto) por categoria. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Faturamento bruto (antes do desconto) por categoria. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-iteradores-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: SUM(a) * SUM(b) é diferente de SUMX(a * b). Segundo: Média por cliente (AVERAGEX) é diferente da média por pedido (AVERAGE).",
+    "say": "Agora, alguns cuidados importantes. Primeiro: SUM(a) vezes SUM(b) é diferente de SUMX(a vezes b). Segundo: Média por cliente (AVERAGEX) é diferente da média por pedido (AVERAGE)."
+   },
+   {
+    "text": "Terceiro: Iteradores sobre tabelas enormes custam processamento.",
+    "say": "Terceiro: Iteradores sobre tabelas enormes custam processamento."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-11",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Faturamento bruto. O financeiro quer o valor antes dos descontos, calculado linha a linha. O objetivo: Use SUMX(fVendas, fVendas[Qtd] * fVendas[Preço Unit]).",
+    "say": "Chegou a sua vez. O desafio é: Faturamento bruto. O financeiro quer o valor antes dos descontos, calculado linha a linha. O objetivo: Use SUMX(fVendas, fVendas[Qtd] vezes fVendas[Preço Unit])."
+   },
+   {
+    "text": "Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-12",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Desconto concedido. O comercial quer saber quantos reais deu de desconto. O objetivo: Some, linha a linha, Qtd × Preço Unit × Desconto. Linhas: Segmento.",
+    "say": "Chegou a sua vez. O desafio é: Desconto concedido. O comercial quer saber quantos reais deu de desconto. O objetivo: Some, linha a linha, Qtd × Preço Unit × Desconto. Linhas: Segmento."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-13",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Vendas a preço de lista. O pricing compara o faturamento com o que seria a preço de lista do cadastro. O objetivo: Some Qtd × RELATED(dProduto[Preço Lista]).",
+    "say": "Chegou a sua vez. O desafio é: Vendas a preço de lista. O pricing compara o faturamento com o que seria a preço de lista do cadastro. O objetivo: Some Qtd × RELATED(dProduto[Preço Lista])."
+   },
+   {
+    "text": "Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-14",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Custo padrão. A controladoria quer o custo calculado pelo custo unitário do cadastro. O objetivo: Some Qtd × RELATED(dProduto[Custo Unit]). Linhas: Loja.",
+    "say": "Chegou a sua vez. O desafio é: Custo padrão. A controladoria quer o custo calculado pelo custo unitário do cadastro. O objetivo: Some Qtd × RELATED(dProduto[Custo Unit]). Linhas: Loja."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-15",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Média por cliente. O CRM quer o valor médio comprado por cliente em cada região. O objetivo: Use AVERAGEX(VALUES(dCliente[Cliente]), [Total Vendas]). Linhas: Região.",
+    "say": "Chegou a sua vez. O desafio é: Média por cliente. O CRM quer o valor médio comprado por cliente em cada região. O objetivo: Use AVERAGEX(VALUES(dCliente[Cliente]), [Total Vendas]). Linhas: Região."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-16",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Média mensal. A diretoria quer a média de vendas por mês em cada ano. O objetivo: Use AVERAGEX(VALUES(dCalendario[Mês Ano]), [Total Vendas]). Linhas: Ano.",
+    "say": "Chegou a sua vez. O desafio é: Média mensal. A diretoria quer a média de vendas por mês em cada ano. O objetivo: Use AVERAGEX(VALUES(dCalendario[Mês Ano]), [Total Vendas]). Linhas: Ano."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-iteragg-1",
+  "chunks": [
+   {
+    "text": "MAXX, MINX e médias por período. Iterando sobre VALUES(dCalendario[Mês Ano]) você calcula a medida mês a mês e pega o maior (MAXX), o menor (MINX) ou a média (AVERAGEX).",
+    "say": "MAXX, MINX e médias por período. Iterando sobre VALUES(dCalendario[Mês Ano]) você calcula a medida mês a mês e pega o maior (MAXX), o menor (MINX) ou a média (AVERAGEX)."
+   },
+   {
+    "text": "É assim que se acha o melhor mês ou a média mensal. Uma comparação que ajuda: É colocar os boletins de cada mês lado a lado e escolher o melhor.",
+    "say": "É assim que se acha o melhor mês ou a média mensal. Uma comparação que ajuda: É colocar os boletins de cada mês lado a lado e escolher o melhor."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-iteragg-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. VALUES devolve os meses visíveis no contexto atual. Meses sem venda (BLANK) não entram na média.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. VALUES devolve os meses visíveis no contexto atual. Meses sem venda (BLANK) não entram na média."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-iteragg-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Faturamento do melhor mês de cada ano. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Faturamento do melhor mês de cada ano. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-iteragg-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: MAXX devolve o valor; para o nome do mês, combine com FILTER ou TOPN. Segundo: A média mensal de um ano incompleto considera só os meses com venda.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: MAXX devolve o valor; para o nome do mês, combine com FILTER ou TOPN. Segundo: A média mensal de um ano incompleto considera só os meses com venda."
+   },
+   {
+    "text": "Terceiro: Confira o resultado com um visual por mês.",
+    "say": "Terceiro: Confira o resultado com um visual por mês."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-17",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Melhor mês do ano. O comercial quer saber o faturamento do melhor mês de cada ano. O objetivo: Use MAXX(VALUES(dCalendario[Mês Ano]), [Total Vendas]). Linhas: Ano.",
+    "say": "Chegou a sua vez. O desafio é: Melhor mês do ano. O comercial quer saber o faturamento do melhor mês de cada ano. O objetivo: Use MAXX(VALUES(dCalendario[Mês Ano]), [Total Vendas]). Linhas: Ano."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-18",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Pior mês da loja. Cada gerente quer o faturamento do seu pior mês de 2025. O objetivo: Use MINX(VALUES(dCalendario[Mês Ano]), [Total Vendas]). Linhas: Loja.",
+    "say": "Chegou a sua vez. O desafio é: Pior mês da loja. Cada gerente quer o faturamento do seu pior mês de 2025. O objetivo: Use MINX(VALUES(dCalendario[Mês Ano]), [Total Vendas]). Linhas: Loja."
+   },
+   {
+    "text": "Página: 2025. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Página: 2025. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-values-1",
+  "chunks": [
+   {
+    "text": "VALUES, SELECTEDVALUE e HASONEVALUE. VALUES(Coluna) devolve os valores visíveis no contexto. SELECTEDVALUE devolve o valor quando há só um (ou um alternativo).",
+    "say": "VALUES, SELECTEDVALUE e HASONEVALUE. VALUES(Coluna) devolve os valores visíveis no contexto. SELECTEDVALUE devolve o valor quando há só um (ou um alternativo)."
+   },
+   {
+    "text": "HASONEVALUE testa se há um único valor, útil para tratar a linha de total. Uma comparação que ajuda: É perguntar ao visual: \"quem está selecionado agora?\".",
+    "say": "HASONEVALUE testa se há um único valor, útil para tratar a linha de total. Uma comparação que ajuda: É perguntar ao visual: quem está selecionado agora?."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-values-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Na linha de total há vários valores: SELECTEDVALUE devolve o alternativo. COUNTROWS(VALUES(...)) conta itens distintos visíveis.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Na linha de total há vários valores: SELECTEDVALUE devolve o alternativo. COUNTROWS(VALUES(...)) conta itens distintos visíveis."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-values-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Categoria em contexto (texto) por linha. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Categoria em contexto (texto) por linha. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-values-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: VALUES usado como valor único falha se houver vários valores. Segundo: Para títulos dinâmicos, SELECTEDVALUE é o padrão.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: VALUES usado como valor único falha se houver vários valores. Segundo: Para títulos dinâmicos, SELECTEDVALUE é o padrão."
+   },
+   {
+    "text": "Terceiro: HASONEVALUE ajuda a esconder totais que não fazem sentido.",
+    "say": "Terceiro: HASONEVALUE ajuda a esconder totais que não fazem sentido."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-19",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Dias com venda. A operação quer saber em quantos dias houve venda em cada mês de 2026. O objetivo: Conte as linhas de VALUES(fVendas[Data]). Linhas: Mês Ano.",
+    "say": "Chegou a sua vez. O desafio é: Dias com venda. A operação quer saber em quantos dias houve venda em cada mês de 2026. O objetivo: Conte as linhas de VALUES(fVendas[Data]). Linhas: Mês Ano."
+   },
+   {
+    "text": "Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-20",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Lojas que venderam. O comercial quer saber em quantas lojas cada categoria vendeu. O objetivo: Conte VALUES(fVendas[CodLoja]). Linhas: Categoria.",
+    "say": "Chegou a sua vez. O desafio é: Lojas que venderam. O comercial quer saber em quantas lojas cada categoria vendeu. O objetivo: Conte VALUES(fVendas[CodLoja]). Linhas: Categoria."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-21",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Categoria em contexto. O título do relatório precisa do nome da categoria filtrada. O objetivo: Use SELECTEDVALUE(dProduto[Categoria], \"Várias\"). Linhas: Categoria.",
+    "say": "Chegou a sua vez. O desafio é: Categoria em contexto. O título do relatório precisa do nome da categoria filtrada. O objetivo: Use SELECTEDVALUE(dProduto[Categoria], Várias). Linhas: Categoria."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-22",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Vendas só nas linhas. Num visual de lojas, o total geral confunde o leitor. A medida deve ficar vazia no total.",
+    "say": "Chegou a sua vez. O desafio é: Vendas só nas linhas. Num visual de lojas, o total geral confunde o leitor. A medida deve ficar vazia no total."
+   },
+   {
+    "text": "O objetivo: Use IF(HASONEVALUE(dLoja[Loja]), [Total Vendas]). Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Use IF(HASONEVALUE(dLoja[Loja]), [Total Vendas]). Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-var-1",
+  "chunks": [
+   {
+    "text": "Variáveis: VAR e RETURN. VAR guarda um resultado com nome e RETURN devolve o cálculo final. Variáveis deixam a medida legível e evitam recalcular a mesma expressão.",
+    "say": "Variáveis: VAR e RETURN. VAR guarda um resultado com nome e RETURN devolve o cálculo final. Variáveis deixam a medida legível e evitam recalcular a mesma expressão."
+   },
+   {
+    "text": "Uma variável é calculada uma vez, no contexto onde foi declarada. Uma comparação que ajuda: São os rascunhos com nome antes da resposta final na prova.",
+    "say": "Uma variável é calculada uma vez, no contexto onde foi declarada. Uma comparação que ajuda: São os rascunhos com nome antes da resposta final na prova."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-var-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Variáveis podem guardar números, textos ou tabelas. Depois de calculada, a variável não muda, nem dentro de um CALCULATE.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Variáveis podem guardar números, textos ou tabelas. Depois de calculada, a variável não muda, nem dentro de um CALCULATE."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-var-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Margem % com variáveis. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Margem sinal de porcentagem com variáveis. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-var-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: CALCULATE(v, …) com v sendo variável não recalcula v: a variável já é um valor. Segundo: Use nomes curtos e claros.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: CALCULATE(v, …) com v sendo variável não recalcula v: a variável já é um valor. Segundo: Use nomes curtos e claros."
+   },
+   {
+    "text": "Terceiro: Variáveis ajudam a depurar: retorne uma variável por vez para testar.",
+    "say": "Terceiro: Variáveis ajudam a depurar: retorne uma variável por vez para testar."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-23",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Margem % com variáveis. O time de BI padronizou o uso de variáveis para deixar as medidas legíveis.",
+    "say": "Chegou a sua vez. O desafio é: Margem sinal de porcentagem com variáveis. O time de BI padronizou o uso de variáveis para deixar as medidas legíveis."
+   },
+   {
+    "text": "O objetivo: Guarde vendas e custo em variáveis e retorne DIVIDE(vendas − custo, vendas). Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Guarde vendas e custo em variáveis e retorne DIVIDE(vendas − custo, vendas). Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-24",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Ticket com variáveis. Outra medida para o padrão do time: ticket médio com VAR. O objetivo: Use VAR para vendas e pedidos e retorne a divisão. Linhas: Canal.",
+    "say": "Chegou a sua vez. O desafio é: Ticket com variáveis. Outra medida para o padrão do time: ticket médio com VAR. O objetivo: Use VAR para vendas e pedidos e retorne a divisão. Linhas: Canal."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-switchtrue-1",
+  "chunks": [
+   {
+    "text": "SWITCH(TRUE()) para faixas. SWITCH(TRUE(), condição1, resultado1, condição2, resultado2, senão) testa as condições em ordem e devolve o resultado da primeira verdadeira.",
+    "say": "SWITCH(TRUE()) para faixas. SWITCH(TRUE(), condição1, resultado1, condição2, resultado2, senão) testa as condições em ordem e devolve o resultado da primeira verdadeira."
+   },
+   {
+    "text": "É a forma limpa de criar faixas em medidas. Uma comparação que ajuda: É uma escada: você para no primeiro degrau que atende ao critério.",
+    "say": "É a forma limpa de criar faixas em medidas. Uma comparação que ajuda: É uma escada: você para no primeiro degrau que atende ao critério."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-switchtrue-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Comece pela condição mais restritiva. O último argumento sem par é o \"senão\".",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Comece pela condição mais restritiva. O último argumento sem par é o senão."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-switchtrue-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Faixa de cada cliente. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Faixa de cada cliente. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-switchtrue-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Fora de ordem, todo mundo cai na primeira faixa ampla. Segundo: Guarde a medida numa variável para não recalcular em cada condição.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Fora de ordem, todo mundo cai na primeira faixa ampla. Segundo: Guarde a medida numa variável para não recalcular em cada condição."
+   },
+   {
+    "text": "Terceiro: Para ordenar faixas no visual, crie também um número da faixa.",
+    "say": "Terceiro: Para ordenar faixas no visual, crie também um número da faixa."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-25",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Faixa do cliente. O CRM classifica clientes: Ouro (≥ R$ 50.000), Prata (≥ R$ 20.000) e Bronze. O objetivo: Use SWITCH(TRUE(), …) com [Total Vendas]. Linhas: Cliente.",
+    "say": "Chegou a sua vez. O desafio é: Faixa do cliente. O CRM classifica clientes: Ouro (≥ R$ 50.000), Prata (≥ R$ 20.000) e Bronze. O objetivo: Use SWITCH(TRUE(), …) com [Total Vendas]. Linhas: Cliente."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-ytd-1",
+  "chunks": [
+   {
+    "text": "Acumulados: TOTALYTD, DATESYTD e TOTALQTD. Com uma tabela de datas marcada, o DAX tem funções de inteligência de tempo. TOTALYTD acumula do 1º de janeiro até a última data do contexto.",
+    "say": "Acumulados: TOTALYTD, DATESYTD e TOTALQTD. Com uma tabela de datas marcada, o DAX tem funções de inteligência de tempo. TOTALYTD acumula do 1º de janeiro até a última data do contexto."
+   },
+   {
+    "text": "DATESYTD devolve essas datas para usar no CALCULATE. Uma comparação que ajuda: É o hodômetro do ano: zera em janeiro e só aumenta até dezembro.",
+    "say": "DATESYTD devolve essas datas para usar no CALCULATE. Uma comparação que ajuda: É o hodômetro do ano: zera em janeiro e só aumenta até dezembro."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-ytd-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Use sempre a coluna de data da dCalendario, não a da fato. QTD acumula no trimestre; MTD, no mês.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Use sempre a coluna de data da dCalendario, não a da fato. QTD acumula no trimestre; MTD, no mês."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-ytd-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Vendas acumuladas no ano de 2026. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Vendas acumuladas no ano de 2026. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-ytd-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: A tabela de datas precisa ter todos os dias, sem buracos. Segundo: Meses futuros repetem o acumulado: esconda-os com um filtro, se necessário.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: A tabela de datas precisa ter todos os dias, sem buracos. Segundo: Meses futuros repetem o acumulado: esconda-os com um filtro, se necessário."
+   },
+   {
+    "text": "Terceiro: O total da matriz mostra o acumulado até o fim do ano.",
+    "say": "Terceiro: O total da matriz mostra o acumulado até o fim do ano."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-26",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Vendas acumuladas no ano. A diretoria acompanha o acumulado do ano mês a mês em 2026. O objetivo: Use TOTALYTD([Total Vendas], dCalendario[Data]). Linhas: Mês Ano.",
+    "say": "Chegou a sua vez. O desafio é: Vendas acumuladas no ano. A diretoria acompanha o acumulado do ano mês a mês em 2026. O objetivo: Use TOTALYTD([Total Vendas], dCalendario[Data]). Linhas: Mês Ano."
+   },
+   {
+    "text": "Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-27",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: YTD com CALCULATE. O mesmo acumulado, escrito com CALCULATE e DATESYTD, para 2025. O objetivo: Use CALCULATE([Total Vendas], DATESYTD(dCalendario[Data])).",
+    "say": "Chegou a sua vez. O desafio é: YTD com CALCULATE. O mesmo acumulado, escrito com CALCULATE e DATESYTD, para 2025. O objetivo: Use CALCULATE([Total Vendas], DATESYTD(dCalendario[Data]))."
+   },
+   {
+    "text": "Linhas: Mês Ano. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Mês Ano. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-28",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Acumulado do trimestre. O financeiro fecha os números por trimestre. O objetivo: Use TOTALQTD([Total Vendas], dCalendario[Data]). Linhas: Mês Ano. Página: 2025.",
+    "say": "Chegou a sua vez. O desafio é: Acumulado do trimestre. O financeiro fecha os números por trimestre. O objetivo: Use TOTALQTD([Total Vendas], dCalendario[Data]). Linhas: Mês Ano. Página: 2025."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-29",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Lucro acumulado no ano. O CFO quer o lucro acumulado de 2025. O objetivo: Use TOTALYTD([Lucro], dCalendario[Data]). Linhas: Mês Ano. Página: 2025.",
+    "say": "Chegou a sua vez. O desafio é: Lucro acumulado no ano. O CFO quer o lucro acumulado de 2025. O objetivo: Use TOTALYTD([Lucro], dCalendario[Data]). Linhas: Mês Ano. Página: 2025."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-sply-1",
+  "chunks": [
+   {
+    "text": "Comparando com o ano anterior. SAMEPERIODLASTYEAR devolve as mesmas datas do contexto, um ano antes.",
+    "say": "Comparando com o ano anterior. SAMEPERIODLASTYEAR devolve as mesmas datas do contexto, um ano antes."
+   },
+   {
+    "text": "Com CALCULATE você obtém as vendas do ano anterior e calcula o crescimento: (atual − anterior) ÷ anterior.",
+    "say": "Com CALCULATE você obtém as vendas do ano anterior e calcula o crescimento: (atual − anterior) ÷ anterior."
+   },
+   {
+    "text": "Uma comparação que ajuda: É colocar o boletim deste ano ao lado do mesmo boletim do ano passado.",
+    "say": "Uma comparação que ajuda: É colocar o boletim deste ano ao lado do mesmo boletim do ano passado."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-sply-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. DIVIDE evita erro quando não há ano anterior. O mesmo padrão vale para DATEADD(…, -1, YEAR).",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. DIVIDE evita erro quando não há ano anterior. O mesmo padrão vale para DATEADD(…, -1, YEAR)."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-sply-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Vendas do mesmo mês em 2025 (página em 2026). A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Vendas do mesmo mês em 2025 (página em 2026). A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-sply-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Meses de 2026 ainda sem venda mostram crescimento de −100%. Segundo: Compare períodos completos: meio mês contra mês inteiro distorce.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Meses de 2026 ainda sem venda mostram crescimento de −100 por cento. Segundo: Compare períodos completos: meio mês contra mês inteiro distorce."
+   },
+   {
+    "text": "Terceiro: Formate o crescimento como %.",
+    "say": "Terceiro: Formate o crescimento como sinal de porcentagem ."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-30",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Vendas do ano anterior. Para comparar, cada mês de 2026 deve mostrar as vendas do mesmo mês de 2025.",
+    "say": "Chegou a sua vez. O desafio é: Vendas do ano anterior. Para comparar, cada mês de 2026 deve mostrar as vendas do mesmo mês de 2025."
+   },
+   {
+    "text": "O objetivo: Use CALCULATE([Total Vendas], SAMEPERIODLASTYEAR(dCalendario[Data])). Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Use CALCULATE([Total Vendas], SAMEPERIODLASTYEAR(dCalendario[Data])). Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-31",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Crescimento sobre o ano anterior. A diretoria quer o crescimento % de cada mês de 2026 contra 2025.",
+    "say": "Chegou a sua vez. O desafio é: Crescimento sobre o ano anterior. A diretoria quer o crescimento sinal de porcentagem de cada mês de 2026 contra 2025."
+   },
+   {
+    "text": "O objetivo: Com VAR: atual e ano anterior (SAMEPERIODLASTYEAR); retorne DIVIDE(atual − anterior, anterior). Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Com VAR: atual e ano anterior (SAMEPERIODLASTYEAR); retorne DIVIDE(atual − anterior, anterior). Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-dateadd-1",
+  "chunks": [
+   {
+    "text": "DATEADD, PREVIOUSMONTH e PARALLELPERIOD. DATEADD desloca as datas do contexto (−1 MONTH = mês anterior). PREVIOUSMONTH devolve o mês anterior completo.",
+    "say": "DATEADD, PREVIOUSMONTH e PARALLELPERIOD. DATEADD desloca as datas do contexto (−1 MONTH igual a mês anterior). PREVIOUSMONTH devolve o mês anterior completo."
+   },
+   {
+    "text": "PARALLELPERIOD devolve o período completo deslocado: com −1 YEAR, o ano anterior inteiro. Uma comparação que ajuda: É andar com o calendário para trás: um mês, um trimestre ou um ano.",
+    "say": "PARALLELPERIOD devolve o período completo deslocado: com −1 YEAR, o ano anterior inteiro. Uma comparação que ajuda: É andar com o calendário para trás: um mês, um trimestre ou um ano."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-dateadd-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. DATEADD aceita DAY, MONTH, QUARTER e YEAR. PARALLELPERIOD sempre devolve períodos inteiros.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. DATEADD aceita DAY, MONTH, QUARTER e YEAR. PARALLELPERIOD sempre devolve períodos inteiros."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-dateadd-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Vendas do mês anterior em 2026. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Vendas do mês anterior em 2026. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-dateadd-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Em janeiro, o mês anterior é dezembro do ano anterior: a tabela de datas precisa ter esse período.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Em janeiro, o mês anterior é dezembro do ano anterior: a tabela de datas precisa ter esse período."
+   },
+   {
+    "text": "Segundo: No total da matriz, DATEADD desloca o ano todo. Terceiro: MoM % = (atual − mês anterior) ÷ mês anterior.",
+    "say": "Segundo: No total da matriz, DATEADD desloca o ano todo. Terceiro: MoM sinal de porcentagem igual a (atual − mês anterior) ÷ mês anterior."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-32",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Vendas do mês anterior. O comercial compara cada mês com o anterior. O objetivo: Use CALCULATE([Total Vendas], DATEADD(dCalendario[Data], -1, MONTH)). Linhas: Mês Ano.",
+    "say": "Chegou a sua vez. O desafio é: Vendas do mês anterior. O comercial compara cada mês com o anterior. O objetivo: Use CALCULATE([Total Vendas], DATEADD(dCalendario[Data], -1, MONTH)). Linhas: Mês Ano."
+   },
+   {
+    "text": "Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-33",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Crescimento mês a mês. O comercial quer o crescimento % sobre o mês anterior em 2025. O objetivo: Calcule DIVIDE(atual − mês anterior, mês anterior), com DATEADD.",
+    "say": "Chegou a sua vez. O desafio é: Crescimento mês a mês. O comercial quer o crescimento sinal de porcentagem sobre o mês anterior em 2025. O objetivo: Calcule DIVIDE(atual − mês anterior, mês anterior), com DATEADD."
+   },
+   {
+    "text": "Linhas: Mês Ano. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Mês Ano. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-34",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Mês anterior com PREVIOUSMONTH. Outra forma de buscar o mês anterior. O objetivo: Use CALCULATE([Total Vendas], PREVIOUSMONTH(dCalendario[Data])). Linhas: Mês Ano.",
+    "say": "Chegou a sua vez. O desafio é: Mês anterior com PREVIOUSMONTH. Outra forma de buscar o mês anterior. O objetivo: Use CALCULATE([Total Vendas], PREVIOUSMONTH(dCalendario[Data])). Linhas: Mês Ano."
+   },
+   {
+    "text": "Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-35",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Acumulado do ano anterior. Para comparar acumulados, cada mês de 2026 deve mostrar o YTD do mesmo ponto de 2025.",
+    "say": "Chegou a sua vez. O desafio é: Acumulado do ano anterior. Para comparar acumulados, cada mês de 2026 deve mostrar o YTD do mesmo ponto de 2025."
+   },
+   {
+    "text": "O objetivo: Use CALCULATE(TOTALYTD([Total Vendas], dCalendario[Data]), SAMEPERIODLASTYEAR(dCalendario[Data])). Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Use CALCULATE(TOTALYTD([Total Vendas], dCalendario[Data]), SAMEPERIODLASTYEAR(dCalendario[Data])). Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-36",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Ano anterior inteiro. O planejamento quer o total do ano anterior inteiro ao lado de cada mês.",
+    "say": "Chegou a sua vez. O desafio é: Ano anterior inteiro. O planejamento quer o total do ano anterior inteiro ao lado de cada mês."
+   },
+   {
+    "text": "O objetivo: Use CALCULATE([Total Vendas], PARALLELPERIOD(dCalendario[Data], -1, YEAR)). Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Use CALCULATE([Total Vendas], PARALLELPERIOD(dCalendario[Data], -1, YEAR)). Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-37",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Atingimento acumulado. A diretoria acompanha o atingimento da meta acumulada em 2025. O objetivo: Divida o YTD de vendas pelo YTD de metas (TOTALYTD nos dois).",
+    "say": "Chegou a sua vez. O desafio é: Atingimento acumulado. A diretoria acompanha o atingimento da meta acumulada em 2025. O objetivo: Divida o YTD de vendas pelo YTD de metas (TOTALYTD nos dois)."
+   },
+   {
+    "text": "Linhas: Mês Ano. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Mês Ano. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-keepfilters-1",
+  "chunks": [
+   {
+    "text": "KEEPFILTERS: somar em vez de substituir. Um filtro do CALCULATE substitui o filtro da mesma coluna que vinha do visual.",
+    "say": "KEEPFILTERS: somar em vez de substituir. Um filtro do CALCULATE substitui o filtro da mesma coluna que vinha do visual."
+   },
+   {
+    "text": "Com KEEPFILTERS, ele é combinado (interseção): a linha Casa continua sendo Casa e não vira Eletrônicos.",
+    "say": "Com KEEPFILTERS, ele é combinado (interseção): a linha Casa continua sendo Casa e não vira Eletrônicos."
+   },
+   {
+    "text": "Uma comparação que ajuda: Sem KEEPFILTERS, você troca o óculos do visual; com KEEPFILTERS, coloca uma lente a mais por cima.",
+    "say": "Uma comparação que ajuda: Sem KEEPFILTERS, você troca o óculos do visual; com KEEPFILTERS, coloca uma lente a mais por cima."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-keepfilters-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. O comportamento padrão (substituir) é o que permite % do total e comparações. KEEPFILTERS respeita o que o usuário filtrou.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. O comportamento padrão (substituir) é o que permite sinal de porcentagem do total e comparações. KEEPFILTERS respeita o que o usuário filtrou."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-keepfilters-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Eletrônicos respeitando a linha do visual. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Eletrônicos respeitando a linha do visual. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-keepfilters-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Medidas com filtro fixo em visuais pela mesma coluna confundem o usuário. Segundo: Teste a medida num visual que usa a coluna filtrada.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Medidas com filtro fixo em visuais pela mesma coluna confundem o usuário. Segundo: Teste a medida num visual que usa a coluna filtrada."
+   },
+   {
+    "text": "Terceiro: KEEPFILTERS também funciona com FILTER e tabelas.",
+    "say": "Terceiro: KEEPFILTERS também funciona com FILTER e tabelas."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-38",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Filtro que respeita o visual. A medida deve mostrar Eletrônicos só na linha de Eletrônicos, e não em todas as categorias.",
+    "say": "Chegou a sua vez. O desafio é: Filtro que respeita o visual. A medida deve mostrar Eletrônicos só na linha de Eletrônicos, e não em todas as categorias."
+   },
+   {
+    "text": "O objetivo: Use CALCULATE([Total Vendas], KEEPFILTERS(dProduto[Categoria] = \"Eletrônicos\")). Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Use CALCULATE([Total Vendas], KEEPFILTERS(dProduto[Categoria] igual a Eletrônicos)). Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-39",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Eletrônicos em todas as linhas. Para entender o comportamento do CALCULATE, repita o filtro sem KEEPFILTERS.",
+    "say": "Chegou a sua vez. O desafio é: Eletrônicos em todas as linhas. Para entender o comportamento do CALCULATE, repita o filtro sem KEEPFILTERS."
+   },
+   {
+    "text": "O objetivo: Use CALCULATE([Total Vendas], dProduto[Categoria] = \"Eletrônicos\"). Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Use CALCULATE([Total Vendas], dProduto[Categoria] igual a Eletrônicos). Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-transicao-1",
+  "chunks": [
+   {
+    "text": "Transição de contexto em colunas. Numa coluna calculada de dimensão, CALCULATE (ou uma medida) transforma a linha atual em filtro.",
+    "say": "Transição de contexto em colunas. Numa coluna calculada de dimensão, CALCULATE (ou uma medida) transforma a linha atual em filtro."
+   },
+   {
+    "text": "Assim CALCULATE(SUM(fVendas[Valor])) em dProduto devolve o total vendido de cada produto. RELATEDTABLE devolve as linhas da fato ligadas à linha atual.",
+    "say": "Assim CALCULATE(SUM(fVendas[Valor])) em dProduto devolve o total vendido de cada produto. RELATEDTABLE devolve as linhas da fato ligadas à linha atual."
+   },
+   {
+    "text": "Uma comparação que ajuda: É apontar para uma linha do cadastro e dizer: \"agora, filtre o relatório por este item\".",
+    "say": "Uma comparação que ajuda: É apontar para uma linha do cadastro e dizer: agora, filtre o relatório por este item."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-transicao-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Sem CALCULATE, SUM somaria a tabela inteira em todas as linhas. LOOKUPVALUE busca sem precisar de relacionamento.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Sem CALCULATE, SUM somaria a tabela inteira em todas as linhas. LOOKUPVALUE busca sem precisar de relacionamento."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-transicao-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Total vendido de cada produto (coluna em dProduto). A coluna foi calculada agora mesmo em cada linha da tabela dProduto. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Total vendido de cada produto (coluna em dProduto). A coluna foi calculada agora mesmo em cada linha da tabela dProduto. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-transicao-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Colunas com transição de contexto ficam fixas até a próxima atualização. Segundo: Prefira medidas quando o resultado precisa reagir a filtros.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Colunas com transição de contexto ficam fixas até a próxima atualização. Segundo: Prefira medidas quando o resultado precisa reagir a filtros."
+   },
+   {
+    "text": "Terceiro: DATEDIFF aceita DAY, MONTH, QUARTER e YEAR.",
+    "say": "Terceiro: DATEDIFF aceita DAY, MONTH, QUARTER e YEAR."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-40",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Pedidos do cliente. O cadastro de clientes ganha uma coluna com o número de pedidos. O objetivo: Crie em dCliente: COUNTROWS(RELATEDTABLE(fVendas)).",
+    "say": "Chegou a sua vez. O desafio é: Pedidos do cliente. O cadastro de clientes ganha uma coluna com o número de pedidos. O objetivo: Crie em dCliente: COUNTROWS(RELATEDTABLE(fVendas))."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-41",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Total vendido por produto. O cadastro de produtos ganha o total vendido de cada item. O objetivo: Crie em dProduto a coluna CALCULATE(SUM(fVendas[Valor])).",
+    "say": "Chegou a sua vez. O desafio é: Total vendido por produto. O cadastro de produtos ganha o total vendido de cada item. O objetivo: Crie em dProduto a coluna CALCULATE(SUM(fVendas[Valor]))."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-42",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Classe do cliente. O CRM quer a classe A/B/C gravada no cadastro: A ≥ R$ 20.000, B ≥ R$ 8.000, senão C.",
+    "say": "Chegou a sua vez. O desafio é: Classe do cliente. O CRM quer a classe A/B/C gravada no cadastro: A ≥ R$ 20.000, B ≥ R$ 8.000, senão C."
+   },
+   {
+    "text": "O objetivo: Em dCliente: VAR v = CALCULATE(SUM(fVendas[Valor])) e IF aninhado. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Em dCliente: VAR v igual a CALCULATE(SUM(fVendas[Valor])) e IF aninhado. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-43",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Gerente da meta. A tabela de metas precisa do nome do gerente de cada loja. O objetivo: Crie em fMetas: LOOKUPVALUE(dLoja[Gerente], dLoja[CodLoja], fMetas[CodLoja]).",
+    "say": "Chegou a sua vez. O desafio é: Gerente da meta. A tabela de metas precisa do nome do gerente de cada loja. O objetivo: Crie em fMetas: LOOKUPVALUE(dLoja[Gerente], dLoja[CodLoja], fMetas[CodLoja])."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-44",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Meses de casa do cliente. O CRM quer saber há quantos meses cada cliente está cadastrado (HOJE = 30/06/2026).",
+    "say": "Chegou a sua vez. O desafio é: Meses de casa do cliente. O CRM quer saber há quantos meses cada cliente está cadastrado (HOJE igual a 30/06/2026)."
+   },
+   {
+    "text": "O objetivo: Crie em dCliente: DATEDIFF(dCliente[Cadastro], TODAY(), MONTH). Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Crie em dCliente: DATEDIFF(dCliente[Cadastro], TODAY(), MONTH). Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-45",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Clientes cadastrados no mês. O marketing quer quantos clientes novos foram cadastrados em cada mês de 2025.",
+    "say": "Chegou a sua vez. O desafio é: Clientes cadastrados no mês. O marketing quer quantos clientes novos foram cadastrados em cada mês de 2025."
+   },
+   {
+    "text": "O objetivo: Conte FILTER(dCliente, Cadastro entre MIN e MAX de dCalendario[Data]). Linhas: Mês Ano. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Conte FILTER(dCliente, Cadastro entre MIN e MAX de dCalendario[Data]). Linhas: Mês Ano. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-46",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Venda média por dia útil. A operação quer a venda média por dia útil em cada mês de 2026.",
+    "say": "Chegou a sua vez. O desafio é: Venda média por dia útil. A operação quer a venda média por dia útil em cada mês de 2026."
+   },
+   {
+    "text": "O objetivo: Divida [Total Vendas] pela quantidade de dias úteis: CALCULATE(COUNTROWS(dCalendario), dCalendario[Dia Útil] = TRUE()). Linhas: Mês Ano. Página: 2026.",
+    "say": "O objetivo: Divida [Total Vendas] pela quantidade de dias úteis: CALCULATE(COUNTROWS(dCalendario), dCalendario[Dia Útil] igual a TRUE()). Linhas: Mês Ano. Página: 2026."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-47",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Pedidos com desconto %. O comercial quer a % de pedidos com desconto em cada loja. O objetivo: Divida os pedidos com Desconto > 0 pelo total de pedidos. Linhas: Loja.",
+    "say": "Chegou a sua vez. O desafio é: Pedidos com desconto sinal de porcentagem . O comercial quer a sinal de porcentagem de pedidos com desconto em cada loja. O objetivo: Divida os pedidos com Desconto maior que 0 pelo total de pedidos. Linhas: Loja."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-48",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Ticket por cliente. O CRM quer o valor médio comprado por cliente em cada segmento. O objetivo: Divida [Total Vendas] por DISTINCTCOUNT(fVendas[CodCliente]).",
+    "say": "Chegou a sua vez. O desafio é: Ticket por cliente. O CRM quer o valor médio comprado por cliente em cada segmento. O objetivo: Divida [Total Vendas] por DISTINCTCOUNT(fVendas[CodCliente])."
+   },
+   {
+    "text": "Linhas: Segmento. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Segmento. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-topn-1",
+  "chunks": [
+   {
+    "text": "TOPN: os N maiores. TOPN(N, Tabela, Expressão) devolve as N linhas com maior valor da expressão. Dentro do CALCULATE, vira filtro (vendas do Top 5); com MAXX ou CONCATENATEX, devolve nomes.",
+    "say": "TOPN: os N maiores. TOPN(N, Tabela, Expressão) devolve as N linhas com maior valor da expressão. Dentro do CALCULATE, vira filtro (vendas do Top 5); com MAXX ou CONCATENATEX, devolve nomes."
+   },
+   {
+    "text": "Uma comparação que ajuda: É o pódio: só os primeiros colocados sobem.",
+    "say": "Uma comparação que ajuda: É o pódio: só os primeiros colocados sobem."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-topn-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Use ALL quando o Top precisa ignorar o filtro da linha. Empates no último lugar entram todos.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Use ALL quando o Top precisa ignorar o filtro da linha. Empates no último lugar entram todos."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-topn-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Produto campeão de cada categoria. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Produto campeão de cada categoria. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-topn-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: TOPN não ordena o resultado visualmente: só escolhe as linhas. Segundo: Escolha bem a tabela: VALUES respeita o contexto; ALL ignora.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: TOPN não ordena o resultado visualmente: só escolhe as linhas. Segundo: Escolha bem a tabela: VALUES respeita o contexto; ALL ignora."
+   },
+   {
+    "text": "Terceiro: Concentração = Top N ÷ total.",
+    "say": "Terceiro: Concentração igual a Top N ÷ total."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-49",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Produto campeão. Cada categoria quer exibir o nome do produto mais vendido. O objetivo: Use MAXX(TOPN(1, VALUES(dProduto[Produto]), [Total Vendas]), dProduto[Produto]).",
+    "say": "Chegou a sua vez. O desafio é: Produto campeão. Cada categoria quer exibir o nome do produto mais vendido. O objetivo: Use MAXX(TOPN(1, VALUES(dProduto[Produto]), [Total Vendas]), dProduto[Produto])."
+   },
+   {
+    "text": "Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b2-50",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Meses com meta batida. Para fechar o nível: em quantos meses de 2025 cada loja bateu a meta?",
+    "say": "Chegou a sua vez. O desafio é: Meses com meta batida. Para fechar o nível: em quantos meses de 2025 cada loja bateu a meta?"
+   },
+   {
+    "text": "O objetivo: Conte FILTER(VALUES(dCalendario[Mês Ano]), [Total Vendas] >= [Total Metas]). Linhas: Loja. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Conte FILTER(VALUES(dCalendario[Mês Ano]), [Total Vendas] maior ou igual a [Total Metas]). Linhas: Loja. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-rankx-1",
+  "chunks": [
+   {
+    "text": "RANKX: rankings. RANKX(Tabela, Expressão) devolve a posição do item atual comparando a expressão com todos os itens da tabela. Use ALL na tabela para comparar com todos, e não só com a linha atual.",
+    "say": "RANKX: rankings. RANKX(Tabela, Expressão) devolve a posição do item atual comparando a expressão com todos os itens da tabela. Use ALL na tabela para comparar com todos, e não só com a linha atual."
+   },
+   {
+    "text": "Uma comparação que ajuda: É a tabela de classificação do campeonato.",
+    "say": "Uma comparação que ajuda: É a tabela de classificação do campeonato."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-rankx-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. DESC (padrão) dá 1 ao maior; ASC dá 1 ao menor. DENSE não pula posições em empates.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. DESC (padrão) dá 1 ao maior; ASC dá 1 ao menor. DENSE não pula posições em empates."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-rankx-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Ranking de produtos por vendas. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Ranking de produtos por vendas. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-rankx-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Sem ALL, todos ficam em 1º (cada linha só vê a si mesma). Segundo: ALLSELECTED ranqueia só entre os itens filtrados.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Sem ALL, todos ficam em 1º (cada linha só vê a si mesma). Segundo: ALLSELECTED ranqueia só entre os itens filtrados."
+   },
+   {
+    "text": "Terceiro: No total da matriz o ranking não faz sentido: trate com HASONEVALUE.",
+    "say": "Terceiro: No total da matriz o ranking não faz sentido: trate com HASONEVALUE."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-01",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Ranking de produtos. O comercial quer a posição de cada produto em faturamento. O objetivo: Use RANKX(ALL(dProduto[Produto]), [Total Vendas]). Linhas: Produto.",
+    "say": "Chegou a sua vez. O desafio é: Ranking de produtos. O comercial quer a posição de cada produto em faturamento. O objetivo: Use RANKX(ALL(dProduto[Produto]), [Total Vendas]). Linhas: Produto."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-02",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Ranking de clientes em 2026. O CRM quer a posição dos clientes no ano de 2026. O objetivo: Use RANKX(ALL(dCliente[Cliente]), [Total Vendas]). Linhas: Cliente.",
+    "say": "Chegou a sua vez. O desafio é: Ranking de clientes em 2026. O CRM quer a posição dos clientes no ano de 2026. O objetivo: Use RANKX(ALL(dCliente[Cliente]), [Total Vendas]). Linhas: Cliente."
+   },
+   {
+    "text": "Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-03",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Ranking denso de lojas. A gestão ranqueia lojas por número de pedidos, sem pular posições em empates. O objetivo: Use RANKX(ALL(dLoja[Loja]), [Pedidos], , DESC, DENSE).",
+    "say": "Chegou a sua vez. O desafio é: Ranking denso de lojas. A gestão ranqueia lojas por número de pedidos, sem pular posições em empates. O objetivo: Use RANKX(ALL(dLoja[Loja]), [Pedidos], , DESC, DENSE)."
+   },
+   {
+    "text": "Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-04",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Ranking dentro da categoria. Na página filtrada em Esportes, o ranking deve considerar só os produtos selecionados.",
+    "say": "Chegou a sua vez. O desafio é: Ranking dentro da categoria. Na página filtrada em Esportes, o ranking deve considerar só os produtos selecionados."
+   },
+   {
+    "text": "O objetivo: Use RANKX(ALLSELECTED(dProduto[Produto]), [Total Vendas]). Linhas: Produto. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Use RANKX(ALLSELECTED(dProduto[Produto]), [Total Vendas]). Linhas: Produto. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-05",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Vendas só do Top 3. O visual deve mostrar vendas apenas dos 3 produtos mais vendidos; os demais ficam vazios.",
+    "say": "Chegou a sua vez. O desafio é: Vendas só do Top 3. O visual deve mostrar vendas apenas dos 3 produtos mais vendidos; os demais ficam vazios."
+   },
+   {
+    "text": "O objetivo: Use IF(RANKX(ALL(dProduto[Produto]), [Total Vendas]) <= 3, [Total Vendas]). Linhas: Produto. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Use IF(RANKX(ALL(dProduto[Produto]), [Total Vendas]) menor ou igual a 3, [Total Vendas]). Linhas: Produto. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-06",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Vendas dos 5 maiores clientes. A diretoria quer saber quanto os 5 maiores clientes de cada ano faturaram.",
+    "say": "Chegou a sua vez. O desafio é: Vendas dos 5 maiores clientes. A diretoria quer saber quanto os 5 maiores clientes de cada ano faturaram."
+   },
+   {
+    "text": "O objetivo: Use CALCULATE([Total Vendas], TOPN(5, ALL(dCliente[Cliente]), [Total Vendas])). Linhas: Ano. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Use CALCULATE([Total Vendas], TOPN(5, ALL(dCliente[Cliente]), [Total Vendas])). Linhas: Ano. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-07",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Concentração no Top 5. Qual a % do faturamento do ano que vem dos 5 maiores clientes? O objetivo: Divida as vendas do Top 5 por [Total Vendas]. Linhas: Ano.",
+    "say": "Chegou a sua vez. O desafio é: Concentração no Top 5. Qual a sinal de porcentagem do faturamento do ano que vem dos 5 maiores clientes? O objetivo: Divida as vendas do Top 5 por [Total Vendas]. Linhas: Ano."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-acumulado-1",
+  "chunks": [
+   {
+    "text": "Acumulado com FILTER e ALL.",
+    "say": "Acumulado com FILTER e ALL."
+   },
+   {
+    "text": "Para acumular desde o início dos dados, guarde a última data do contexto e filtre todas as datas até ela: CALCULATE([Total Vendas], FILTER(ALL(dCalendario[Data]), dCalendario[Data] <= d)).",
+    "say": "Para acumular desde o início dos dados, guarde a última data do contexto e filtre todas as datas até ela: CALCULATE([Total Vendas], FILTER(ALL(dCalendario[Data]), dCalendario[Data] menor ou igual a d))."
+   },
+   {
+    "text": "Uma comparação que ajuda: É a linha do tempo inteira, somando tudo até o ponto em que você está.",
+    "say": "Uma comparação que ajuda: É a linha do tempo inteira, somando tudo até o ponto em que você está."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-acumulado-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. A variável guarda a data antes do CALCULATE mudar o contexto.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. A variável guarda a data antes do CALCULATE mudar o contexto."
+   },
+   {
+    "text": "Filtrar a data de uma tabela de datas marcada remove os demais filtros dela (ano, mês).",
+    "say": "Filtrar a data de uma tabela de datas marcada remove os demais filtros dela (ano, mês)."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-acumulado-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Acumulado desde jan/2025, olhando 2026. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Acumulado desde jan/2025, olhando 2026. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-acumulado-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Sem a VAR, MAX seria reavaliado dentro do FILTER com outro contexto. Segundo: Para acumular só dentro do ano, use TOTALYTD.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Sem a VAR, MAX seria reavaliado dentro do FILTER com outro contexto. Segundo: Para acumular só dentro do ano, use TOTALYTD."
+   },
+   {
+    "text": "Terceiro: Acumulados crescem sempre: confira se o último mês bate com o total.",
+    "say": "Terceiro: Acumulados crescem sempre: confira se o último mês bate com o total."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-08",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Acumulado desde o início. A diretoria quer o faturamento acumulado desde jan/2025, mês a mês, olhando 2026.",
+    "say": "Chegou a sua vez. O desafio é: Acumulado desde o início. A diretoria quer o faturamento acumulado desde jan/2025, mês a mês, olhando 2026."
+   },
+   {
+    "text": "O objetivo: VAR d = MAX(dCalendario[Data]) e CALCULATE com FILTER(ALL(dCalendario[Data]), dCalendario[Data] <= d). Linhas: Mês Ano. Página: 2026.",
+    "say": "O objetivo: VAR d igual a MAX(dCalendario[Data]) e CALCULATE com FILTER(ALL(dCalendario[Data]), dCalendario[Data] menor ou igual a d). Linhas: Mês Ano. Página: 2026."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-movel-1",
+  "chunks": [
+   {
+    "text": "Períodos móveis com DATESINPERIOD. DATESINPERIOD(Datas, DataFinal, −3, MONTH) devolve as datas dos 3 meses que terminam na data final.",
+    "say": "Períodos móveis com DATESINPERIOD. DATESINPERIOD(Datas, DataFinal, −3, MONTH) devolve as datas dos 3 meses que terminam na data final."
+   },
+   {
+    "text": "Com CALCULATE, vira soma móvel; com AVERAGEX por mês, média móvel. Uma comparação que ajuda: É uma janela que desliza pela linha do tempo, sempre mostrando os últimos 3 meses.",
+    "say": "Com CALCULATE, vira soma móvel; com AVERAGEX por mês, média móvel. Uma comparação que ajuda: É uma janela que desliza pela linha do tempo, sempre mostrando os últimos 3 meses."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-movel-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. O número negativo olha para trás; positivo, para frente. Use DAY para janelas de dias (últimos 30 dias).",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. O número negativo olha para trás; positivo, para frente. Use DAY para janelas de dias (últimos 30 dias)."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-movel-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Média móvel de 3 meses em 2025. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Média móvel de 3 meses em 2025. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-movel-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Nos primeiros meses a janela tem menos dados. Segundo: A média móvel por mês é diferente da média diária da janela.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Nos primeiros meses a janela tem menos dados. Segundo: A média móvel por mês é diferente da média diária da janela."
+   },
+   {
+    "text": "Terceiro: DATESINPERIOD considera todas as datas da tabela, não só as do filtro.",
+    "say": "Terceiro: DATESINPERIOD considera todas as datas da tabela, não só as do filtro."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-09",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Média móvel de 3 meses. Para suavizar a sazonalidade, o planejamento usa a média dos últimos 3 meses.",
+    "say": "Chegou a sua vez. O desafio é: Média móvel de 3 meses. Para suavizar a sazonalidade, o planejamento usa a média dos últimos 3 meses."
+   },
+   {
+    "text": "O objetivo: CALCULATE(AVERAGEX(VALUES(dCalendario[Mês Ano]), [Total Vendas]), DATESINPERIOD(dCalendario[Data], MAX(dCalendario[Data]), -3, MONTH)). Linhas: Mês Ano. Página: 2025.",
+    "say": "O objetivo: CALCULATE(AVERAGEX(VALUES(dCalendario[Mês Ano]), [Total Vendas]), DATESINPERIOD(dCalendario[Data], MAX(dCalendario[Data]), -3, MONTH)). Linhas: Mês Ano. Página: 2025."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-10",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Vendas dos últimos 3 meses. O comercial quer a soma móvel dos últimos 3 meses.",
+    "say": "Chegou a sua vez. O desafio é: Vendas dos últimos 3 meses. O comercial quer a soma móvel dos últimos 3 meses."
+   },
+   {
+    "text": "O objetivo: CALCULATE([Total Vendas], DATESINPERIOD(dCalendario[Data], MAX(dCalendario[Data]), -3, MONTH)). Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: CALCULATE([Total Vendas], DATESINPERIOD(dCalendario[Data], MAX(dCalendario[Data]), -3, MONTH)). Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-11",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Últimos 30 dias. Um cartão mostra as vendas dos últimos 30 dias até hoje (30/06/2026).",
+    "say": "Chegou a sua vez. O desafio é: Últimos 30 dias. Um cartão mostra as vendas dos últimos 30 dias até hoje (30/06/2026)."
+   },
+   {
+    "text": "O objetivo: CALCULATE([Total Vendas], DATESINPERIOD(dCalendario[Data], TODAY(), -30, DAY)). Visual: cartão. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: CALCULATE([Total Vendas], DATESINPERIOD(dCalendario[Data], TODAY(), -30, DAY)). Visual: cartão. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-userel-1",
+  "chunks": [
+   {
+    "text": "Relacionamentos inativos e USERELATIONSHIP. Entre duas tabelas só um relacionamento pode estar ativo. A fVendas tem Data (ativa) e DataEntrega (inativa) ligadas à dCalendario.",
+    "say": "Relacionamentos inativos e USERELATIONSHIP. Entre duas tabelas só um relacionamento pode estar ativo. A fVendas tem Data (ativa) e DataEntrega (inativa) ligadas à dCalendario."
+   },
+   {
+    "text": "USERELATIONSHIP ativa a relação inativa dentro de um CALCULATE. Uma comparação que ajuda: São duas portas entre os mesmos cômodos: uma fica aberta; a outra você abre só quando precisa.",
+    "say": "USERELATIONSHIP ativa a relação inativa dentro de um CALCULATE. Uma comparação que ajuda: São duas portas entre os mesmos cômodos: uma fica aberta; a outra você abre só quando precisa."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-userel-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Fora desse CALCULATE, vale a relação ativa. Uma tabela de datas atende várias datas da fato.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Fora desse CALCULATE, vale a relação ativa. Uma tabela de datas atende várias datas da fato."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-userel-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Vendas pela data de entrega em 2025. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Vendas pela data de entrega em 2025. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-userel-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: O relacionamento inativo precisa existir no modelo. Segundo: Não duplique a tabela calendário à toa: USERELATIONSHIP resolve.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: O relacionamento inativo precisa existir no modelo. Segundo: Não duplique a tabela calendário à toa: USERELATIONSHIP resolve."
+   },
+   {
+    "text": "Terceiro: A diferença entre data da venda e da entrega mostra o que está em trânsito.",
+    "say": "Terceiro: A diferença entre data da venda e da entrega mostra o que está em trânsito."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-12",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Vendas por data de entrega. A logística quer o faturamento pela data de entrega, que usa a relação inativa.",
+    "say": "Chegou a sua vez. O desafio é: Vendas por data de entrega. A logística quer o faturamento pela data de entrega, que usa a relação inativa."
+   },
+   {
+    "text": "O objetivo: CALCULATE([Total Vendas], USERELATIONSHIP(fVendas[DataEntrega], dCalendario[Data])). Linhas: Mês Ano. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: CALCULATE([Total Vendas], USERELATIONSHIP(fVendas[DataEntrega], dCalendario[Data])). Linhas: Mês Ano. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-13",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Pedidos entregues no mês. A logística quer o número de pedidos pela data de entrega em 2026.",
+    "say": "Chegou a sua vez. O desafio é: Pedidos entregues no mês. A logística quer o número de pedidos pela data de entrega em 2026."
+   },
+   {
+    "text": "O objetivo: Use [Pedidos] com USERELATIONSHIP(fVendas[DataEntrega], dCalendario[Data]). Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Use [Pedidos] com USERELATIONSHIP(fVendas[DataEntrega], dCalendario[Data]). Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-14",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Venda ainda não entregue. O financeiro quer a diferença entre o vendido e o entregue em cada mês de 2026.",
+    "say": "Chegou a sua vez. O desafio é: Venda ainda não entregue. O financeiro quer a diferença entre o vendido e o entregue em cada mês de 2026."
+   },
+   {
+    "text": "O objetivo: Calcule [Total Vendas] − vendas pela data de entrega. Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Calcule [Total Vendas] − vendas pela data de entrega. Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-escopo-1",
+  "chunks": [
+   {
+    "text": "ISINSCOPE e ISFILTERED. ISINSCOPE(Coluna) diz se a linha do visual está agrupada por aquela coluna (é falso no total). ISFILTERED diz se a coluna está filtrada diretamente.",
+    "say": "ISINSCOPE e ISFILTERED. ISINSCOPE(Coluna) diz se a linha do visual está agrupada por aquela coluna (é falso no total). ISFILTERED diz se a coluna está filtrada diretamente."
+   },
+   {
+    "text": "Elas permitem tratar totais e mensagens. Uma comparação que ajuda: É saber em que andar do prédio você está: na sala de uma categoria ou no térreo do total.",
+    "say": "Elas permitem tratar totais e mensagens. Uma comparação que ajuda: É saber em que andar do prédio você está: na sala de uma categoria ou no térreo do total."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-escopo-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Em hierarquias, ISINSCOPE identifica o nível atual. ISCROSSFILTERED também detecta filtros vindos de outras tabelas.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Em hierarquias, ISINSCOPE identifica o nível atual. ISCROSSFILTERED também detecta filtros vindos de outras tabelas."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-escopo-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Rótulo de nível por linha. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Rótulo de nível por linha. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-escopo-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Use para esconder rankings e percentuais sem sentido no total. Segundo: Filtros de página fazem ISFILTERED ser verdadeiro, mas não ISINSCOPE.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Use para esconder rankings e percentuais sem sentido no total. Segundo: Filtros de página fazem ISFILTERED ser verdadeiro, mas não ISINSCOPE."
+   },
+   {
+    "text": "Terceiro: Teste as medidas no total do visual.",
+    "say": "Terceiro: Teste as medidas no total do visual."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-15",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Rótulo da linha. O visual precisa de um rótulo que diga se a linha é de categoria ou o total.",
+    "say": "Chegou a sua vez. O desafio é: Rótulo da linha. O visual precisa de um rótulo que diga se a linha é de categoria ou o total."
+   },
+   {
+    "text": "O objetivo: Use IF(ISINSCOPE(dProduto[Categoria]), \"Categoria\", \"Total geral\"). Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Use IF(ISINSCOPE(dProduto[Categoria]), Categoria, Total geral). Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-16",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Filtro de loja ativo?. Um aviso deve aparecer quando nenhuma loja está filtrada. O objetivo: Use IF(ISFILTERED(dLoja[Loja]), \"Filtrado\", \"Todas as lojas\"). Linhas: Loja.",
+    "say": "Chegou a sua vez. O desafio é: Filtro de loja ativo?. Um aviso deve aparecer quando nenhuma loja está filtrada. O objetivo: Use IF(ISFILTERED(dLoja[Loja]), Filtrado, Todas as lojas). Linhas: Loja."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-clientes-1",
+  "chunks": [
+   {
+    "text": "Análises de clientes: novos, recorrentes e inativos.",
+    "say": "Análises de clientes: novos, recorrentes e inativos."
+   },
+   {
+    "text": "Combinando FILTER, VALUES e CALCULATE você responde perguntas de CRM: quem comprou nos dois anos, quem fez a 1ª compra no mês, quem não compra há 90 dias. A chave é avaliar uma medida por cliente.",
+    "say": "Combinando FILTER, VALUES e CALCULATE você responde perguntas de CRM: quem comprou nos dois anos, quem fez a 1ª compra no mês, quem não compra há 90 dias. A chave é avaliar uma medida por cliente."
+   },
+   {
+    "text": "Uma comparação que ajuda: É olhar a ficha de cada cliente e marcar quem voltou, quem é novo e quem sumiu.",
+    "say": "Uma comparação que ajuda: É olhar a ficha de cada cliente e marcar quem voltou, quem é novo e quem sumiu."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-clientes-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. CALCULATE(MIN(fVendas[Data]), ALL(dCalendario)) dá a primeira compra, ignorando o período.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. CALCULATE(MIN(fVendas[Data]), ALL(dCalendario)) dá a primeira compra, ignorando o período."
+   },
+   {
+    "text": "DATEDIFF(MAX(fVendas[Data]), TODAY(), DAY) mede dias sem comprar.",
+    "say": "DATEDIFF(MAX(fVendas[Data]), TODAY(), DAY) mede dias sem comprar."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-clientes-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Clientes que compraram em 2025 e em 2026. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Clientes que compraram em 2025 e em 2026. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-clientes-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Defina com o negócio o que é \"ativo\" e \"inativo\". Segundo: A primeira compra precisa ignorar o filtro de data do visual.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Defina com o negócio o que é ativo e inativo. Segundo: A primeira compra precisa ignorar o filtro de data do visual."
+   },
+   {
+    "text": "Terceiro: Clientes sem nenhuma compra também aparecem na dCliente.",
+    "say": "Terceiro: Clientes sem nenhuma compra também aparecem na dCliente."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-17",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Clientes que voltaram. O CRM quer quantos clientes compraram em 2025 e também em 2026, por segmento.",
+    "say": "Chegou a sua vez. O desafio é: Clientes que voltaram. O CRM quer quantos clientes compraram em 2025 e também em 2026, por segmento."
+   },
+   {
+    "text": "O objetivo: Conte FILTER(VALUES(fVendas[CodCliente]), pedidos em 2025 > 0 && pedidos em 2026 > 0). Linhas: Segmento. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Conte FILTER(VALUES(fVendas[CodCliente]), pedidos em 2025 maior que 0 && pedidos em 2026 maior que 0). Linhas: Segmento. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-18",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Primeira compra no mês. O marketing quer saber quantos clientes fizeram a primeira compra em cada mês de 2025.",
+    "say": "Chegou a sua vez. O desafio é: Primeira compra no mês. O marketing quer saber quantos clientes fizeram a primeira compra em cada mês de 2025."
+   },
+   {
+    "text": "O objetivo: Para cada cliente, a 1ª compra é CALCULATE(MIN(fVendas[Data]), ALL(dCalendario)); conte os que caem no mês. Linhas: Mês Ano. Página: 2025.",
+    "say": "O objetivo: Para cada cliente, a 1ª compra é CALCULATE(MIN(fVendas[Data]), ALL(dCalendario)); conte os que caem no mês. Linhas: Mês Ano. Página: 2025."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-19",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Data da primeira compra. O cadastro de clientes ganha a data da primeira compra. O objetivo: Crie em dCliente: CALCULATE(MIN(fVendas[Data])).",
+    "say": "Chegou a sua vez. O desafio é: Data da primeira compra. O cadastro de clientes ganha a data da primeira compra. O objetivo: Crie em dCliente: CALCULATE(MIN(fVendas[Data]))."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-20",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Dias sem comprar. O CRM quer saber há quantos dias cada cliente não compra (HOJE = 30/06/2026). O objetivo: Use DATEDIFF(MAX(fVendas[Data]), TODAY(), DAY).",
+    "say": "Chegou a sua vez. O desafio é: Dias sem comprar. O CRM quer saber há quantos dias cada cliente não compra (HOJE igual a 30/06/2026). O objetivo: Use DATEDIFF(MAX(fVendas[Data]), TODAY(), DAY)."
+   },
+   {
+    "text": "Linhas: Cliente. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Cliente. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-21",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Clientes inativos há 90 dias. Um cartão mostra quantos clientes não compram há mais de 90 dias.",
+    "say": "Chegou a sua vez. O desafio é: Clientes inativos há 90 dias. Um cartão mostra quantos clientes não compram há mais de 90 dias."
+   },
+   {
+    "text": "O objetivo: Conte FILTER(dCliente, CALCULATE(MAX(fVendas[Data])) < TODAY() − 90). Visual: cartão. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Conte FILTER(dCliente, CALCULATE(MAX(fVendas[Data])) menor que TODAY() − 90). Visual: cartão. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-abc-1",
+  "chunks": [
+   {
+    "text": "Curva ABC (Pareto). A curva ABC ordena os itens do maior para o menor e acumula a participação. Itens até ~70% do faturamento são A, até 90% são B, o resto C.",
+    "say": "Curva ABC (Pareto). A curva ABC ordena os itens do maior para o menor e acumula a participação. Itens até ~70 por cento do faturamento são A, até 90 por cento são B, o resto C."
+   },
+   {
+    "text": "Em DAX, some as vendas dos itens com venda maior ou igual à do item atual. Uma comparação que ajuda: É a regra 80/20: poucos produtos respondem pela maior parte do faturamento.",
+    "say": "Em DAX, some as vendas dos itens com venda maior ou igual à do item atual. Uma comparação que ajuda: É a regra 80/20: poucos produtos respondem pela maior parte do faturamento."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-abc-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. O FILTER pega todos os produtos que vendem pelo menos o mesmo que o atual. Depois, SWITCH(TRUE(), …) define A, B ou C.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. O FILTER pega todos os produtos que vendem pelo menos o mesmo que o atual. Depois, SWITCH(TRUE(), …) define A, B ou C."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-abc-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. % acumulado de cada produto. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. sinal de porcentagem acumulado de cada produto. A medida foi calculada agora mesmo no visual, linha a linha, e também no total. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-abc-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Ordene o visual pelo % acumulado para ver a curva. Segundo: Os cortes (70/90) são decisão do negócio.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Ordene o visual pelo sinal de porcentagem acumulado para ver a curva. Segundo: Os cortes (70/90) são decisão do negócio."
+   },
+   {
+    "text": "Terceiro: Em modelos grandes, a ABC pode ser pesada: considere uma coluna calculada.",
+    "say": "Terceiro: Em modelos grandes, a ABC pode ser pesada: considere uma coluna calculada."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-22",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: % acumulado (Pareto). A curva ABC precisa do % acumulado de cada produto, do mais vendido para o menos vendido.",
+    "say": "Chegou a sua vez. O desafio é: sinal de porcentagem acumulado (Pareto). A curva ABC precisa do sinal de porcentagem acumulado de cada produto, do mais vendido para o menos vendido."
+   },
+   {
+    "text": "O objetivo: Some as vendas dos produtos com venda ≥ à do produto atual e divida pelo total. Linhas: Produto. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Some as vendas dos produtos com venda ≥ à do produto atual e divida pelo total. Linhas: Produto. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-23",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Classe ABC. Classifique cada produto: A até 70% acumulado, B até 90% e C no restante. O objetivo: Reaproveite o % acumulado e use SWITCH(TRUE(), …). Linhas: Produto.",
+    "say": "Chegou a sua vez. O desafio é: Classe ABC. Classifique cada produto: A até 70 por cento acumulado, B até 90 por cento e C no restante. O objetivo: Reaproveite o sinal de porcentagem acumulado e use SWITCH(TRUE(), …). Linhas: Produto."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-24",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Produtos de cada categoria. Um tooltip lista os produtos de cada categoria. O objetivo: Use CONCATENATEX(VALUES(dProduto[Produto]), dProduto[Produto], \", \").",
+    "say": "Chegou a sua vez. O desafio é: Produtos de cada categoria. Um tooltip lista os produtos de cada categoria. O objetivo: Use CONCATENATEX(VALUES(dProduto[Produto]), dProduto[Produto], , )."
+   },
+   {
+    "text": "Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Categoria. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-25",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Top 3 produtos da loja. Cada loja quer o nome dos seus 3 produtos mais vendidos, do maior para o menor.",
+    "say": "Chegou a sua vez. O desafio é: Top 3 produtos da loja. Cada loja quer o nome dos seus 3 produtos mais vendidos, do maior para o menor."
+   },
+   {
+    "text": "O objetivo: CONCATENATEX(TOPN(3, VALUES(dProduto[Produto]), [Total Vendas]), dProduto[Produto], \", \", [Total Vendas], DESC). Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: CONCATENATEX(TOPN(3, VALUES(dProduto[Produto]), [Total Vendas]), dProduto[Produto], , , [Total Vendas], DESC). Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-tabelas-1",
+  "chunks": [
+   {
+    "text": "Tabelas virtuais e calculadas. SUMMARIZE agrupa, ADDCOLUMNS acrescenta colunas, SELECTCOLUMNS escolhe colunas e CALCULATETABLE filtra uma tabela.",
+    "say": "Tabelas virtuais e calculadas. SUMMARIZE agrupa, ADDCOLUMNS acrescenta colunas, SELECTCOLUMNS escolhe colunas e CALCULATETABLE filtra uma tabela."
+   },
+   {
+    "text": "Elas criam tabelas calculadas no modelo ou tabelas virtuais dentro de medidas. Uma comparação que ajuda: É montar uma planilha auxiliar sem sair do Power BI.",
+    "say": "Elas criam tabelas calculadas no modelo ou tabelas virtuais dentro de medidas. Uma comparação que ajuda: É montar uma planilha auxiliar sem sair do Power BI."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-tabelas-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Colunas criadas com ADDCOLUMNS são referenciadas como [Nome]. Tabelas virtuais em variáveis deixam medidas complexas legíveis.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Colunas criadas com ADDCOLUMNS são referenciadas como [Nome]. Tabelas virtuais em variáveis deixam medidas complexas legíveis."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-tabelas-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Resumo por loja (tabela calculada). A tabela foi calculada agora mesmo e tem 5 linhas. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Resumo por loja (tabela calculada). A tabela foi calculada agora mesmo e tem 5 linhas. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-tabelas-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Tabelas calculadas são fixas até a atualização. Segundo: Use ADDCOLUMNS para calcular medidas em tabelas virtuais.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Tabelas calculadas são fixas até a atualização. Segundo: Use ADDCOLUMNS para calcular medidas em tabelas virtuais."
+   },
+   {
+    "text": "Terceiro: Dê nomes às colunas novas entre aspas.",
+    "say": "Terceiro: Dê nomes às colunas novas entre aspas."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-26",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Meses acima de 30 mil. Quantos meses de cada ano passaram de R$ 30.000 em vendas?",
+    "say": "Chegou a sua vez. O desafio é: Meses acima de 30 mil. Quantos meses de cada ano passaram de R$ 30.000 em vendas?"
+   },
+   {
+    "text": "O objetivo: Conte FILTER(SUMMARIZE(fVendas, dCalendario[Mês Ano]), [Total Vendas] > 30000). Linhas: Ano. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Conte FILTER(SUMMARIZE(fVendas, dCalendario[Mês Ano]), [Total Vendas] maior que 30000). Linhas: Ano. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-27",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Valor do melhor mês. Monte uma tabela virtual com as vendas de cada mês e pegue o maior valor.",
+    "say": "Chegou a sua vez. O desafio é: Valor do melhor mês. Monte uma tabela virtual com as vendas de cada mês e pegue o maior valor."
+   },
+   {
+    "text": "O objetivo: MAXX(ADDCOLUMNS(VALUES(dCalendario[Mês Ano]), \"V\", [Total Vendas]), [V]). Linhas: Ano. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: MAXX(ADDCOLUMNS(VALUES(dCalendario[Mês Ano]), V, [Total Vendas]), [V]). Linhas: Ano. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-28",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Nome do melhor mês. Agora o nome do mês de maior venda de cada ano.",
+    "say": "Chegou a sua vez. O desafio é: Nome do melhor mês. Agora o nome do mês de maior venda de cada ano."
+   },
+   {
+    "text": "O objetivo: Com VAR: t = ADDCOLUMNS(...), m = MAXX(t, [V]); retorne MAXX(FILTER(t, [V] = m), dCalendario[Mês Ano]). Linhas: Ano. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Com VAR: t igual a ADDCOLUMNS(...), m igual a MAXX(t, [V]); retorne MAXX(FILTER(t, [V] igual a m), dCalendario[Mês Ano]). Linhas: Ano. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-29",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Top 5 produtos. O time quer uma tabela calculada com os 5 produtos mais vendidos e suas vendas.",
+    "say": "Chegou a sua vez. O desafio é: Top 5 produtos. O time quer uma tabela calculada com os 5 produtos mais vendidos e suas vendas."
+   },
+   {
+    "text": "O objetivo: Crie a tabela: TOPN(5, SUMMARIZE(fVendas, dProduto[Produto], \"Vendas\", [Total Vendas]), [Vendas]). Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Crie a tabela: TOPN(5, SUMMARIZE(fVendas, dProduto[Produto], Vendas, [Total Vendas]), [Vendas]). Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-30",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Resumo por loja. Uma tabela de apoio com vendas e pedidos de cada loja. O objetivo: ADDCOLUMNS(VALUES(dLoja[Loja]), \"Vendas\", [Total Vendas], \"Pedidos\", [Pedidos]).",
+    "say": "Chegou a sua vez. O desafio é: Resumo por loja. Uma tabela de apoio com vendas e pedidos de cada loja. O objetivo: ADDCOLUMNS(VALUES(dLoja[Loja]), Vendas, [Total Vendas], Pedidos, [Pedidos])."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-31",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Clientes corporativos. O time de contas corporativas quer uma tabela só com seus clientes. O objetivo: CALCULATETABLE(dCliente, dCliente[Segmento] = \"Corporativo\").",
+    "say": "Chegou a sua vez. O desafio é: Clientes corporativos. O time de contas corporativas quer uma tabela só com seus clientes. O objetivo: CALCULATETABLE(dCliente, dCliente[Segmento] igual a Corporativo)."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-32",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Produtos premium. O marketing quer uma tabela com os produtos acima de R$ 1.000 de preço de lista. O objetivo: FILTER(dProduto, dProduto[Preço Lista] > 1000).",
+    "say": "Chegou a sua vez. O desafio é: Produtos premium. O marketing quer uma tabela com os produtos acima de R$ 1.000 de preço de lista. O objetivo: FILTER(dProduto, dProduto[Preço Lista] maior que 1000)."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-33",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Lojas e canais. Uma tabela enxuta com loja e canal para um filtro. O objetivo: SELECTCOLUMNS(dLoja, \"Loja\", dLoja[Loja], \"Canal\", dLoja[Canal]).",
+    "say": "Chegou a sua vez. O desafio é: Lojas e canais. Uma tabela enxuta com loja e canal para um filtro. O objetivo: SELECTCOLUMNS(dLoja, Loja, dLoja[Loja], Canal, dLoja[Canal])."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-34",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Variação em texto. O painel mostra a variação contra o ano anterior em texto, ou \"Sem base\" quando não há 2025.",
+    "say": "Chegou a sua vez. O desafio é: Variação em texto. O painel mostra a variação contra o ano anterior em texto, ou Sem base quando não há 2025."
+   },
+   {
+    "text": "O objetivo: VAR a, VAR b (ano anterior); IF(ISBLANK(b), \"Sem base\", FORMAT(DIVIDE(a − b, b), \"0.0%\")). Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: VAR a, VAR b (ano anterior); IF(ISBLANK(b), Sem base, FORMAT(DIVIDE(a − b, b), 0.0 por cento)). Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-35",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Título dinâmico. O título do visual muda conforme a loja: \"Vendas de Paulista: R$ 120.000\".",
+    "say": "Chegou a sua vez. O desafio é: Título dinâmico. O título do visual muda conforme a loja: Vendas de Paulista: R$ 120.000."
+   },
+   {
+    "text": "O objetivo: \"Vendas de \" & SELECTEDVALUE(dLoja[Loja], \"todas as lojas\") & \": \" & FORMAT([Total Vendas], \"R$ #,##0\"). Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Vendas de & SELECTEDVALUE(dLoja[Loja], todas as lojas) & : & FORMAT([Total Vendas], R$ #,##0). Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-36",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Gap acumulado da meta. A diretoria quer quanto falta (ou sobra) no acumulado do ano de 2026. O objetivo: TOTALYTD de vendas − TOTALYTD de metas. Linhas: Mês Ano.",
+    "say": "Chegou a sua vez. O desafio é: Gap acumulado da meta. A diretoria quer quanto falta (ou sobra) no acumulado do ano de 2026. O objetivo: TOTALYTD de vendas − TOTALYTD de metas. Linhas: Mês Ano."
+   },
+   {
+    "text": "Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-final-1",
+  "chunks": [
+   {
+    "text": "Juntando tudo. Medidas de negócio combinam várias peças: variáveis para cada parte, CALCULATE para mudar o contexto, inteligência de tempo para comparar períodos e FORMAT para apresentar.",
+    "say": "Juntando tudo. Medidas de negócio combinam várias peças: variáveis para cada parte, CALCULATE para mudar o contexto, inteligência de tempo para comparar períodos e FORMAT para apresentar."
+   },
+   {
+    "text": "Monte por partes e teste cada uma. Uma comparação que ajuda: É montar o painel do carro: cada ponteiro é uma medida, e todos olham para o mesmo motor.",
+    "say": "Monte por partes e teste cada uma. Uma comparação que ajuda: É montar o painel do carro: cada ponteiro é uma medida, e todos olham para o mesmo motor."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-final-2",
+  "chunks": [
+   {
+    "text": "Agora, a sintaxe. Repare na estrutura do comando no código. Teste cada variável retornando-a sozinha. Prefira reaproveitar medidas a repetir lógica.",
+    "say": "Agora, a sintaxe. Repare na estrutura do comando no código. Teste cada variável retornando-a sozinha. Prefira reaproveitar medidas a repetir lógica."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-final-3",
+  "chunks": [
+   {
+    "text": "Vamos ver na prática. Projeção simples de 2026 (cartão). O cartão mostra R$ 466.804,90. Compare o código com o resultado na tabela.",
+    "say": "Vamos ver na prática. Projeção simples de 2026 (cartão). O cartão mostra R$ 466.804,90. Compare o código com o resultado na tabela."
+   }
+  ]
+ },
+ {
+  "id": "powerbi-final-4",
+  "chunks": [
+   {
+    "text": "Agora, alguns cuidados importantes. Primeiro: Medidas longas sem VAR são difíceis de manter. Segundo: Valide sempre com um visual simples. Terceiro: Documente o objetivo de cada medida na descrição.",
+    "say": "Agora, alguns cuidados importantes. Primeiro: Medidas longas sem VAR são difíceis de manter. Segundo: Valide sempre com um visual simples. Terceiro: Documente o objetivo de cada medida na descrição."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-37",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Projeção do ano. O CFO quer uma projeção simples de 2026: média mensal até agora × 12.",
+    "say": "Chegou a sua vez. O desafio é: Projeção do ano. O CFO quer uma projeção simples de 2026: média mensal até agora × 12."
+   },
+   {
+    "text": "O objetivo: DIVIDE(TOTALYTD([Total Vendas], dCalendario[Data]), MONTH(MAX(fVendas[Data]))) * 12. Visual: cartão. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: DIVIDE(TOTALYTD([Total Vendas], dCalendario[Data]), MONTH(MAX(fVendas[Data]))) vezes 12. Visual: cartão. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-38",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Lojas que bateram a meta. Em cada mês de 2025, quantas lojas bateram a meta? O objetivo: Conte FILTER(VALUES(dLoja[Loja]), [Total Vendas] >= [Total Metas]).",
+    "say": "Chegou a sua vez. O desafio é: Lojas que bateram a meta. Em cada mês de 2025, quantas lojas bateram a meta? O objetivo: Conte FILTER(VALUES(dLoja[Loja]), [Total Vendas] maior ou igual a [Total Metas])."
+   },
+   {
+    "text": "Linhas: Mês Ano. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Mês Ano. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-39",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: % de meses na meta. Qual % dos meses de 2025 cada loja bateu a meta? O objetivo: Divida os meses na meta pelo total de meses (VALUES(dCalendario[Mês Ano])).",
+    "say": "Chegou a sua vez. O desafio é: sinal de porcentagem de meses na meta. Qual sinal de porcentagem dos meses de 2025 cada loja bateu a meta? O objetivo: Divida os meses na meta pelo total de meses (VALUES(dCalendario[Mês Ano]))."
+   },
+   {
+    "text": "Linhas: Loja. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Loja. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-40",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Maior pedido do cliente. O CRM quer o valor do maior pedido de cada cliente. O objetivo: Use MAXX(VALUES(fVendas[Pedido]), [Total Vendas]). Linhas: Cliente.",
+    "say": "Chegou a sua vez. O desafio é: Maior pedido do cliente. O CRM quer o valor do maior pedido de cada cliente. O objetivo: Use MAXX(VALUES(fVendas[Pedido]), [Total Vendas]). Linhas: Cliente."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-41",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Prazo médio de entrega. A logística quer o prazo médio de entrega em dias por loja. O objetivo: Use AVERAGEX(fVendas, fVendas[DataEntrega] − fVendas[Data]).",
+    "say": "Chegou a sua vez. O desafio é: Prazo médio de entrega. A logística quer o prazo médio de entrega em dias por loja. O objetivo: Use AVERAGEX(fVendas, fVendas[DataEntrega] − fVendas[Data])."
+   },
+   {
+    "text": "Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-42",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Clientes ativos em 180 dias. O CRM considera ativo quem comprou nos 180 dias anteriores ao fim do mês.",
+    "say": "Chegou a sua vez. O desafio é: Clientes ativos em 180 dias. O CRM considera ativo quem comprou nos 180 dias anteriores ao fim do mês."
+   },
+   {
+    "text": "O objetivo: VAR fim = MAX(dCalendario[Data]); CALCULATE(DISTINCTCOUNT(fVendas[CodCliente]), DATESINPERIOD(dCalendario[Data], fim, -180, DAY)). Linhas: Mês Ano. Página: 2026.",
+    "say": "O objetivo: VAR fim igual a MAX(dCalendario[Data]); CALCULATE(DISTINCTCOUNT(fVendas[CodCliente]), DATESINPERIOD(dCalendario[Data], fim, -180, DAY)). Linhas: Mês Ano. Página: 2026."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-43",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Variação de clientes. O CRM quer quantos clientes a mais (ou a menos) compraram em cada trimestre de 2026 contra 2025.",
+    "say": "Chegou a sua vez. O desafio é: Variação de clientes. O CRM quer quantos clientes a mais (ou a menos) compraram em cada trimestre de 2026 contra 2025."
+   },
+   {
+    "text": "O objetivo: DISTINCTCOUNT atual − DISTINCTCOUNT com SAMEPERIODLASTYEAR. Linhas: Ano Trimestre. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: DISTINCTCOUNT atual − DISTINCTCOUNT com SAMEPERIODLASTYEAR. Linhas: Ano Trimestre. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-44",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Margem acumulada %. O CFO quer a margem % acumulada no ano de 2025. O objetivo: DIVIDE(TOTALYTD([Lucro], …), TOTALYTD([Total Vendas], …)). Linhas: Mês Ano. Página: 2025.",
+    "say": "Chegou a sua vez. O desafio é: Margem acumulada sinal de porcentagem . O CFO quer a margem sinal de porcentagem acumulada no ano de 2025. O objetivo: DIVIDE(TOTALYTD([Lucro], …), TOTALYTD([Total Vendas], …)). Linhas: Mês Ano. Página: 2025."
+   },
+   {
+    "text": "Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-45",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Participação no ano. Cada mês deve mostrar seu peso no total do próprio ano.",
+    "say": "Chegou a sua vez. O desafio é: Participação no ano. Cada mês deve mostrar seu peso no total do próprio ano."
+   },
+   {
+    "text": "O objetivo: Denominador: CALCULATE([Total Vendas], ALL(dCalendario), VALUES(dCalendario[Ano])). Linhas: Mês Ano. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: Denominador: CALCULATE([Total Vendas], ALL(dCalendario), VALUES(dCalendario[Ano])). Linhas: Mês Ano. Página: 2025. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-46",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Acima da média das lojas?. Cada loja quer saber se está acima da média de vendas das lojas.",
+    "say": "Chegou a sua vez. O desafio é: Acima da média das lojas?. Cada loja quer saber se está acima da média de vendas das lojas."
+   },
+   {
+    "text": "O objetivo: IF([Total Vendas] > AVERAGEX(ALL(dLoja[Loja]), [Total Vendas]), \"Acima\", \"Abaixo\"). Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: IF([Total Vendas] maior que AVERAGEX(ALL(dLoja[Loja]), [Total Vendas]), Acima, Abaixo). Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-47",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Mesmo mês, 12 meses antes. Outra forma de comparar com o ano anterior: deslocar 12 meses.",
+    "say": "Chegou a sua vez. O desafio é: Mesmo mês, 12 meses antes. Outra forma de comparar com o ano anterior: deslocar 12 meses."
+   },
+   {
+    "text": "O objetivo: CALCULATE([Total Vendas], PARALLELPERIOD(dCalendario[Data], -12, MONTH)). Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: CALCULATE([Total Vendas], PARALLELPERIOD(dCalendario[Data], -12, MONTH)). Linhas: Mês Ano. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-48",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Vendas no fim de semana. O varejo quer a % das vendas feitas em sábados e domingos.",
+    "say": "Chegou a sua vez. O desafio é: Vendas no fim de semana. O varejo quer a sinal de porcentagem das vendas feitas em sábados e domingos."
+   },
+   {
+    "text": "O objetivo: DIVIDE(CALCULATE([Total Vendas], dCalendario[Dia Útil] = FALSE()), [Total Vendas]). Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: DIVIDE(CALCULATE([Total Vendas], dCalendario[Dia Útil] igual a FALSE()), [Total Vendas]). Linhas: Loja. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-49",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Ticket dos 3 maiores clientes. O comercial quer o ticket médio dos 3 maiores clientes de cada ano.",
+    "say": "Chegou a sua vez. O desafio é: Ticket dos 3 maiores clientes. O comercial quer o ticket médio dos 3 maiores clientes de cada ano."
+   },
+   {
+    "text": "O objetivo: AVERAGEX(TOPN(3, VALUES(dCliente[Cliente]), [Total Vendas]), DIVIDE([Total Vendas], [Pedidos])). Linhas: Ano. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "O objetivo: AVERAGEX(TOPN(3, VALUES(dCliente[Cliente]), [Total Vendas]), DIVIDE([Total Vendas], [Pedidos])). Linhas: Ano. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
+ },
+ {
+  "id": "ex-b3-50",
+  "chunks": [
+   {
+    "text": "Chegou a sua vez. O desafio é: Resumo executivo da loja. O desafio final: uma medida de texto com vendas, % da meta e variação contra o ano anterior, para cada loja em 2026.",
+    "say": "Chegou a sua vez. O desafio é: Resumo executivo da loja. O desafio final: uma medida de texto com vendas, sinal de porcentagem da meta e variação contra o ano anterior, para cada loja em 2026."
+   },
+   {
+    "text": "O objetivo: Com VAR: v = vendas, m = DIVIDE(v, [Total Metas]), aa = vendas do ano anterior.",
+    "say": "O objetivo: Com VAR: v igual a vendas, m igual a DIVIDE(v, [Total Metas]), aa igual a vendas do ano anterior."
+   },
+   {
+    "text": "Retorne FORMAT(v, \"R$ #,##0\") & \" | meta \" & FORMAT(m, \"0%\") & \" | vs AA \" & FORMAT(DIVIDE(v − aa, aa), \"0%\"). Linhas: Loja. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício.",
+    "say": "Retorne FORMAT(v, R$ #,##0) & | meta & FORMAT(m, 0 por cento) & | vs AA & FORMAT(DIVIDE(v − aa, aa), 0 por cento). Linhas: Loja. Página: 2026. Quando estiver pronto, é só clicar em Começar exercício."
+   }
+  ]
  }
 ]

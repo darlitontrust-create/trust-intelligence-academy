@@ -1004,3 +1004,99 @@ a, button, label, .tile, .exam-opt, .chip, .av-opt { touch-action: manipulation;
 .profile-grid .card { grid-template-columns: minmax(0, 1fr); }
 .cloud-cta .btn { white-space: normal; text-align: left; height: auto; padding-block: 9px; }
 .cert-dl dd { overflow-wrap: anywhere; }
+
+/* =====================================================================
+   Editor de fórmulas (Excel e DAX): cores e autocompletar
+   ===================================================================== */
+.fe { position: relative; min-width: 0; }
+.fe-hl, .fe-input { margin: 0; border: 0; box-sizing: border-box; width: 100%; font: 500 15px/1.6 var(--f-mono); letter-spacing: 0; padding: 12px 14px; white-space: pre; tab-size: 4; -moz-tab-size: 4; word-spacing: 0; }
+.fe-hl { position: absolute; inset: 0; overflow: hidden; pointer-events: none; color: var(--ink); background: none; }
+.fe-input { position: relative; display: block; background: transparent; color: transparent; -webkit-text-fill-color: transparent; caret-color: #4ade80; resize: none; outline: none; overflow: auto; }
+.fe-input::placeholder { color: var(--ink-4); -webkit-text-fill-color: var(--ink-4); }
+.fe-input::selection { background: rgba(77,124,255,.38); }
+.fe-single .fe-input { height: 48px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+.fe-single .fe-input::-webkit-scrollbar { display: none; }
+.fe-multi .fe-input { min-height: 190px; overflow-x: hidden; }
+.fe-multi .fe-hl, .fe-multi .fe-input { white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; }
+.fe-multi .fe-input { scrollbar-gutter: stable; } .fe-multi .fe-hl { scrollbar-gutter: stable; overflow-y: scroll; scrollbar-color: transparent transparent; }
+.fe-fn { color: #8fa8ff; font-weight: 600; } .fe-fnx { color: #fca5a5; text-decoration: underline wavy rgba(248,113,113,.7); text-underline-offset: 3px; }
+.fe-str { color: #6ee7b7; } .fe-num { color: #f5c86b; } .fe-op { color: #f0abfc; } .fe-sep { color: var(--ink-3); }
+.fe-sheet { color: #fdba74; } .fe-kw { color: #c084fc; font-weight: 600; } .fe-err { color: #f87171; } .fe-name { color: var(--ink); }
+.fe-comment { color: var(--ink-4); font-style: italic; } .fe-table { color: #fdba74; } .fe-col { color: #7dd3fc; } .fe-measure { color: #fde047; } .fe-var { color: #f9a8d4; }
+.fe-list { position: absolute; z-index: 45; margin: 0; padding: 4px; list-style: none; width: min(340px, calc(100% - 8px)); max-height: 268px; overflow: auto; border-radius: 12px; background: #131a2c; border: 1px solid var(--line-2); box-shadow: 0 22px 50px -18px #000, 0 0 0 1px rgba(255,255,255,.03); }
+.fe-opt { display: grid; grid-template-columns: 22px minmax(0, 1fr); column-gap: 8px; align-items: center; padding: 7px 9px; border-radius: 8px; cursor: pointer; }
+.fe-opt small { grid-column: 2; color: var(--ink-4); font-size: 11.5px; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fe-opt.on { background: rgba(77,124,255,.2); }
+.fe-opt.on small { color: var(--ink-3); }
+.fe-l { font: 600 13px var(--f-mono); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fe-k { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; font: 600 11px var(--f-mono); background: rgba(143,168,255,.14); color: #8fa8ff; }
+.k-sheet .fe-k, .k-table .fe-k { background: rgba(253,186,116,.14); color: #fdba74; }
+.k-col .fe-k { background: rgba(125,211,252,.14); color: #7dd3fc; }
+.k-measure .fe-k { background: rgba(253,224,71,.14); color: #fde047; }
+.k-kw .fe-k { background: rgba(192,132,252,.14); color: #c084fc; }
+.fe-sig { display: none; }
+.fe-sig.on { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 8px 12px; border-radius: 10px; background: rgba(143,168,255,.07); border: 1px solid rgba(143,168,255,.18); font-size: 12.5px; color: var(--ink-3); animation: fadeIn .15s ease; }
+.fe-sig code { font: 500 12.5px var(--f-mono); color: var(--ink-2); overflow-wrap: anywhere; }
+.fe-sig code b { color: #8fa8ff; }
+.fe-sig .cur { color: #fff; background: rgba(77,124,255,.32); border-radius: 4px; padding: 0 3px; }
+.xl-bar { overflow: visible; }
+.xl-bar .xl-name { border-radius: 11px 0 0 11px; }
+.xl-input-host { min-width: 0; }
+.xl-bar:has(.fe-input.bad) { border-color: rgba(248,113,113,.6); }
+.xl-sig:empty { display: none; }
+@media (max-width: 640px) { .fe-hl, .fe-input { font-size: 16px; } }
+
+/* =====================================================================
+   Power BI: editor DAX, matriz, cartão e modelo
+   ===================================================================== */
+.pbi-editor .fe { border-top: 1px solid var(--line); background: rgba(6,8,14,.55); }
+.pbi-editor .fe-hl, .pbi-editor .fe-input { font-size: 14px; line-height: 1.65; padding: 14px 16px; }
+.pbi-editor .fe-input { caret-color: #ffd76a; min-height: 200px; }
+.pbi-editor .fe:focus-within { box-shadow: inset 0 0 0 1px rgba(255,215,106,.35); }
+.pbi-sig { padding: 0 14px; }
+.pbi-sig:empty { display: none; }
+.pbi-sig .fe-sig.on { margin: 10px 0 2px; }
+.pbi-facts .ic { color: #ffd76a; }
+.pbi-scroll { max-height: 420px; overflow: auto; }
+.pbi-scroll.sm { max-height: 230px; }
+.pbi-matrix { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; font-variant-numeric: tabular-nums; }
+.pbi-matrix th, .pbi-matrix td { padding: 8px 12px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+.pbi-matrix th { position: sticky; top: 0; z-index: 1; background: #151a28; color: var(--ink-3); font: 600 11.5px var(--f-ui); letter-spacing: .02em; }
+.pbi-matrix .num { text-align: right; }
+.pbi-matrix th.new, .pbi-matrix td.new { color: #ffd76a; background: rgba(255,215,106,.06); }
+.pbi-matrix tr.tot td { font-weight: 700; color: var(--ink); background: rgba(255,255,255,.04); border-top: 1px solid var(--line-2); }
+.pbi-matrix tr.no td { background: rgba(251,191,36,.1); }
+.pbi-matrix tr.no td:last-child { box-shadow: inset 3px 0 0 var(--warn); }
+.pbi-matrix .err { color: var(--err); font-weight: 600; }
+.pbi-card { display: grid; gap: 4px; justify-items: start; padding: 22px 24px; border-radius: 14px; border: 1px solid rgba(255,215,106,.3); background: linear-gradient(135deg, rgba(255,215,106,.08), transparent); }
+.pbi-card small { color: var(--ink-3); font-size: 12.5px; }
+.pbi-card b { font-size: clamp(26px, 4vw, 38px); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.pbi-card b.no { color: var(--warn); }
+.pbi-mini { border-collapse: collapse; font-size: 12.5px; width: 100%; font-variant-numeric: tabular-nums; }
+.pbi-mini th, .pbi-mini td { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+.pbi-mini th { color: var(--ink-3); font: 600 11px var(--f-mono); }
+.pbi-mini .res { color: #ffd76a; font-weight: 600; }
+.pbi-mini tr.tot td { font-weight: 700; border-top: 1px solid var(--line-2); }
+.pbi-card-mini { display: inline-grid; gap: 2px; padding: 14px 18px; border-radius: 12px; border: 1px solid rgba(255,215,106,.35); background: rgba(255,215,106,.07); }
+.pbi-card-mini small, .pbi-card-mini span { color: var(--ink-3); font-size: 12px; }
+.pbi-card-mini b { font-size: 24px; font-variant-numeric: tabular-nums; }
+.pbi-cols { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+.chip-col { display: inline-flex; gap: 6px; align-items: baseline; padding: 4px 9px; border-radius: 8px; font: 500 12px var(--f-mono); color: #7dd3fc; background: rgba(125,211,252,.08); border: 1px solid rgba(125,211,252,.22); }
+.chip-col small { color: var(--ink-4); font-size: 10.5px; }
+.pbi-rels, .pbi-measures { list-style: none; margin: 12px 0 8px; padding: 0; display: grid; gap: 8px; }
+.pbi-rels li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12.5px; }
+.pbi-rels code, .pbi-measures code { font: 500 12px var(--f-mono); color: var(--ink-2); padding: 3px 8px; border-radius: 7px; background: rgba(255,255,255,.04); border: 1px solid var(--line); overflow-wrap: anywhere; }
+.pbi-rels .card { font: 600 11px var(--f-mono); color: #ffd76a; }
+.pbi-rels li.off { opacity: .6; }
+.pbi-rels em { font-size: 11.5px; color: var(--warn); font-style: normal; border: 1px dashed rgba(251,191,36,.5); border-radius: 6px; padding: 1px 6px; }
+.pbi-measures li { display: grid; gap: 4px; padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,.025); border: 1px solid var(--line); }
+.pbi-measures b { color: #fde047; font: 600 13px var(--f-mono); }
+.ex-grid.pbi .tabs { flex-wrap: wrap; }
+@media (max-width: 640px) {
+  .pbi-editor .fe-hl, .pbi-editor .fe-input { font-size: 16px; }
+  .pbi-editor .fe-input { min-height: 180px; }
+}
+.hub-card.on { grid-column: span 4; }
+.hub-card.soon { grid-column: span 4; }
+@media (max-width: 1180px) { .hub-card.on { grid-column: 1 / -1; } .hub-card.soon { grid-column: auto; } }
+@media (max-width: 640px) { .hub-card.on, .hub-card.soon { grid-column: auto; } }

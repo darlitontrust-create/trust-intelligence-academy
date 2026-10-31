@@ -1,7 +1,7 @@
 # Trust Intelligence Academy
 
-Academia gamificada de dados, BI e IA. Trilhas disponíveis: **SQL Prático** e **Excel Prático**.
-Em breve: Power BI & DAX, Python para Dados, IA para Dados e Estatística Aplicada.
+Academia gamificada de dados, BI e IA. Trilhas disponíveis: **SQL Prático**, **Excel Prático** e **Power BI & DAX**.
+Em breve: Python para Dados, IA para Dados e Estatística Aplicada.
 Cada trilha tem 150 exercícios em 3 níveis, aulas em slides narradas, correção automática, carreira com 10 promoções,
 conquistas, ranking, painel, provas e 13 certificados.
 
@@ -27,6 +27,13 @@ O conteúdo pode ser reaberto pelo botão "Conteúdo" e desligado em Perfil > Pr
 - `js/excel-exercises.js` — os 150 exercícios de Excel
 - `js/excel-lessons.js` — as 37 aulas de Excel, com exemplo calculado ao vivo e 3 questões de prova por aula
 - `js/excel-ui.js` — tela de prática do Excel: planilha, barra de fórmulas e correção célula a célula
+- `js/formula-editor.js` — editor de fórmulas compartilhado (Excel e DAX): realce de sintaxe por cores, sugestões ao digitar (↑↓ para navegar, Tab/Enter para aceitar) e dica de assinatura com o argumento atual destacado
+- `js/dax-data.js` — modelo estrela da NexusMarket para Power BI (fVendas, fMetas, dProduto, dCliente, dLoja, dCalendario), relacionamentos e medidas base
+- `js/dax-engine.js` — motor DAX: contexto de filtro e de linha, transição de contexto, CALCULATE e modificadores (ALL, ALLEXCEPT, REMOVEFILTERS, ALLSELECTED, KEEPFILTERS, USERELATIONSHIP), iteradores, inteligência de tempo, RANKX, TOPN e tabelas calculadas; aceita "," ou ";" como separador
+- `js/dax-lang.js` — realce e sugestões do DAX: funções, tabelas, colunas após `Tabela[`, medidas após `[` e variáveis
+- `js/dax-exercises.js` — os 150 exercícios de Power BI (medidas, colunas e tabelas calculadas)
+- `js/dax-lessons.js` — as 36 aulas de DAX, com mini visual calculado ao vivo e 3 questões de prova por aula
+- `js/dax-ui.js` — tela de prática do Power BI: explorador do modelo, editor DAX, visual de matriz/cartão e correção linha a linha
 - `js/quiz-sql.js` — 3 questões de prova para cada uma das 43 aulas de SQL
 - `js/exams.js` — provas de 15 questões que liberam os certificados (mínimo 11 acertos, 70%)
 - `js/profile.js` — perfil público: foto (reduzida para 256 px) ou avatar, bio de até 280 caracteres e até 5 hobbies

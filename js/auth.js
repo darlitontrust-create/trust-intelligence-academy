@@ -49,7 +49,7 @@
           '<p class="sr-only">Do primeiro comando à decisão inteligente.</p>' +
           '<p class="lead">Uma academia de dados, BI e inteligência artificial para aprender fazendo: aulas narradas em slides, exercícios com correção automática, carreira gamificada e certificados a cada conquista.</p>' +
           '<ul class="login-facts">' +
-            '<li><b>' + global.Tracks.TRACKS.length + '</b><span>trilhas de conhecimento</span></li><li><b>150+</b><span>exercícios práticos</span></li><li><b>43</b><span>aulas narradas</span></li><li><b>13</b><span>certificados por trilha</span></li>' +
+            '<li><b>' + global.Tracks.TRACKS.length + '</b><span>trilhas de conhecimento</span></li><li><b>' + global.Tracks.TRACKS.reduce(function (n, t) { return n + (t.status === 'ativo' ? t.total : 0); }, 0) + '</b><span>exercícios práticos</span></li><li><b>' + Object.keys(global.Lessons.PACKS).reduce(function (n, k) { return n + Object.keys(global.Lessons.PACKS[k].LESSONS).length; }, 0) + '</b><span>aulas narradas</span></li><li><b>13</b><span>certificados por trilha</span></li>' +
           '</ul>' +
           '<div class="login-tracks glass"><p class="eyebrow">Trilhas da academia</p><ul>' +
             global.Tracks.TRACKS.map(function (t) {

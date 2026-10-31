@@ -37,6 +37,13 @@
         'Usa matrizes dinâmicas: FILTRO, CLASSIFICAR e ÚNICO.', 'Domina LET, SOMARPRODUTO e estatística.', 'Concluiu o nível Avançado.'],
       { key: 'trainee', nome: 'Assistente de Planilhas', desc: 'Primeiros passos nas planilhas da NexusMarket.' },
       'Lenda do Excel', 'Concluiu os 150 exercícios da trilha de Excel.'),
+    powerbi: career(
+      ['Explorador de Dashboards', 'Analista de Medidas', 'Modelador Júnior', 'Especialista em CALCULATE', 'Analista de Inteligência de Tempo', 'Analista de BI Pleno', 'Engenheiro de Analytics', 'Mestre do DAX', 'Arquiteto de BI'],
+      ['Cria medidas com SUM, COUNTROWS e DIVIDE.', 'Domina colunas calculadas, RELATED e IF.', 'Concluiu o nível Iniciante com CALCULATE e metas.',
+        'Controla filtros com ALL, ALLEXCEPT e FILTER.', 'Compara períodos com YTD, ano anterior e DATEADD.', 'Concluiu o nível Intermediário.',
+        'Cria rankings, Top N, acumulados e médias móveis.', 'Analisa clientes, curva ABC e tabelas virtuais.', 'Concluiu o nível Avançado.'],
+      { key: 'trainee', nome: 'Assistente de BI', desc: 'Primeiros passos no modelo da NexusMarket.' },
+      'Lenda do Power BI', 'Concluiu os 150 exercícios da trilha de Power BI.'),
   };
   function C() { return CAREERS[global.Tracks.activeId()] || CAREERS.sql; }
 
@@ -75,6 +82,14 @@
       { key: 'first-dynamic', nome: 'Matriz Dinâmica', desc: 'Resolva um exercício com FILTRO, CLASSIFICAR ou ÚNICO.', icon: 'bars', test: has(['FILTRO', 'CLASSIFICAR', 'ÚNICO', 'SEQUÊNCIA']) },
       { key: 'first-let', nome: 'Fórmula Elegante', desc: 'Use LET para organizar um cálculo.', icon: 'flame', test: has(['LET']) },
       { key: 'excel-master', nome: 'Excel Master', desc: 'Conclua os 150 exercícios.', icon: 'trophy', test: function (st) { return solvedList(st).length >= 150; } },
+    ],
+    powerbi: [
+      { key: 'first-measure', nome: 'Primeira Medida', desc: 'Crie sua primeira medida DAX.', icon: 'play', test: function (st) { return solvedList(st).length >= 1; } },
+      { key: 'first-calculate', nome: 'Senhor do Contexto', desc: 'Resolva um exercício com CALCULATE.', icon: 'target', test: has(['CALCULATE']) },
+      { key: 'first-iterator', nome: 'Linha a Linha', desc: 'Use um iterador como SUMX ou AVERAGEX.', icon: 'bars', test: has(['SUMX', 'AVERAGEX', 'MAXX', 'MINX']) },
+      { key: 'first-time', nome: 'Viajante do Tempo', desc: 'Resolva um exercício de inteligência de tempo.', icon: 'clock', test: has(['YTD', 'QTD', 'SAMEPERIODLASTYEAR', 'DATEADD', 'PREVIOUSMONTH', 'PARALLELPERIOD', 'YOY', 'MOM', 'DATESINPERIOD']) },
+      { key: 'first-rank', nome: 'Pódio', desc: 'Crie um ranking com RANKX ou TOPN.', icon: 'trophy', test: has(['RANKX', 'TOPN']) },
+      { key: 'pbi-master', nome: 'Power BI Master', desc: 'Conclua os 150 exercícios.', icon: 'trophy', test: function (st) { return solvedList(st).length >= 150; } },
     ],
   };
   function achievements() { return (SPECIFIC[global.Tracks.activeId()] || SPECIFIC.sql).slice(0, 1).concat(COMMON, (SPECIFIC[global.Tracks.activeId()] || SPECIFIC.sql).slice(1)); }

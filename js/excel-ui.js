@@ -148,13 +148,14 @@
         '<div class="ex-work">' +
           '<section class="card glass xl-card">' +
             '<div class="xl-bar"><span class="xl-name">' + esc(ex.c) + '</span><span class="xl-fx">fx</span>' +
-              '<input id="xl-input" class="xl-input" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Barra de fórmulas" placeholder="=SOMA(G2:G31)"></div>' +
+              '<div id="xl-input" class="xl-input-host"></div></div>' +
+            '<div id="xl-sig" class="xl-sig"></div>' +
             '<div id="xl-pos" class="xl-pos" aria-hidden="true"></div>' +
             '<div class="editor-actions">' +
               '<button class="btn btn-ghost" id="b-run">' + icon('play') + 'Calcular</button>' +
               '<button class="btn btn-primary" id="b-submit">' + icon('send') + 'Enviar resposta</button>' +
               '<button class="btn btn-quiet" id="b-clear">' + icon('eraser') + 'Limpar</button>' +
-              '<span class="muted sm hide-sm">Enter calcula · Ctrl+Enter envia</span>' +
+              '<span class="muted sm hide-sm">Enter calcula · Ctrl+Enter envia · Tab aceita a sugestão</span>' +
             '</div>' +
           '</section>' +
           '<section id="feedback" aria-live="polite"></section>' +
@@ -166,12 +167,21 @@
         '</div>' +
       '</div>';
 
-    const input = view.querySelector('#xl-input');
+    let draftTimer = null;
+    const input = global.FormulaEditor.mount(view.querySelector('#xl-input'), {
+      lang: 'excel', ariaLabel: 'Barra de fórmulas', placeholder: '=SOMA(G2:G31)',
+      value: st.progress.drafts[ex.id] || (solved ? ex.q : '='),
+      ctx: { sheets: Object.keys(D) }, sigHost: view.querySelector('#xl-sig'),
+      onChange: function (v) {
+        posBox.innerHTML = ''; input.el.classList.remove('bad');
+        clearTimeout(draftTimer); draftTimer = setTimeout(function () { st.progress.drafts[ex.id] = v; S.save(); }, 400);
+      },
+      onRun: function () { doRun(); }, onSubmit: function () { doSubmit(); },
+    });
     const fb = view.querySelector('#feedback');
     const posBox = view.querySelector('#xl-pos');
     const sheetBox = view.querySelector('#xl-sheet');
     let curSheet = ex.sh, lastResult = null, lastStatus = '';
-    input.value = st.progress.drafts[ex.id] || (solved ? ex.q : '=');
 
     function paint() { sheetBox.innerHTML = grid(ex, curSheet, curSheet === ex.sh ? lastResult : null, lastStatus); }
     view.querySelectorAll('[data-s]').forEach(function (b) {
@@ -180,20 +190,12 @@
     function showSheet(name) { const b = view.querySelector('[data-s="' + name + '"]'); if (b) b.click(); else { curSheet = name; paint(); } }
     paint();
 
-    let draftTimer = null;
-    input.addEventListener('input', function () {
-      posBox.innerHTML = ''; input.classList.remove('bad');
-      clearTimeout(draftTimer); draftTimer = setTimeout(function () { st.progress.drafts[ex.id] = input.value; S.save(); }, 400);
-    });
-    input.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') { e.preventDefault(); if (e.ctrlKey || e.metaKey) doSubmit(); else doRun(); }
-    });
-    ctx.setCleanup(function () { clearTimeout(draftTimer); st.progress.drafts[ex.id] = input.value; S.save(); });
+    ctx.setCleanup(function () { clearTimeout(draftTimer); st.progress.drafts[ex.id] = input.get(); S.save(); });
 
     function markPos(col) {
-      const f = input.value;
+      const f = input.get();
       posBox.innerHTML = '<code>' + esc(f.slice(0, col - 1)) + '<mark>' + esc(f.charAt(col - 1) || ' ') + '</mark>' + esc(f.slice(col)) + '</code>';
-      input.classList.add('bad');
+      input.el.classList.add('bad');
     }
     function errorPanel(r, graded) {
       const tries = st.progress.attempts[ex.id] || 0;
@@ -208,24 +210,24 @@
         '</div>';
       if (r.col) markPos(r.col);
       fb.querySelector('[data-a=retry]').onclick = doSubmit;
-      fb.querySelector('[data-a=fix]').onclick = function () { input.focus(); if (r.col) input.setSelectionRange(r.col - 1, r.col); };
+      fb.querySelector('[data-a=fix]').onclick = function () { if (r.col) input.select(r.col); else input.focus(); };
       fb.querySelector('[data-a=clear]').onclick = clear;
     }
     function doRun() {
-      const g = evaluate(input.value, ex);
+      const g = evaluate(input.get(), ex);
       if (!g.ok) { errorPanel({ title: 'Erro de sintaxe', explain: g.msg, col: g.col }, false); return; }
       fb.innerHTML = ''; lastResult = g.r; lastStatus = ''; showSheet(ex.sh); paint();
       view.querySelector('#res-meta').textContent = 'Calculado em ' + range + (g.r.spill ? ' · matriz de ' + g.r.values.length + ' linha(s)' : '');
     }
     function doSubmit() {
       st.progress.attempts[ex.id] = (st.progress.attempts[ex.id] || 0) + 1;
-      st.progress.drafts[ex.id] = input.value;
-      const r = grade(ex, input.value);
+      st.progress.drafts[ex.id] = input.get();
+      const r = grade(ex, input.get());
       if (r.result) { lastResult = r.result; lastStatus = r.status === 'correct' ? 'ok' : 'no'; showSheet(ex.sh); paint(); }
       if (r.status !== 'correct') { st.progress.firstTryStreak = 0; S.save(); errorPanel(r, true); return; }
       ctx.onSolved(fb, '✅ Fórmula correta', 'Resultado igual ao esperado em todas as células.');
     }
-    function clear() { input.value = '='; fb.innerHTML = ''; posBox.innerHTML = ''; input.classList.remove('bad'); lastResult = null; lastStatus = ''; paint(); input.focus(); }
+    function clear() { input.set('='); fb.innerHTML = ''; posBox.innerHTML = ''; input.el.classList.remove('bad'); lastResult = null; lastStatus = ''; paint(); input.focus(); }
     view.querySelector('#b-run').onclick = doRun;
     view.querySelector('#b-submit').onclick = doSubmit;
     view.querySelector('#b-clear').onclick = clear;
@@ -246,7 +248,7 @@
       const show = function () {
         st.progress.revealed[ex.id] = true; S.save();
         helpOut.innerHTML = '<pre class="code-block">' + highlight(ex.q) + '</pre><button class="btn btn-ghost sm" id="b-copy">' + icon('copy') + 'Copiar para a barra de fórmulas</button>';
-        helpOut.querySelector('#b-copy').onclick = function () { input.value = ex.q; input.focus(); };
+        helpOut.querySelector('#b-copy').onclick = function () { input.set(ex.q); input.focus(); };
       };
       if (st.progress.solved[ex.id] || st.progress.revealed[ex.id]) return show();
       helpOut.innerHTML = '<div class="confirm"><p>Ver o gabarito reduz o XP deste exercício para <b>' + Math.round(xpVal / 2) + ' XP</b>. Deseja continuar?</p>' +
@@ -255,7 +257,7 @@
       helpOut.querySelector('#b-no').onclick = function () { helpOut.innerHTML = ''; };
     };
     if (solved) setTimeout(doRun, 30);
-    setTimeout(function () { input.focus(); const n = input.value.length; input.setSelectionRange(n, n); }, 60);
+    setTimeout(function () { input.focus(); }, 60);
   }
 
   global.ExcelPractice = { render: render, grade: grade, grid: grid, sheetsOf: sheetsOf };
