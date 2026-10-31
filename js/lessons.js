@@ -423,13 +423,13 @@
   const ORD = ['Primeiro', 'Segundo', 'Terceiro', 'Quarto'];
   function narration(ex) {
     const les = forExercise(ex);
-    const exm = packOf(ex).example(les);
+    const pk = packOf(ex), exm = pk.example(les);
     const parts = [
       [les.titulo + '.', les.ideia, 'Uma comparação que ajuda: ' + les.analogia],
-      ['Agora, a sintaxe. Repare na estrutura do comando no código.'].concat(les.notas),
+      [pk.syntaxSpeech || 'Agora, a sintaxe. Repare na estrutura do comando no código.'].concat(les.notas),
       ['Vamos ver na prática. ' + les.exemplo.p.replace(/:\s*$/, '.'),
         exm.speech,
-        'Compare o código com o resultado na tabela.'],
+        pk.compareSpeech || 'Compare o código com o resultado na tabela.'],
       ['Agora, alguns cuidados importantes.'].concat(les.cuidados.map(function (c, i) { return (ORD[i] || 'Também') + ': ' + c; })),
       ['Chegou a sua vez. O desafio é: ' + ex.n + '.', ex.s, 'O objetivo: ' + ex.g, 'Quando estiver pronto, é só clicar em Começar exercício.'],
     ];
@@ -469,7 +469,7 @@
         '<h2 class="ls-title">' + esc(les.titulo) + '</h2><p class="ls-lead">' + esc(les.ideia) + '</p>' +
         '<div class="ls-analogy">' + icon('bulb') + '<p>' + esc(les.analogia) + '</p></div></div>',
       // 2 · Sintaxe
-      '<div class="ls-body"><h3 class="ls-h">Como se escreve</h3><div class="ls-split"><pre class="code-block">' + pack.codeHtml(les.sintaxe) + '</pre>' +
+      '<div class="ls-body"><h3 class="ls-h">' + esc(pack.syntaxTitle || 'Como se escreve') + '</h3><div class="ls-split"><pre class="code-block">' + pack.codeHtml(les.sintaxe) + '</pre>' +
         '<ul class="ls-notes">' + les.notas.map(function (n) { return '<li>' + icon('chevR') + '<span>' + esc(n) + '</span></li>'; }).join('') + '</ul></div></div>',
       // 3 · Exemplo ao vivo
       '<div class="ls-body"><h3 class="ls-h">' + esc(les.exemplo.p) + '</h3><div class="ls-split ex"><pre class="code-block">' + pack.codeHtml(exm.code) + '</pre>' +

@@ -1,6 +1,6 @@
 # Trust Intelligence Academy
 
-Academia gamificada de dados, BI e IA. Trilhas disponíveis: **SQL Prático**, **Excel Prático** e **Power BI & DAX**.
+Academia gamificada de dados, BI e IA. Trilhas disponíveis: **SQL Prático**, **Excel Prático**, **Power BI & DAX** e **Gestão da Qualidade**.
 Em breve: Python para Dados, IA para Dados e Estatística Aplicada.
 Cada trilha tem 150 exercícios em 3 níveis, aulas em slides narradas, correção automática, carreira com 10 promoções,
 conquistas, ranking, painel, provas e 13 certificados.
@@ -34,6 +34,11 @@ O conteúdo pode ser reaberto pelo botão "Conteúdo" e desligado em Perfil > Pr
 - `js/dax-exercises.js` — os 150 exercícios de Power BI (medidas, colunas e tabelas calculadas)
 - `js/dax-lessons.js` — as 36 aulas de DAX, com mini visual calculado ao vivo e 3 questões de prova por aula
 - `js/dax-ui.js` — tela de prática do Power BI: explorador do modelo, editor DAX, visual de matriz/cartão e correção linha a linha
+- `js/gq-data.js` — dados da operação da NexusMarket para a trilha de Gestão (SAC, CD, entregas, embalagem)
+- `js/gq-charts.js` — gráficos e cálculos da qualidade em SVG, calculados na hora: Pareto, carta de controle (I-MR e regras de sinais), histograma, dispersão, Ishikawa, VSM, OEE, Cp/Cpk, matriz GUT/FMEA, DPMO e nível sigma
+- `js/gq-exercises.js` — os 150 casos de Gestão: estudo de caso, múltipla escolha, ordenar, classificar e cálculo com dados reais
+- `js/gq-lessons.js` — as 40 aulas de Gestão (PDCA, 7 ferramentas, MASP, 8D, A3, Lean, CEP, Seis Sigma, FMEA, ISO 9001, Hoshin), com 3 questões de prova por aula
+- `js/gq-ui.js` — tela de prática da Gestão: dados do caso, resposta interativa, correção com explicação
 - `js/quiz-sql.js` — 3 questões de prova para cada uma das 43 aulas de SQL
 - `js/exams.js` — provas de 15 questões que liberam os certificados (mínimo 11 acertos, 70%)
 - `js/profile.js` — perfil público: foto (reduzida para 256 px) ou avatar, bio de até 280 caracteres e até 5 hobbies
@@ -50,6 +55,10 @@ O conteúdo pode ser reaberto pelo botão "Conteúdo" e desligado em Perfil > Pr
 - `js/dashboard.js` — painel de evolução
 - `js/certificate.js` — 13 certificados por trilha, desenhados em canvas, com medalha, símbolo do tema e brasão (PDF, impressão, compartilhamento)
 - `js/ui.js` / `js/app.js` — componentes e orquestração
+
+## Publicando uma atualização
+Antes de cada upload, rode `python build/bump_version.py`. Ele coloca `?v=<data-hora>` nos arquivos js/css do
+`index.html`, e assim os navegadores baixam a versão nova em vez de usar a do cache.
 
 ## Adicionando um novo tema
 1. Em `js/tracks.js`, mude o `status` do tema para `'ativo'` e defina `start` e `total`.

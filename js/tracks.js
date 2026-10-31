@@ -38,6 +38,14 @@
       summary: 'das primeiras medidas a CALCULATE, contexto de filtro, iteradores, inteligência de tempo, RANKX, curva ABC e tabelas virtuais',
     },
     {
+      id: 'gestao', status: 'ativo', icon: 'cycle', start: 'dashboard', kind: 'gestao',
+      nome: 'Gestão da Qualidade', short: 'Gestão', tag: 'Melhoria contínua',
+      color: { a: '#ff9a76', b: '#ff5e3a' },            // coral
+      desc: 'PDCA, Pareto, Ishikawa, Lean, CEP, Seis Sigma e FMEA, com casos práticos e correção automática na operação da NexusMarket.',
+      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'GQBank',
+      summary: 'dos conceitos de qualidade e do PDCA às ferramentas da qualidade, MASP, 8D, Lean, controle estatístico, Seis Sigma, FMEA e ISO 9001',
+    },
+    {
       id: 'python', status: 'em-breve', icon: 'code', nome: 'Python para Dados', short: 'Python', tag: 'Programação',
       color: { a: '#fff59d', b: '#d4c21a' },            // amarelo em outro tom (limão)
       desc: 'pandas, limpeza de dados, análises exploratórias e automação de relatórios.', facts: ['pandas', 'Automação', 'Gráficos'],

@@ -28,11 +28,11 @@ globalThis.initSqlJs = async () => ({ Database });
 globalThis.performance = globalThis.performance || require('perf_hooks').performance;
 const js = (f) => eval(fs.readFileSync(path.join(__dirname, '..', 'js', f), 'utf8'));
 globalThis.UI = globalThis.UI || { esc: (x) => String(x == null ? '' : x).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]) };
-js('seed.js'); js('exercises.js'); js('excel-engine.js'); js('excel-data.js'); js('excel-exercises.js'); js('dax-data.js'); js('dax-engine.js'); js('dax-exercises.js'); js('narrator.js'); js('sql-engine.js'); js('formula-editor.js'); js('dax-lang.js'); js('lessons.js'); js('excel-lessons.js'); js('dax-lessons.js');
+js('seed.js'); js('exercises.js'); js('excel-engine.js'); js('excel-data.js'); js('excel-exercises.js'); js('dax-data.js'); js('dax-engine.js'); js('dax-exercises.js'); js('gq-data.js'); js('gq-charts.js'); js('gq-exercises.js'); js('narrator.js'); js('sql-engine.js'); js('formula-editor.js'); js('dax-lang.js'); js('lessons.js'); js('excel-lessons.js'); js('dax-lessons.js'); js('gq-lessons.js');
 (async () => {
   await SQLEngine.init();
   const seen = new Map();
-  SQLBank.EXERCISES.concat(ExcelBank.EXERCISES, PBIBank.EXERCISES).forEach((ex) => Lessons.narration(ex).forEach((clip) => { if (!seen.has(clip.id)) seen.set(clip.id, clip); }));
+  SQLBank.EXERCISES.concat(ExcelBank.EXERCISES, PBIBank.EXERCISES, GQBank.EXERCISES).forEach((ex) => Lessons.narration(ex).forEach((clip) => { if (!seen.has(clip.id)) seen.set(clip.id, clip); }));
   const out = [...seen.values()];
   fs.writeFileSync(path.join(__dirname, 'narration.json'), JSON.stringify(out, null, 1));
   console.log(out.length + ' clipes, ' + out.reduce((s, c) => s + c.chunks.length, 0) + ' trechos de fala → build/narration.json');

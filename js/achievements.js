@@ -44,6 +44,13 @@
         'Cria rankings, Top N, acumulados e médias móveis.', 'Analisa clientes, curva ABC e tabelas virtuais.', 'Concluiu o nível Avançado.'],
       { key: 'trainee', nome: 'Assistente de BI', desc: 'Primeiros passos no modelo da NexusMarket.' },
       'Lenda do Power BI', 'Concluiu os 150 exercícios da trilha de Power BI.'),
+    gestao: career(
+      ['Analista de Indicadores', 'Facilitador de Melhoria', 'Analista da Qualidade Júnior', 'Solucionador de Problemas', 'Praticante Lean', 'Analista da Qualidade Pleno', 'Especialista em Controle Estatístico', 'Especialista Seis Sigma', 'Gestor da Qualidade'],
+      ['Domina conceitos de qualidade, processos, indicadores e PDCA.', 'Aplica brainstorming, Pareto e Ishikawa.', 'Concluiu o nível Iniciante com as 7 ferramentas da qualidade.',
+        'Resolve problemas com MASP, 8D e A3.', 'Elimina desperdícios com VSM, takt, kaizen e poka-yoke.', 'Concluiu o nível Intermediário com OEE e controle estatístico.',
+        'Conduz DMAIC e mede o nível sigma e a capabilidade.', 'Antecipa riscos com FMEA, CTQ e MSA.', 'Concluiu o nível Avançado.'],
+      { key: 'trainee', nome: 'Assistente da Qualidade', desc: 'Primeiros passos na operação da NexusMarket.' },
+      'Lenda da Melhoria Contínua', 'Concluiu os 150 exercícios da trilha de Gestão da Qualidade.'),
   };
   function C() { return CAREERS[global.Tracks.activeId()] || CAREERS.sql; }
 
@@ -90,6 +97,14 @@
       { key: 'first-time', nome: 'Viajante do Tempo', desc: 'Resolva um exercício de inteligência de tempo.', icon: 'clock', test: has(['YTD', 'QTD', 'SAMEPERIODLASTYEAR', 'DATEADD', 'PREVIOUSMONTH', 'PARALLELPERIOD', 'YOY', 'MOM', 'DATESINPERIOD']) },
       { key: 'first-rank', nome: 'Pódio', desc: 'Crie um ranking com RANKX ou TOPN.', icon: 'trophy', test: has(['RANKX', 'TOPN']) },
       { key: 'pbi-master', nome: 'Power BI Master', desc: 'Conclua os 150 exercícios.', icon: 'trophy', test: function (st) { return solvedList(st).length >= 150; } },
+    ],
+    gestao: [
+      { key: 'first-case', nome: 'Primeiro Caso Resolvido', desc: 'Resolva seu primeiro caso de gestão.', icon: 'play', test: function (st) { return solvedList(st).length >= 1; } },
+      { key: 'first-pareto', nome: 'Regra 80/20', desc: 'Resolva um exercício de Pareto.', icon: 'bars', test: has(['PARETO']) },
+      { key: 'first-root', nome: 'Caçador de Causas', desc: 'Resolva um exercício de Ishikawa ou 5 Porquês.', icon: 'search', test: has(['ISHIKAWA', 'PORQUÊS']) },
+      { key: 'first-lean', nome: 'Pensamento Lean', desc: 'Resolva um exercício de desperdícios, VSM ou kaizen.', icon: 'flame', test: has(['DESPERDÍCIOS', 'VSM', 'KAIZEN', 'TAKT']) },
+      { key: 'first-sigma', nome: 'Faixa Preta', desc: 'Resolva um exercício de DMAIC, sigma ou capabilidade.', icon: 'target', test: has(['DMAIC', 'SIGMA', 'CAPABILIDADE']) },
+      { key: 'gq-master', nome: 'Mestre da Qualidade', desc: 'Conclua os 150 exercícios.', icon: 'trophy', test: function (st) { return solvedList(st).length >= 150; } },
     ],
   };
   function achievements() { return (SPECIFIC[global.Tracks.activeId()] || SPECIFIC.sql).slice(0, 1).concat(COMMON, (SPECIFIC[global.Tracks.activeId()] || SPECIFIC.sql).slice(1)); }

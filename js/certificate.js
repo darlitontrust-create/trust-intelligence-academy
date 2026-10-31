@@ -165,10 +165,10 @@
     c.fillText(s, x, y);
     c.restore();
   }
-  function fitFont(c, s, maxW, size, family, weight) {
+  function fitFont(c, s, maxW, size, family, weight, min) {
     let f = size;
     c.save();
-    while (f > 18) { c.font = (weight || '') + ' ' + f + 'px ' + family; if (c.measureText(s).width <= maxW) break; f -= 2; }
+    while (f > (min || 18)) { c.font = (weight || '') + ' ' + f + 'px ' + family; if (c.measureText(s).width <= maxW) break; f -= f > 20 ? 2 : 1; }
     c.restore();
     return (weight || '') + ' ' + f + 'px ' + family;
   }
@@ -281,7 +281,7 @@
       c.restore();
     });
   }
-  function ribbon(c, cx, cy, w, h, fill, label, font, textFill) {
+  function ribbon(c, cx, cy, w, h, fill, label, font, textFill, spacing) {
     c.save();
     const tail = h * 0.9;
     // pontas
@@ -298,7 +298,7 @@
     c.lineTo(cx + w / 2, cy + h / 2); c.quadraticCurveTo(cx, cy + h / 2 + h * 0.35, cx - w / 2, cy + h / 2); c.closePath();
     c.fillStyle = fill; c.shadowColor = 'rgba(0,0,0,0.5)'; c.shadowBlur = 12; c.fill();
     c.restore();
-    txt(c, label, cx, cy + h * 0.22, font, textFill, 'center', 3);
+    txt(c, label, cx, cy + h * 0.22, font, textFill, 'center', spacing == null ? 3 : spacing);
   }
   function dbIcon(c, cx, cy, s, stroke) {
     c.save(); c.strokeStyle = stroke; c.lineWidth = s * 0.08; c.lineCap = 'round';
@@ -328,6 +328,16 @@
         const bw = s * 0.15, bh = s * 0.78 * k, x = cx - s * 0.36 + i * s * 0.2;
         rr(c, x, cy + s * 0.39 - bh, bw, bh, s * 0.04); c.globalAlpha = 0.55 + i * 0.15; c.fill();
       });
+    } else if (kind === 'gestao') {
+      const R = s * 0.36;
+      for (let i = 0; i < 4; i++) {
+        const a0 = -Math.PI / 2 + i * Math.PI / 2 + 0.2, a1 = a0 + Math.PI / 2 - 0.4;
+        c.globalAlpha = 0.55 + i * 0.15; c.beginPath(); c.arc(cx, cy, R, a0, a1); c.stroke();
+        const hx = cx + R * Math.cos(a1), hy = cy + R * Math.sin(a1), ta = a1 + Math.PI / 2, hs = s * 0.11;
+        c.beginPath(); c.moveTo(hx + Math.cos(ta) * hs, hy + Math.sin(ta) * hs);
+        c.lineTo(hx + Math.cos(ta + 2.5) * hs, hy + Math.sin(ta + 2.5) * hs); c.lineTo(hx + Math.cos(ta - 2.5) * hs, hy + Math.sin(ta - 2.5) * hs); c.closePath(); c.fill();
+      }
+      c.globalAlpha = 1; c.beginPath(); c.arc(cx, cy, s * 0.09, 0, Math.PI * 2); c.fill();
     } else if (kind === 'python') {
       c.font = '700 ' + Math.round(s * 0.7) + 'px ' + F.mono; c.textAlign = 'center'; c.textBaseline = 'middle';
       c.fillText('{ }', cx, cy + s * 0.02);
@@ -484,14 +494,15 @@
       c.save(); c.beginPath(); c.arc(cx + cw * k, cyb + chh * 0.1, s * 0.016, 0, Math.PI * 2); c.fillStyle = ['#4d7cff', '#ff5ccf', '#2fd8f0'][i]; c.fill(); c.restore();
     });
     const fname = G.FINAL.nome.toUpperCase();
-    ribbon(c, cx, cy + s * 0.6, s * 1.05, s * 0.17, gold, fname, fitFont(c, fname, s * 0.9, Math.round(s * 0.07), F.sans, '800'), '#2a1606');
+    const fsp = fname.length > 18 ? 1 : 3;
+    ribbon(c, cx, cy + s * 0.6, s * 1.05, s * 0.17, gold, fname, fitFont(c, fname, s * 0.84 - fsp * fname.length, Math.round(s * 0.07), F.sans, '800', 9), '#2a1606', fsp);
   }
 
   /* ------------------------------ Certificados ------------------------------ */
   function stat(c, x, y, w, h, label, value, accent) {
     glassPanel(c, x, y, w, h, 18);
     txt(c, label.toUpperCase(), x + w / 2, y + 36, '600 14px ' + F.mono, 'rgba(195,200,222,0.75)', 'center', 2);
-    txt(c, value, x + w / 2, y + h - 24, fitFont(c, value, w - 30, 28, F.sans, '650'), accent || '#ffffff', 'center');
+    txt(c, value, x + w / 2, y + h - 24, fitFont(c, value, w - 24, 28, F.sans, '650', 12), accent || '#ffffff', 'center');
   }
   function chips(c, list, cx, y, maxW, tone) {
     c.save(); c.font = '500 16px ' + F.mono;
