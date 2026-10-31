@@ -1,0 +1,68 @@
+/* =====================================================================
+   codemirror.css — Estrutura base do CodeMirror 5 + tema "nexus"
+   (o CSS da biblioteca precisa ser local; só o JS vem do CDN)
+   ===================================================================== */
+.CodeMirror { position: relative; overflow: hidden; height: 100%; font-family: var(--f-mono); font-size: 13.5px; line-height: 1.65; direction: ltr; }
+.CodeMirror-lines { padding: 10px 0; cursor: text; min-height: 1px; }
+.CodeMirror pre.CodeMirror-line, .CodeMirror pre.CodeMirror-line-like {
+  padding: 0 12px; border-radius: 0; border-width: 0; background: transparent; font-family: inherit; font-size: inherit; margin: 0;
+  white-space: pre; word-wrap: normal; line-height: inherit; color: inherit; z-index: 2; position: relative; overflow: visible;
+  -webkit-tap-highlight-color: transparent; font-variant-ligatures: contextual;
+}
+.CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler { background: transparent; }
+.CodeMirror-gutters { position: absolute; left: 0; top: 0; min-height: 100%; z-index: 3; white-space: nowrap; }
+.CodeMirror-gutter { white-space: normal; height: 100%; display: inline-block; vertical-align: top; margin-bottom: -50px; }
+.CodeMirror-gutter-wrapper { position: absolute; z-index: 4; background: none !important; border: none !important; }
+.CodeMirror-gutter-background { position: absolute; top: 0; bottom: 0; z-index: 4; }
+.CodeMirror-gutter-elt { position: absolute; cursor: default; z-index: 4; }
+.CodeMirror-linenumber { padding: 0 10px 0 12px; min-width: 22px; text-align: right; white-space: nowrap; }
+.CodeMirror-cursor { position: absolute; pointer-events: none; border-left: 2px solid; border-right: none; width: 0; }
+.CodeMirror-scroll { overflow: scroll !important; margin-bottom: -50px; margin-right: -50px; padding-bottom: 50px; height: 100%; outline: none; position: relative; z-index: 0; }
+.CodeMirror-sizer { position: relative; border-right: 50px solid transparent; }
+.CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler { position: absolute; z-index: 6; display: none; outline: none; }
+.CodeMirror-vscrollbar { right: 0; top: 0; overflow-x: hidden; overflow-y: scroll; }
+.CodeMirror-hscrollbar { bottom: 0; left: 0; overflow-y: hidden; overflow-x: scroll; }
+.CodeMirror-scrollbar-filler { right: 0; bottom: 0; }
+.CodeMirror-gutter-filler { left: 0; bottom: 0; }
+.CodeMirror-measure { position: absolute; width: 100%; height: 0; overflow: hidden; visibility: hidden; }
+.CodeMirror-measure pre { position: static; }
+div.CodeMirror-cursors { visibility: hidden; position: relative; z-index: 3; }
+div.CodeMirror-dragcursors, .CodeMirror-focused div.CodeMirror-cursors { visibility: visible; }
+.CodeMirror-code { outline: none; }
+.CodeMirror-widget {}
+.CodeMirror-rtl pre { direction: rtl; }
+.cm-tab { display: inline-block; text-decoration: inherit; }
+.CodeMirror-selectedtext {}
+span.CodeMirror-selectedtext { background: none; }
+.cm-force-border { padding-right: .1px; }
+@media print { .CodeMirror div.CodeMirror-cursors { visibility: hidden; } }
+
+/* ---------------------------- Tema nexus ---------------------------- */
+.cm-s-nexus.CodeMirror { background: transparent; color: var(--ink); }
+.cm-s-nexus .CodeMirror-gutters { background: rgba(255,255,255,.015); border-right: 1px solid var(--line); }
+.cm-s-nexus .CodeMirror-linenumber { color: var(--ink-4); }
+.cm-s-nexus .CodeMirror-cursor { border-left-color: var(--cyan); }
+.cm-s-nexus .CodeMirror-selected { background: rgba(77,124,255,.22); }
+.cm-s-nexus.CodeMirror-focused .CodeMirror-selected { background: rgba(77,124,255,.32); }
+.cm-s-nexus .CodeMirror-activeline-background { background: rgba(120,140,255,.06); }
+.cm-s-nexus .CodeMirror-activeline-gutter .CodeMirror-linenumber { color: var(--ink-2); }
+.cm-s-nexus .cm-keyword { color: #8fa8ff; font-weight: 600; }
+.cm-s-nexus .cm-builtin, .cm-s-nexus .cm-type { color: var(--violet); }
+.cm-s-nexus .cm-atom { color: #f0a6ff; }
+.cm-s-nexus .cm-number { color: #f5c86b; }
+.cm-s-nexus .cm-string, .cm-s-nexus .cm-string-2 { color: #6ee7b7; }
+.cm-s-nexus .cm-comment { color: var(--ink-4); font-style: italic; }
+.cm-s-nexus .cm-operator { color: var(--cyan); }
+.cm-s-nexus .cm-variable-2, .cm-s-nexus .cm-variable-3 { color: #c4d0ff; }
+.cm-s-nexus .cm-bracket { color: var(--ink-3); }
+.cm-s-nexus .CodeMirror-matchingbracket { color: var(--cyan) !important; outline: 1px solid rgba(47,216,240,.45); border-radius: 2px; }
+.cm-s-nexus .cm-err-line { background: rgba(248,113,113,.12); box-shadow: inset 2px 0 0 var(--err); }
+
+/* ------------------------- Autocomplete (show-hint) ------------------------- */
+.CodeMirror-hints {
+  position: absolute; z-index: 60; overflow: hidden; list-style: none; margin: 0; padding: 4px;
+  background: #121624; border: 1px solid var(--line-2); border-radius: 10px; box-shadow: 0 16px 40px -12px rgba(0,0,0,.7);
+  font-family: var(--f-mono); font-size: 12.5px; max-height: 16em; overflow-y: auto; color: var(--ink-2);
+}
+.CodeMirror-hint { margin: 0; padding: 4px 10px; border-radius: 6px; white-space: pre; cursor: pointer; }
+li.CodeMirror-hint-active { background: rgba(77,124,255,.22); color: #fff; }
