@@ -54,6 +54,7 @@ O conteúdo pode ser reaberto pelo botão "Conteúdo" e desligado em Perfil > Pr
 - `js/achievements.js` — XP, promoções, conquistas e ranking
 - `js/dashboard.js` — painel de evolução
 - `js/certificate.js` — 13 certificados por trilha, desenhados em canvas, com medalha, símbolo do tema e brasão (PDF, impressão, compartilhamento)
+- `js/overview.js` — Visão geral: consolida todas as trilhas em Painel, Trilha, Conquistas, Ranking e Certificados, com o seletor de tema no topo dessas páginas
 - `js/ui.js` / `js/app.js` — componentes e orquestração
 
 ## Publicando uma atualização

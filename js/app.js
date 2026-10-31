@@ -216,6 +216,7 @@
   /** Atualiza barra global, chip de XP, avatar e card lateral. */
   function refreshChrome() {
     const st = S.state; if (!st || !document.getElementById('gp-bar')) return;
+    if (global.Overview.isOverview(st)) return overviewChrome(st);
     const solved = G.solvedList(st).length;
     document.getElementById('gp-bar').style.width = (solved / 150 * 100) + '%';
     document.getElementById('gp-label').innerHTML = '<b>' + solved + '</b>/150 exercícios<span class="hide-sm"> · ' + Math.round(solved / 1.5) + '% da trilha</span>';
@@ -229,6 +230,19 @@
     document.getElementById('side-card').innerHTML =
       '<span class="eyebrow">Cargo atual</span><b class="side-role">' + esc(role.nome) + '</b>' +
       (next ? '<div class="mini-bar"><i style="width:' + next.pct * 100 + '%"></i></div><span class="muted sm">Próximo: ' + esc(next.role.nome) + '</span>' : '<span class="muted sm">Topo da carreira alcançado</span>');
+  }
+
+  /** Topo, XP e card lateral somando todas as trilhas. */
+  function overviewChrome(st) {
+    const o = global.Overview.chrome(st), T = o.T;
+    document.getElementById('gp-bar').style.width = (T.total ? T.solved / T.total * 100 : 0) + '%';
+    document.getElementById('gp-label').innerHTML = '<b>' + T.solved + '</b>/' + T.total + ' exercícios<span class="hide-sm"> · ' + Math.round(T.total ? T.solved / T.total * 100 : 0) + '% da academia</span>';
+    document.getElementById('xp-chip').innerHTML = icon('sparkle') + '<b>' + fmt(T.xp) + '</b> XP';
+    document.getElementById('avatar').innerHTML = global.Profile.avatarHtml(st.profile);
+    document.getElementById('track-switch').innerHTML = icon('grid') + '<span><small>Visão geral</small><b>Todas as trilhas</b></span>' + icon('chevR');
+    document.getElementById('side-card').innerHTML = '<span class="eyebrow">Cargos atuais</span><ul class="side-roles">' + o.sum.map(function (s) {
+      return '<li style="--ta:' + s.t.color.a + '"><i></i><span><small>' + esc(s.t.short) + '</small><b>' + esc(s.role.nome) + '</b></span></li>';
+    }).join('') + '</ul>';
   }
 
   /* ------------------------------- Rotas ------------------------------- */
@@ -248,16 +262,31 @@
     const navId = h.indexOf('ex-') === 0 ? 'trilha' : h;
     document.querySelectorAll('[data-nav]').forEach(function (a) { a.classList.toggle('on', a.dataset.nav === navId); });
     view.classList.remove('enter'); void view.offsetWidth; view.classList.add('enter');
+    const O = global.Overview;
+    const page = O.PAGES.indexOf(h) >= 0 ? h : (h === 'temas' || h === 'perfil' || h.indexOf('ex-') === 0) ? null : 'dashboard';
+    if (h.indexOf('ex-') === 0) {
+      // abrir um exercício seleciona o tema dele
+      const tid = O.trackOfExercise(h.slice(3));
+      if (tid && (tid !== S.state.currentTrack || O.isOverview(S.state))) O.focus(tid);
+    }
     if (h === 'temas') renderHub(view);
     else if (h.indexOf('ex-') === 0) renderExercise(view, h.slice(3));
-    else if (h === 'trilha') renderTrail(view);
-    else if (h === 'conquistas') renderAchievements(view);
-    else if (h === 'ranking') renderRanking(view);
-    else if (h === 'certificado') global.Certificate.render(view, S.state);
     else if (h === 'perfil') renderProfile(view);
+    else if (O.isOverview(S.state)) O.render(view, page, rerender);
+    else if (page === 'trilha') renderTrail(view);
+    else if (page === 'conquistas') renderAchievements(view);
+    else if (page === 'ranking') renderRanking(view);
+    else if (page === 'certificado') global.Certificate.render(view, S.state);
     else global.Dashboard.render(view, S.state);
+    if (page) { view.insertAdjacentHTML('afterbegin', O.scopeBar(S.state, page)); O.bindScope(view, page, rerender); }
     view.scrollTop = 0; global.scrollTo(0, 0);
     refreshChrome();
+  }
+  /** Redesenha a página atual mantendo a rolagem (troca de escopo). */
+  function rerender() {
+    const y = global.scrollY;
+    route();
+    global.scrollTo(0, Math.min(y, 120));
   }
 
   /* ---------------------------- Desbloqueio ---------------------------- */
@@ -310,7 +339,7 @@
         '</article>';
       }).join('') + '</section>';
     view.querySelectorAll('[data-track]').forEach(function (b) {
-      b.onclick = function () { S.setTrack(b.dataset.track); location.hash = global.Tracks.get(b.dataset.track).start; };
+      b.onclick = function () { global.Overview.focus(b.dataset.track); location.hash = global.Tracks.get(b.dataset.track).start; };
     });
   }
 

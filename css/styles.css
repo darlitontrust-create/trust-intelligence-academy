@@ -1177,3 +1177,84 @@ a, button, label, .tile, .exam-opt, .chip, .av-opt { touch-action: manipulation;
   .gq-chip { min-height: 38px; padding: 8px 14px; font-size: 13.5px; }
   .gq-calc input { font-size: 20px; }
 }
+
+/* ============================ Visão geral (todas as trilhas) ============================ */
+.scope-bar { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 2px 2px 4px; margin: -4px 0 2px; -webkit-overflow-scrolling: touch; }
+.scope-bar::-webkit-scrollbar { display: none; }
+.scope-b { all: unset; box-sizing: border-box; flex: none; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line-2); background: rgba(255,255,255,.03); color: var(--ink-2); font-size: 13.5px; font-weight: 600; cursor: pointer; transition: border-color .15s, background .15s, color .15s; min-height: 38px; }
+.scope-b .ic { width: 16px; height: 16px; color: var(--ta, #8fa8ff); }
+.scope-b small { font: 600 11.5px var(--f-mono); color: var(--ink-4); }
+.scope-b:hover { color: var(--ink); border-color: color-mix(in srgb, var(--ta, #8fa8ff) 55%, transparent); }
+.scope-b:focus-visible { outline: 2px solid var(--ta, #8fa8ff); outline-offset: 2px; }
+.scope-b.on { color: #0a0d18; background: linear-gradient(135deg, var(--ta, #8fa8ff), var(--tb, #a46bff)); border-color: transparent; box-shadow: 0 0 22px -8px var(--ta, #8fa8ff); }
+.scope-b.on .ic, .scope-b.on small { color: #0a0d18; }
+.ov-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: linear-gradient(135deg, var(--ta), var(--tb)); margin-right: 6px; flex: none; }
+.giant-bar.ov-stack { display: flex; overflow: hidden; }
+.giant-bar.ov-stack > i { position: relative; display: block; height: 100%; flex: none; background: linear-gradient(90deg, var(--ta), var(--tb)); border-radius: 0; box-shadow: none; }
+.ov-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 13px; color: var(--ink-3); }
+.ov-legend span { display: inline-flex; align-items: center; } .ov-legend b { color: var(--ink); margin: 0 1px 0 4px; }
+.ov-tracks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.ov-track { padding: 18px 20px; display: grid; gap: 12px; border-color: color-mix(in srgb, var(--ta) 30%, transparent); background: linear-gradient(135deg, color-mix(in srgb, var(--ta) 9%, transparent), var(--glass) 60%); }
+.ov-track header { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.ov-track header b { display: block; font-size: 17px; } .ov-track header small { color: var(--ink-3); font-size: 13px; }
+.ov-track .hub-ic, .ov-trail .hub-ic, .ov-ach .hub-ic, .ov-cert .hub-ic, .ov-medal-card .hub-ic { color: #0a0d18; background: linear-gradient(135deg, var(--ta), var(--tb)); border-color: transparent; }
+.hub-ic.sm { width: 30px; height: 30px; border-radius: 9px; display: inline-grid; vertical-align: middle; margin-right: 10px; } .hub-ic.sm .ic { width: 16px; height: 16px; }
+.ov-pct { font: 700 22px var(--f-mono); color: var(--ta); }
+.ov-track .mini-bar i, .ov-trail .mini-bar i, .ov-medal-card .mini-bar i, .ov-cert .mini-bar i, .ov-xp .mini-bar i { background: linear-gradient(90deg, var(--ta), var(--tb)); }
+.ov-mini { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.ov-mini li { padding: 8px 10px; border-radius: 10px; background: rgba(255,255,255,.03); border: 1px solid var(--line); display: grid; gap: 2px; min-width: 0; }
+.ov-mini small { font-size: 10.5px; color: var(--ink-4); text-transform: uppercase; letter-spacing: .05em; } .ov-mini b { font: 650 15px var(--f-mono); white-space: nowrap; }
+.ov-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.ov-track p, .ov-trail p, .ov-cert p { margin: 0; }
+.md { display: inline-block; width: 14px; height: 15px; clip-path: polygon(50% 0, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%); background: rgba(255,255,255,.12); vertical-align: middle; }
+.md.got.m-bronze { background: radial-gradient(circle at 35% 30%, #ffd2ae, #cd7f45 65%, #6e3a17); }
+.md.got.m-prata { background: radial-gradient(circle at 35% 30%, #fff, #b9c0d4 65%, #596079); }
+.md.got.m-ouro { background: radial-gradient(circle at 35% 30%, #fff3c4, #f5c040 65%, #94600f); }
+.ov-medals { display: inline-flex; gap: 4px; align-items: center; } .ov-medals.lg .md { width: 22px; height: 24px; }
+.ov-xp { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ov-xp li { display: grid; grid-template-columns: 96px minmax(0, 1fr) 64px; gap: 10px; align-items: center; font-size: 13.5px; }
+.ov-xp li span { display: inline-flex; align-items: center; color: var(--ink-2); } .ov-xp li b { font-family: var(--f-mono); text-align: right; }
+.ov-xp .mini-bar { height: 10px; }
+.ov-sub { margin: 18px 0 8px; }
+.ov-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 1100px) { .ov-grid { grid-template-columns: minmax(0, 1fr); } }
+.ov-feed { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ov-feed li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; font-size: 13.5px; }
+.ov-feed li span { display: grid; min-width: 0; } .ov-feed li b { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ov-feed small { color: var(--ink-4); font-size: 12px; } .ov-feed em { font-style: normal; font: 600 12.5px var(--f-mono); color: var(--ta); }
+.ov-trails, .ov-certs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.ov-trail, .ov-cert { display: grid; gap: 12px; align-content: start; border-color: color-mix(in srgb, var(--ta) 26%, transparent); }
+.ov-trail h2, .ov-ach h2, .ov-cert h2 { display: flex; align-items: center; }
+.ov-levels { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ov-levels li { display: grid; grid-template-columns: 26px minmax(0, 1fr) 48px 18px; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.025); }
+.ov-levels .hl-n { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font: 700 12px var(--f-mono); color: #0a0d18; background: linear-gradient(135deg, var(--ta), var(--tb)); }
+.ov-lv { display: grid; gap: 6px; } .ov-lv b { font-size: 14px; } .ov-levels .hl-c { font: 600 12.5px var(--f-mono); color: var(--ink-3); text-align: right; }
+.ov-medal-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.ov-medal-card { padding: 16px; border-radius: 18px; display: grid; justify-items: center; gap: 8px; text-align: center; border-color: color-mix(in srgb, var(--ta) 26%, transparent); }
+.ov-medal-card .hub-ic.sm { margin: 0; } .ov-medal-card .mini-bar { width: 100%; }
+.ov-ach { display: grid; gap: 12px; }
+.ach-grid.compact { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.ov-pos { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; }
+.ov-pos li { display: grid; grid-template-columns: 98px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.025); font-size: 13.5px; }
+.ov-pos li span { display: inline-flex; align-items: center; font-weight: 600; } .ov-pos small { color: var(--ink-4); }
+.ov-pos b { font: 700 16px var(--f-mono); color: var(--ta); } .ov-pos b em { font-style: normal; font-size: 12px; color: var(--ink-4); font-weight: 500; }
+.ov-cert-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.ov-cert-list a { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--line); color: var(--ink); text-decoration: none; background: rgba(255,255,255,.025); }
+.ov-cert-list a:hover { border-color: color-mix(in srgb, var(--ta) 50%, transparent); }
+.ov-cert-list a > .ic:first-child { color: var(--ta); } .ov-cert-list span { display: grid; min-width: 0; }
+.ov-cert-list b { font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ov-cert-list small { color: var(--ink-4); font-size: 12px; }
+.side-roles { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
+.side-roles li { display: grid; grid-template-columns: 8px minmax(0, 1fr); gap: 9px; align-items: center; }
+.side-roles i { width: 8px; height: 8px; border-radius: 50%; background: var(--ta); box-shadow: 0 0 8px var(--ta); }
+.side-roles span { display: grid; min-width: 0; } .side-roles small { font-size: 10.5px; color: var(--ink-4); text-transform: uppercase; letter-spacing: .06em; }
+.side-roles b { font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 1180px) { .ov-medal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .ov-tracks, .ov-trails, .ov-certs { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 640px) {
+  .scope-bar { margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; }
+  .ov-mini { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ov-pos li { grid-template-columns: 84px minmax(0, 1fr) auto auto; }
+  .ov-xp li { grid-template-columns: 84px minmax(0, 1fr) 56px; }
+}
+.ov-ach .ach.on .ach-ic { background: linear-gradient(135deg, var(--ta), var(--tb)); color: #0a0d18; box-shadow: 0 0 18px -6px var(--ta); }
+.ov-ach { border-color: color-mix(in srgb, var(--ta) 22%, transparent); }

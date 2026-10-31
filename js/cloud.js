@@ -215,8 +215,8 @@
     if (!force && boardAt[track] && Date.now() - boardAt[track] < 20000) return boards[track];
     boardAt[track] = Date.now();
     try {
-      const snap = await withTimeout(db.collection('leaderboard').orderBy('xp.' + track, 'desc').limit(50).get(), 10000);
-      boards[track] = snap.docs.map(function (d) { const v = d.data(); return { uid: d.id, nome: v.nome || 'Aluno', xp: (v.xp && v.xp[track]) || 0 }; })
+      const snap = await withTimeout(db.collection('leaderboard').orderBy(track === '__all' ? 'total' : 'xp.' + track, 'desc').limit(50).get(), 10000);
+      boards[track] = snap.docs.map(function (d) { const v = d.data(); return { uid: d.id, nome: v.nome || 'Aluno', xp: track === '__all' ? (v.total || 0) : ((v.xp && v.xp[track]) || 0) }; })
         .filter(function (r) { return r.xp > 0 || r.uid === uid; });
       return boards[track];
     } catch (e) { return boards[track] || null; }
