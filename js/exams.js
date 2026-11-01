@@ -15,6 +15,12 @@
   const N = 15, PASS = 11;
   const LETTERS = ['A', 'B', 'C', 'D'];
 
+  /** A questão envolve conta? (vários números no enunciado ou alternativas numéricas) */
+  function needsCalc(q) {
+    const nums = (String(q.q).match(/\d+(?:[.,]\d+)*/g) || []).length;
+    const numericOpts = q.opts.filter(function (o) { const t = String(o.t); return /\d/.test(t) && t.replace(/[^\d]/g, '').length >= t.replace(/\s/g, '').length * 0.4; }).length;
+    return nums >= 2 || numericOpts >= 3;
+  }
   function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 
   function pack() { return global.Lessons.PACKS[global.Tracks.activeId()]; }
@@ -53,6 +59,7 @@
   /* --------------------------------- Tela --------------------------------- */
   let overlay = null, keyHandler = null;
   function close(refresh) {
+    if (global.Calculator) global.Calculator.close();
     if (keyHandler) document.removeEventListener('keydown', keyHandler);
     keyHandler = null;
     if (overlay) { overlay.classList.add('out'); const o = overlay; setTimeout(function () { o.remove(); }, 220); }
@@ -122,7 +129,7 @@
       const hits = qs.filter(function (x) { return x.answer != null && x.answer === x.correct; }).length;
       overlay.innerHTML = shell(cert,
         '<div class="exam-body">' +
-          '<div class="exam-prog"><span>Questão <b>' + (i + 1) + '</b> de ' + N + '</span><span class="muted sm">' + hits + ' acerto(s)</span></div>' + dots() +
+          '<div class="exam-prog"><span>Questão <b>' + (i + 1) + '</b> de ' + N + '</span>' + (needsCalc(q) && global.Calculator ? '<button class="btn btn-ghost sm exam-calc" data-calc>' + icon('grid') + 'Calculadora</button>' : '') + '<span class="muted sm">' + hits + ' acerto(s)</span></div>' + dots() +
           '<span class="tag tag-topic">' + icon('book') + esc(q.lesson) + '</span>' +
           '<h2 class="exam-q">' + esc(q.q) + '</h2>' +
           '<div class="exam-opts" role="group">' + q.opts.map(function (o, k) {
@@ -138,6 +145,8 @@
       bindClose(function () { return !done; });
       overlay.querySelectorAll('[data-o]').forEach(function (b) { b.onclick = function () { pick(+b.dataset.o); }; });
       const cf = overlay.querySelector('[data-confirm]'); if (cf) cf.onclick = confirm;
+      const cb = overlay.querySelector('[data-calc]'); if (cb) cb.onclick = function () { global.Calculator.open({ title: 'Calculadora · questão ' + (i + 1) }); };
+      if (!needsCalc(qs[i]) && global.Calculator) global.Calculator.close();
       const nx = overlay.querySelector('[data-next]');
       if (nx) { nx.onclick = next; nx.focus(); }
       else { const f = overlay.querySelector(qs[i].pick != null ? '[data-o="' + qs[i].pick + '"]' : '[data-o]'); if (f) f.focus(); }
@@ -148,6 +157,7 @@
     function next() { if (qs[i].answer == null) return; if (i < N - 1) { i++; paint(); } else { done = true; finish(st, cert, qs); } }
     keyHandler = function (e) {
       if (!overlay || done) return;
+      if (global.Calculator && global.Calculator.isOpen()) return;   // o teclado é da calculadora
       if (e.key === 'Escape') { overlay.querySelector('[data-x]').click(); return; }
       const k = '1234'.indexOf(e.key) >= 0 ? +e.key - 1 : 'abcd'.indexOf(e.key.toLowerCase());
       if (k >= 0 && e.key.length === 1 && qs[i].answer == null) { e.preventDefault(); pick(k); }

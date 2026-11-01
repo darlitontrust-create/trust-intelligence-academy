@@ -1,5 +1,7 @@
 # Trust Intelligence Academy
 
+Documentação completa da plataforma: https://claude.ai/artifact/A7jAk5ZxZDs4NBD22y4MUi
+
 Academia gamificada de dados, BI e IA. Trilhas disponíveis: **SQL Prático**, **Excel Prático**, **Power BI & DAX**, **Gestão da Qualidade** e **Python para Dados**.
 Em breve: IA para Dados e Estatística Aplicada.
 Cada trilha tem 150 exercícios em 3 níveis, aulas em slides narradas, correção automática, carreira com 10 promoções,

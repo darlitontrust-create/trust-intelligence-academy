@@ -65,70 +65,78 @@
   function mount(host, st, S, onChange) {
     const p = st.profile;
     if (!Array.isArray(p.hobbies)) p.hobbies = [];
-    let saveTimer = null;
-    function persist(msg) { S.saveNow(); if (onChange) onChange(); if (msg) flash(msg); }
-    function flash(msg) { const f = host.querySelector('.pf-saved'); if (!f) return; f.textContent = msg; f.classList.add('on'); clearTimeout(f._t); f._t = setTimeout(function () { f.classList.remove('on'); }, 1600); }
+    // rascunho: as alterações só valem ao clicar em "Salvar alterações"
+    const snap = function () { return { photo: p.photo || '', avatar: p.avatar || '', bio: p.bio || '', hobbies: p.hobbies.slice() }; };
+    let d = snap();
+    const dirty = function () { const o = snap(); return o.photo !== d.photo || o.avatar !== d.avatar || o.bio !== d.bio.trim() || o.hobbies.join('|') !== d.hobbies.join('|'); };
 
     function paint() {
-      const custom = p.hobbies.filter(function (h) { return HOBBIES.indexOf(h) < 0; });
-      const full = p.hobbies.length >= MAX_HOBBIES;
+      const custom = d.hobbies.filter(function (h) { return HOBBIES.indexOf(h) < 0; }).concat(p.hobbies.filter(function (h) { return HOBBIES.indexOf(h) < 0 && d.hobbies.indexOf(h) < 0; }));
+      const full = d.hobbies.length >= MAX_HOBBIES;
+      const prev = { photo: d.photo, avatar: d.avatar, apelido: p.apelido, nome: p.nome, picture: p.picture };
       host.innerHTML =
         '<header class="card-h"><h2>Perfil público</h2><span class="pf-saved" aria-live="polite"></span></header>' +
         '<div class="pf-grid">' +
           '<div class="pf-photo">' +
-            '<div class="pf-avatar">' + avatarHtml(p) + '</div>' +
+            '<div class="pf-avatar">' + avatarHtml(prev) + '</div>' +
             '<div class="pf-photo-actions">' +
               '<label class="btn btn-primary sm">' + icon('camera') + 'Carregar foto<input type="file" accept="image/*" id="pf-file" hidden></label>' +
-              (p.photo || p.avatar ? '<button class="btn btn-quiet sm" id="pf-remove">' + icon('x') + 'Remover</button>' : '') +
+              (d.photo || d.avatar ? '<button class="btn btn-quiet sm" id="pf-remove">' + icon('x') + 'Remover</button>' : '') +
             '</div>' +
-            '<p class="muted sm">A foto é reduzida para 256 px e fica salva só neste navegador.</p>' +
+            '<p class="muted sm">A foto é reduzida para 256 px.</p>' +
           '</div>' +
           '<div class="pf-fields">' +
             '<span class="pf-label">Ou escolha um avatar</span>' +
             '<div class="av-grid" role="radiogroup" aria-label="Avatares">' + AVATARS.map(function (a) {
-              const on = !p.photo && p.avatar === a.id;
+              const on = !d.photo && d.avatar === a.id;
               return '<button class="av-opt' + (on ? ' on' : '') + '" role="radio" aria-checked="' + on + '" data-av="' + a.id + '" aria-label="Avatar ' + a.id + '">' + avatarSvg(a.id) + '</button>';
             }).join('') + '</div>' +
-            '<label class="field"><span class="pf-label">Bio <small class="muted" id="bio-count">' + (p.bio || '').length + '/' + MAX_BIO + '</small></span>' +
-              '<textarea id="pf-bio" rows="3" maxlength="' + MAX_BIO + '" placeholder="Conte em poucas linhas quem você é, o que estuda e seus objetivos com dados.">' + esc(p.bio || '') + '</textarea></label>' +
+            '<label class="field"><span class="pf-label">Bio <small class="muted" id="bio-count">' + d.bio.length + '/' + MAX_BIO + '</small></span>' +
+              '<textarea id="pf-bio" rows="3" maxlength="' + MAX_BIO + '" placeholder="Conte em poucas linhas quem você é, o que estuda e seus objetivos com dados.">' + esc(d.bio) + '</textarea></label>' +
           '</div>' +
         '</div>' +
         '<div class="pf-hobbies">' +
-          '<span class="pf-label">Hobbies <small class="muted">' + p.hobbies.length + '/' + MAX_HOBBIES + (full ? ' · limite atingido' : ' · escolha até 5') + '</small></span>' +
+          '<span class="pf-label">Hobbies <small class="muted">' + d.hobbies.length + '/' + MAX_HOBBIES + (full ? ' · limite atingido' : ' · escolha até 5') + '</small></span>' +
           '<div class="chips" role="group" aria-label="Hobbies">' +
             HOBBIES.concat(custom).map(function (h) {
-              const on = p.hobbies.indexOf(h) >= 0;
+              const on = d.hobbies.indexOf(h) >= 0;
               return '<button class="chip' + (on ? ' on' : '') + '" aria-pressed="' + on + '" data-h="' + esc(h) + '"' + (!on && full ? ' disabled' : '') + '>' + (on ? icon('check') : '') + esc(h) + '</button>';
             }).join('') +
           '</div>' +
           '<form class="pf-add" id="pf-add"><input id="pf-hobby" maxlength="24" placeholder="Outro hobby"' + (full ? ' disabled' : '') + '><button class="btn btn-ghost sm"' + (full ? ' disabled' : '') + '>' + icon('plus') + 'Adicionar</button></form>' +
-        '</div>';
-      bind();
+        '</div>' +
+        '<div class="pf-savebar" id="pf-savebar" hidden><span>' + icon('bulb') + 'Você tem alterações não salvas.</span>' +
+          '<div class="pf-savebar-btns"><button class="btn btn-quiet sm" id="pf-discard">Descartar</button><button class="btn btn-primary sm" id="pf-save">' + icon('check') + 'Salvar alterações</button></div></div>';
+      bind(); refreshBar();
+    }
+    function refreshBar() {
+      const bar = host.querySelector('#pf-savebar'); if (!bar) return;
+      const on = dirty(); bar.hidden = !on; host.classList.toggle('pf-dirty', on);
+    }
+    function flash(msg) { const f = host.querySelector('.pf-saved'); if (!f) return; f.textContent = msg; f.classList.add('on'); clearTimeout(f._t); f._t = setTimeout(function () { f.classList.remove('on'); }, 2200); }
+    function commit(quiet) {
+      p.photo = d.photo; p.avatar = d.avatar; p.bio = d.bio.trim(); p.hobbies = d.hobbies.slice();
+      S.saveNow(); if (onChange) onChange();
+      if (!quiet) { const a = document.activeElement; if (a && a.blur) a.blur(); toast('Perfil salvo.', 'success'); }
+      d = snap(); paint(); if (!quiet) flash('Alterações salvas');
     }
     function bind() {
       host.querySelector('#pf-file').onchange = function (e) {
         const f = e.target.files && e.target.files[0]; if (!f) return;
-        resizeImage(f).then(function (data) { p.photo = data; p.avatar = ''; persist('Foto salva'); paint(); toast('Foto de perfil atualizada.', 'success'); })
-          .catch(function (err) { toast(err.message, 'error'); });
+        resizeImage(f).then(function (data) { d.photo = data; d.avatar = ''; paint(); }).catch(function (err) { toast(err.message, 'error'); });
       };
       const rm = host.querySelector('#pf-remove');
-      if (rm) rm.onclick = function () { p.photo = ''; p.avatar = ''; persist('Removido'); paint(); };
-      host.querySelectorAll('[data-av]').forEach(function (b) {
-        b.onclick = function () { p.avatar = b.dataset.av; p.photo = ''; persist('Avatar salvo'); paint(); };
-      });
+      if (rm) rm.onclick = function () { d.photo = ''; d.avatar = ''; paint(); };
+      host.querySelectorAll('[data-av]').forEach(function (b) { b.onclick = function () { d.avatar = b.dataset.av; d.photo = ''; paint(); }; });
       const bio = host.querySelector('#pf-bio'), cnt = host.querySelector('#bio-count');
-      bio.oninput = function () {
-        cnt.textContent = bio.value.length + '/' + MAX_BIO;
-        clearTimeout(saveTimer); saveTimer = setTimeout(function () { p.bio = bio.value.trim(); persist('Bio salva'); }, 600);
-      };
-      bio.onblur = function () { clearTimeout(saveTimer); if (p.bio !== bio.value.trim()) { p.bio = bio.value.trim(); persist('Bio salva'); } };
+      bio.oninput = function () { d.bio = bio.value; cnt.textContent = bio.value.length + '/' + MAX_BIO; refreshBar(); };
       host.querySelectorAll('[data-h]').forEach(function (b) {
         b.onclick = function () {
-          const h = b.dataset.h, i = p.hobbies.indexOf(h);
-          if (i >= 0) p.hobbies.splice(i, 1);
-          else if (p.hobbies.length >= MAX_HOBBIES) { toast('Você pode escolher até 5 hobbies.', 'warn'); return; }
-          else p.hobbies.push(h);
-          persist('Hobbies salvos'); paint();
+          const h = b.dataset.h, i = d.hobbies.indexOf(h);
+          if (i >= 0) d.hobbies.splice(i, 1);
+          else if (d.hobbies.length >= MAX_HOBBIES) { toast('Você pode escolher até 5 hobbies.', 'warn'); return; }
+          else d.hobbies.push(h);
+          paint();
         };
       });
       host.querySelector('#pf-add').onsubmit = function (e) {
@@ -136,18 +144,21 @@
         const inp = host.querySelector('#pf-hobby');
         const v = inp.value.trim().replace(/\s+/g, ' ');
         if (!v) return;
-        const exists = p.hobbies.some(function (h) { return h.toLowerCase() === v.toLowerCase(); });
-        if (exists) { toast('Esse hobby já está na sua lista.', 'info'); return; }
-        if (p.hobbies.length >= MAX_HOBBIES) { toast('Você pode escolher até 5 hobbies.', 'warn'); return; }
+        if (d.hobbies.some(function (h) { return h.toLowerCase() === v.toLowerCase(); })) { toast('Esse hobby já está na sua lista.', 'info'); return; }
+        if (d.hobbies.length >= MAX_HOBBIES) { toast('Você pode escolher até 5 hobbies.', 'warn'); return; }
         const preset = HOBBIES.find(function (h) { return h.toLowerCase() === v.toLowerCase(); });
-        p.hobbies.push(preset || v.charAt(0).toUpperCase() + v.slice(1));
-        persist('Hobbies salvos'); paint();
+        d.hobbies.push(preset || v.charAt(0).toUpperCase() + v.slice(1));
+        paint();
         const again = host.querySelector('#pf-hobby'); if (again && !again.disabled) again.focus();
       };
+      host.querySelector('#pf-save').onclick = function () { commit(false); };
+      host.querySelector('#pf-discard').onclick = function () { const a = document.activeElement; if (a && a.blur) a.blur(); d = snap(); paint(); flash('Alterações descartadas'); };
     }
     paint();
-    return function () { clearTimeout(saveTimer); const b = host.querySelector('#pf-bio'); if (b && p.bio !== b.value.trim()) { p.bio = b.value.trim(); S.save(); } };
+    // ao sair da página com alterações pendentes, elas são salvas para não se perderem
+    return function () { if (dirty()) { commit(true); toast('Alterações do perfil salvas.', 'info'); } };
   }
+
 
   /** Cartão de perfil para o Painel: foto/avatar, nome, bio e hobbies. */
   function summaryHtml(p) {

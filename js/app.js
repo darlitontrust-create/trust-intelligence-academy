@@ -192,7 +192,7 @@
           '</header>' +
           '<main id="view" class="view" tabindex="-1"></main>' +
         '</div>' +
-        '<nav class="bottom-nav" aria-label="Navegação">' + NAV.filter(function (n) { return ['temas', 'dashboard', 'trilha', 'conquistas', 'certificado'].indexOf(n.id) >= 0; }).map(function (n) { return '<a href="#' + n.id + '" data-nav="' + n.id + '">' + icon(n.ic) + '<span>' + n.label + '</span></a>'; }).join('') + '</nav>' +
+        '<nav class="bottom-nav" aria-label="Navegação">' + NAV.filter(function (n) { return ['temas', 'dashboard', 'trilha', 'conquistas', 'ranking', 'certificado'].indexOf(n.id) >= 0; }).map(function (n) { return '<a href="#' + n.id + '" data-nav="' + n.id + '">' + icon(n.ic) + '<span>' + n.label + '</span></a>'; }).join('') + '</nav>' +
       '</div>' +
       '<div id="print-area"></div>';
     refreshChrome();
