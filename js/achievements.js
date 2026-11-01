@@ -51,6 +51,13 @@
         'Conduz DMAIC e mede o nível sigma e a capabilidade.', 'Antecipa riscos com FMEA, CTQ e MSA.', 'Concluiu o nível Avançado.'],
       { key: 'trainee', nome: 'Assistente da Qualidade', desc: 'Primeiros passos na operação da NexusMarket.' },
       'Lenda da Melhoria Contínua', 'Concluiu os 150 exercícios da trilha de Gestão da Qualidade.'),
+    python: career(
+      ['Programador Iniciante', 'Explorador de Estruturas', 'Desenvolvedor Python Júnior', 'Organizador de Dados', 'Limpador de Dados', 'Analista Python Pleno', 'Analista de Dados com pandas', 'Engenheiro de Análises', 'Cientista de Dados'],
+      ['Domina print, variáveis, operadores e textos.', 'Usa listas, fatias, decisões e laços.', 'Concluiu o nível Iniciante com dicionários e funções.',
+        'Agrupa e ordena dados com compreensões, lambda e Counter.', 'Trata datas, erros e textos sujos.', 'Concluiu o nível Intermediário com statistics, csv e relatórios.',
+        'Filtra, cria colunas e agrega com pandas.', 'Usa groupby, agg, merge e tabelas dinâmicas.', 'Concluiu o nível Avançado.'],
+      { key: 'trainee', nome: 'Estagiário de Dados', desc: 'Primeiras linhas de código na NexusMarket.' },
+      'Lenda do Python', 'Concluiu os 150 exercícios da trilha de Python para Dados.'),
   };
   function C() { return CAREERS[global.Tracks.activeId()] || CAREERS.sql; }
 
@@ -105,6 +112,15 @@
       { key: 'first-lean', nome: 'Pensamento Lean', desc: 'Resolva um exercício de desperdícios, VSM ou kaizen.', icon: 'flame', test: has(['DESPERDÍCIOS', 'VSM', 'KAIZEN', 'TAKT']) },
       { key: 'first-sigma', nome: 'Faixa Preta', desc: 'Resolva um exercício de DMAIC, sigma ou capabilidade.', icon: 'target', test: has(['DMAIC', 'SIGMA', 'CAPABILIDADE']) },
       { key: 'gq-master', nome: 'Mestre da Qualidade', desc: 'Conclua os 150 exercícios.', icon: 'trophy', test: function (st) { return solvedList(st).length >= 150; } },
+    ],
+    python: [
+      { key: 'first-code', nome: 'Hello, World!', desc: 'Resolva seu primeiro exercício de Python.', icon: 'play', test: function (st) { return solvedList(st).length >= 1; } },
+      { key: 'first-loop', nome: 'Em Loop', desc: 'Resolva um exercício com for ou while.', icon: 'refresh', test: has(['FOR', 'WHILE', 'ACUMULADORES']) },
+      { key: 'first-def', nome: 'Função Própria', desc: 'Crie sua primeira função com def.', icon: 'code', test: has(['FUNÇÕES']) },
+      { key: 'first-comp', nome: 'Uma Linha Só', desc: 'Resolva um exercício de compreensão de lista.', icon: 'flame', test: has(['COMPREENSÃO']) },
+      { key: 'first-pandas', nome: 'Panda Domado', desc: 'Resolva seu primeiro exercício com pandas.', icon: 'table', test: function (st) { return solvedList(st).some(function (e) { return e.level === 3; }); } },
+      { key: 'first-groupby', nome: 'Agrupador', desc: 'Use groupby ou pivot_table.', icon: 'bars', test: has(['GROUPBY', 'AGG', 'PIVOT']) },
+      { key: 'py-master', nome: 'Pythonista', desc: 'Conclua os 150 exercícios.', icon: 'trophy', test: function (st) { return solvedList(st).length >= 150; } },
     ],
   };
   function achievements() { return (SPECIFIC[global.Tracks.activeId()] || SPECIFIC.sql).slice(0, 1).concat(COMMON, (SPECIFIC[global.Tracks.activeId()] || SPECIFIC.sql).slice(1)); }

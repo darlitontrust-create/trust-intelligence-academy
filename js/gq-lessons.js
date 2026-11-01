@@ -473,7 +473,17 @@
     if (!global.Lessons || !global.Lessons.registerPack) return;
     global.Lessons.registerPack('gestao', {
       LESSONS: L, MAP: MAP, fallback: 'qualidade', goalLabel: 'Sua missão',
-      syntaxTitle: 'Como se aplica', syntaxSpeech: 'Agora, o passo a passo. Repare na estrutura da ferramenta.', compareSpeech: 'Repare como os números viram uma decisão.',
+      steps: ['Conceito', 'Passo a passo', 'Exemplo aplicado', 'Cuidados', 'Seu desafio'],
+      syntaxTitle: 'Como se aplica',
+      solution: function (ex) {
+        const esc = global.UI.esc; let html = '';
+        if (ex.kind === 'choice') html = '<p class="ls-ans">' + esc(ex.opts[0]) + '</p>';
+        else if (ex.kind === 'multi') html = '<ul class="ls-anslist">' + ex.ok.map(function (i) { return '<li>' + esc(ex.opts[i]) + '</li>'; }).join('') + '</ul>';
+        else if (ex.kind === 'order') html = '<ol class="ls-anslist num">' + ex.items.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ol>';
+        else if (ex.kind === 'classify') html = '<ul class="ls-anslist">' + ex.items.map(function (it) { return '<li><span>' + esc(it[0]) + '</span><b>' + esc(ex.cats[it[1]]) + '</b></li>'; }).join('') + '</ul>';
+        else html = '<p class="ls-ans">' + esc((ex.unit === 'R$' ? 'R$ ' : '') + global.GQCharts.fmt(ex.a, ex.dec == null ? 2 : ex.dec) + (ex.unit && ex.unit !== 'R$' ? (ex.unit === '%' ? '%' : ' ' + ex.unit) : '')) + '</p>';
+        return { label: 'Resposta', html: html, note: ex.x, speech: ex.x };
+      }, syntaxSpeech: 'Agora, o passo a passo. Repare em como a ferramenta é aplicada.', compareSpeech: 'Repare como os números viram uma decisão.',
       codeHtml: function (code) { return global.GQCharts.highlight(code); },
       example: function (les) {
         const r = global.GQCharts.render(les.exemplo.fig);

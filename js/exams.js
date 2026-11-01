@@ -128,23 +128,30 @@
           '<div class="exam-opts" role="group">' + q.opts.map(function (o, k) {
             let cls = '';
             if (q.answer != null) { if (k === q.correct) cls = ' right'; else if (k === q.answer) cls = ' wrong'; else cls = ' dim'; }
-            return '<button class="exam-opt' + cls + '" data-o="' + k + '"' + (q.answer != null ? ' disabled' : '') + '><span class="eo-l">' + LETTERS[k] + '</span><span>' + esc(o.t) + '</span></button>';
+            else if (q.pick === k) cls = ' picked';
+            return '<button class="exam-opt' + cls + '" data-o="' + k + '"' + (q.answer != null ? ' disabled' : ' aria-pressed="' + (q.pick === k) + '"') + '><span class="eo-l">' + LETTERS[k] + '</span><span>' + esc(o.t) + '</span></button>';
           }).join('') + '</div>' +
+          (q.answer == null ? '<div class="exam-next"><span class="muted sm hide-sm">' + (q.pick == null ? 'Escolha uma alternativa' : 'Você pode trocar a alternativa antes de confirmar') + '</span><button class="btn btn-primary" data-confirm' + (q.pick == null ? ' disabled' : '') + '>' + icon('check') + 'Confirmar resposta</button></div>' : '') +
           (q.answer != null ? '<div class="exam-exp ' + (q.answer === q.correct ? 'ok' : 'no') + '">' + icon(q.answer === q.correct ? 'check' : 'x') + '<p><b>' + (q.answer === q.correct ? 'Correto.' : 'Incorreto.') + '</b> ' + esc(q.exp) + '</p></div>' +
             '<div class="exam-next"><button class="btn btn-primary" data-next>' + (i < N - 1 ? 'Próxima questão' + icon('chevR') : icon('award') + 'Ver resultado') + '</button></div>' : '') +
         '</div>');
       bindClose(function () { return !done; });
-      overlay.querySelectorAll('[data-o]').forEach(function (b) { b.onclick = function () { answer(+b.dataset.o); }; });
+      overlay.querySelectorAll('[data-o]').forEach(function (b) { b.onclick = function () { pick(+b.dataset.o); }; });
+      const cf = overlay.querySelector('[data-confirm]'); if (cf) cf.onclick = confirm;
       const nx = overlay.querySelector('[data-next]');
-      if (nx) { nx.onclick = next; nx.focus(); } else { const f = overlay.querySelector('[data-o]'); if (f) f.focus(); }
+      if (nx) { nx.onclick = next; nx.focus(); }
+      else { const f = overlay.querySelector(qs[i].pick != null ? '[data-o="' + qs[i].pick + '"]' : '[data-o]'); if (f) f.focus(); }
     }
-    function answer(k) { if (qs[i].answer != null) return; qs[i].answer = k; paint(); }
+    // escolher marca a alternativa; só o botão Confirmar registra a resposta
+    function pick(k) { if (qs[i].answer != null) return; qs[i].pick = k; paint(); }
+    function confirm() { const q = qs[i]; if (q.answer != null || q.pick == null) return; q.answer = q.pick; paint(); }
     function next() { if (qs[i].answer == null) return; if (i < N - 1) { i++; paint(); } else { done = true; finish(st, cert, qs); } }
     keyHandler = function (e) {
       if (!overlay || done) return;
       if (e.key === 'Escape') { overlay.querySelector('[data-x]').click(); return; }
       const k = '1234'.indexOf(e.key) >= 0 ? +e.key - 1 : 'abcd'.indexOf(e.key.toLowerCase());
-      if (k >= 0 && e.key.length === 1 && qs[i].answer == null) { e.preventDefault(); answer(k); }
+      if (k >= 0 && e.key.length === 1 && qs[i].answer == null) { e.preventDefault(); pick(k); }
+      else if (e.key === 'Enter' && qs[i].answer == null && qs[i].pick != null) { e.preventDefault(); confirm(); }
       else if (e.key === 'Enter' && qs[i].answer != null && document.activeElement && !document.activeElement.matches('[data-next]')) { e.preventDefault(); next(); }
     };
     document.addEventListener('keydown', keyHandler);

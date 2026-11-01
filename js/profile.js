@@ -149,5 +149,18 @@
     return function () { clearTimeout(saveTimer); const b = host.querySelector('#pf-bio'); if (b && p.bio !== b.value.trim()) { p.bio = b.value.trim(); S.save(); } };
   }
 
-  global.Profile = { AVATARS: AVATARS, HOBBIES: HOBBIES, MAX_HOBBIES: MAX_HOBBIES, avatarHtml: avatarHtml, avatarSvg: avatarSvg, mount: mount, resizeImage: resizeImage };
+  /** Cartão de perfil para o Painel: foto/avatar, nome, bio e hobbies. */
+  function summaryHtml(p) {
+    const hob = Array.isArray(p.hobbies) ? p.hobbies : [];
+    return '<section class="pf-strip glass">' +
+      '<a class="pf-strip-av" href="#perfil" aria-label="Abrir perfil">' + avatarHtml(p) + '</a>' +
+      '<div class="pf-strip-main"><div class="pf-strip-name"><b>' + esc((p.nome || '') + ' ' + (p.sobrenome || '')) + '</b>' + (p.apelido ? '<span class="muted">@' + esc(p.apelido) + '</span>' : '') + '</div>' +
+        (p.bio ? '<p class="pf-strip-bio">' + esc(p.bio) + '</p>' : '<p class="pf-strip-bio muted">Você ainda não escreveu uma bio. <a href="#perfil">Conte quem você é</a>.</p>') +
+        (hob.length ? '<ul class="pf-strip-hob" aria-label="Hobbies">' + hob.map(function (h) { return '<li>' + esc(h) + '</li>'; }).join('') + '</ul>' : '<p class="muted sm pf-strip-nohob"><a href="#perfil">Escolha até 5 hobbies</a> para mostrar aqui.</p>') +
+      '</div>' +
+      '<a class="btn btn-ghost sm pf-strip-edit" href="#perfil">' + icon('user') + 'Editar perfil</a>' +
+    '</section>';
+  }
+
+  global.Profile = { summaryHtml: summaryHtml, AVATARS: AVATARS, HOBBIES: HOBBIES, MAX_HOBBIES: MAX_HOBBIES, avatarHtml: avatarHtml, avatarSvg: avatarSvg, mount: mount, resizeImage: resizeImage };
 })(window);

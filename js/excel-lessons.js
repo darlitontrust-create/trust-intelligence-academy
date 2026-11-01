@@ -503,6 +503,7 @@
     global.Lessons.registerPack('excel', {
       LESSONS: L, MAP: MAP, fallback: 'refs', goalLabel: 'Objetivo da fórmula',
       codeHtml: highlightFormula,
+      solution: function (ex) { return { label: 'Fórmula em ' + ex.sh + '!' + ex.c + (ex.fill ? ', arrastada até a linha ' + ex.fill : ''), code: ex.q, speech: 'A fórmula foi digitada na célula ' + ex.c + ' da planilha ' + ex.sh + '. Repare na estrutura no código.' }; },
       example: function (les) {
         const pv = sheetPreview(les.exemplo);
         return { code: les.exemplo.f, badge: 'Calculado agora na planilha ' + les.exemplo.sh, liveHtml: pv.html, speech: pv.speech };

@@ -289,7 +289,7 @@
     }
     function suggest() {
       const before = caretBefore();
-      if (ta.selectionStart !== ta.selectionEnd || inString(before) || inComment(before)) return closeList();
+      if (ta.selectionStart !== ta.selectionEnd || (lang.inString || inString)(before) || (lang.inComment || inComment)(before)) return closeList();
       const res = lang.suggest(before, opts.ctx || {});
       if (!res || !res.items.length) return closeList();
       from = res.from; items = res.items.sort(function (a, b) { return (a.rank || 0) - (b.rank || 0) || a.label.localeCompare(b.label); }).slice(0, res.limit || 9); sel = 0;
@@ -311,7 +311,7 @@
     }
     function updateSig() {
       const before = caretBefore();
-      const c = !inString(before) && callAt(before, lang.sepChars || ';,');
+      const c = !(lang.inString || inString)(before) && callAt(before, lang.sepChars || ';,');
       const sig = c && lang.signature(c.name, opts.ctx || {});
       if (!sig) { sigBox.innerHTML = ''; sigBox.classList.remove('on'); return; }
       const args = sig.args.map(function (a, i) { return '<span class="' + (i === Math.min(c.arg, sig.args.length - 1) || (i === sig.args.length - 1 && c.arg >= i && /…/.test(a)) ? 'cur' : '') + '">' + esc(a) + '</span>'; });
@@ -329,7 +329,8 @@
       if (open) {
         if (e.key === 'ArrowDown') { e.preventDefault(); sel = (sel + 1) % items.length; showList(); return; }
         if (e.key === 'ArrowUp') { e.preventDefault(); sel = (sel - 1 + items.length) % items.length; showList(); return; }
-        if ((e.key === 'Enter' && !e.ctrlKey && !e.metaKey) || e.key === 'Tab') { e.preventDefault(); accept(sel); return; }
+        if ((e.key === 'Enter' && !e.ctrlKey && !e.metaKey && lang.enterAccepts !== false) || e.key === 'Tab') { e.preventDefault(); accept(sel); return; }
+        if (e.key === 'Enter') closeList();
         if (e.key === 'Escape') { e.preventDefault(); closeList(); return; }
       }
       if (e.key === 'Enter') {
@@ -338,7 +339,7 @@
         // nova linha mantendo o recuo
         e.preventDefault();
         const s = ta.selectionStart, ls = ta.value.lastIndexOf('\n', s - 1) + 1;
-        const ind = ta.value.slice(ls).match(/^[ \t]*/)[0] + (/[(\[{]\s*$/.test(ta.value.slice(ls, s)) ? '    ' : '');
+        const ind = ta.value.slice(ls).match(/^[ \t]*/)[0] + ((lang.indentAfter || /[(\[{]\s*$/).test(ta.value.slice(ls, s)) ? '    ' : '');
         ta.setRangeText('\n' + ind, s, ta.selectionEnd, 'end'); paint(); changed(); return;
       }
       if (e.key === 'Tab' && multi) {

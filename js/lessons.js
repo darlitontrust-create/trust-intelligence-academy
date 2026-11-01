@@ -421,7 +421,39 @@
    * Usado pelo app e por build/export_narration.js, que gera os áudios gravados.
    */
   const ORD = ['Primeiro', 'Segundo', 'Terceiro', 'Quarto'];
-  function narration(ex) {
+  /**
+   * Posição do exercício dentro da sequência de exercícios do mesmo tema:
+   * k = 0 no primeiro (aula completa); k ≥ 1 nos seguintes (revisão variada).
+   */
+  function occurrence(ex) {
+    const bank = (global.Tracks && global.Tracks.bankOf(ex.track || 'sql')) || null;
+    if (!bank) return { k: 0, prev: null };
+    const key = forExercise(ex).key; let k = 0, i = ex.index - 1;
+    while (i >= 0 && forExercise(bank.EXERCISES[i]).key === key && bank.EXERCISES[i].level === ex.level) { k++; i--; }
+    return { k: k, prev: k ? bank.EXERCISES[ex.index - 1] : null };
+  }
+  function pick(list, k) { return list && list.length ? list[(k - 1) % list.length] : ''; }
+  /** Solução de um exercício para o slide "Exemplo resolvido". */
+  function solutionOf(ex) {
+    const pk = packOf(ex);
+    if (pk.solution) return pk.solution(ex);
+    return { code: String(ex.q || '').replace(/;\s+(?=\S)/g, ';\n'), speech: 'Repare na solução no código.' };
+  }
+  function hintOf(ex, les, k) { return ex.h || pick(les.notas, k + 1) || les.notas[0]; }
+  function narrationReview(ex, les, oc) {
+    const pre = (ex.track && ex.track !== 'sql') ? ex.track + '-' : '';
+    const q = pick(les.quiz, oc.k), sol = solutionOf(oc.prev);
+    const parts = [
+      ['Antes do seu desafio, veja como o exercício anterior foi resolvido: ' + oc.prev.n + '.', oc.prev.g, sol.speech || ''],
+      ['Teste rápido sobre ' + les.titulo + '.', q[0], 'Escolha uma alternativa na tela para conferir.'],
+      ['Algumas dicas para o seu desafio.', hintOf(ex, les, oc.k), 'Atenção: ' + pick(les.cuidados, oc.k)],
+      ['Chegou a sua vez. O desafio é: ' + ex.n + '.', ex.s, 'O objetivo: ' + ex.g, 'Quando estiver pronto, é só clicar em Começar exercício.'],
+    ];
+    return parts.map(function (p, i) { return { id: pre + 'rv-' + ex.id + '-' + (i + 1), chunks: global.Narrator.chunk(p.filter(Boolean)) }; });
+  }
+  function narration(ex, full) {
+    const oc = occurrence(ex);
+    if (!full && oc.k > 0) return narrationReview(ex, forExercise(ex), oc);
     const les = forExercise(ex);
     const pk = packOf(ex), exm = pk.example(les);
     const parts = [
@@ -457,13 +489,51 @@
    * opts.onStart() é chamado no botão final; devolve uma função de limpeza.
    */
   function mount(host, ex, opts) {
+    let cleanup = mountOnce(host, ex, opts, false, function () { cleanup(); cleanup = mountOnce(host, ex, opts, true, null); });
+    return function () { cleanup(); };
+  }
+  function finalSlide(ex, pack, tags) {
+    const { esc, icon } = global.UI, G = global.Gamification;
+    return '<div class="ls-body ls-final"><span class="eyebrow">' + esc(ex.levelName) + ' · exercício ' + ex.pos + ' de 50</span><h2 class="ls-title">' + esc(ex.n) + '</h2>' +
+      '<p class="ls-lead">' + esc(ex.s) + '</p>' +
+      '<div class="goal">' + icon('target') + '<div><h3 class="card-k">' + esc(pack.goalLabel) + '</h3><p>' + esc(ex.g) + '</p></div></div>' +
+      '<div class="ls-meta"><span class="tag d-' + ex.diff + '">' + G.DIFF_LABEL[ex.diff] + ' · ' + G.XP[ex.diff] + ' XP</span>' +
+      tags.map(function (t) { return '<span class="tag tag-topic">' + icon(t.icon) + esc(t.label) + '</span>'; }).join('') + '</div></div>';
+  }
+  /** Slides de revisão (2º, 3º… exercício do mesmo tema): exemplo resolvido, teste rápido e dicas. */
+  function reviewSlides(ex, les, pack, oc, tags) {
+    const { esc, icon } = global.UI;
+    const prev = oc.prev, sol = solutionOf(prev), q = pick(les.quiz, oc.k);
+    // alternativas do teste rápido em ordem fixa por exercício
+    let h = 7; String(ex.id).split('').forEach(function (c) { h = (h * 31 + c.charCodeAt(0)) >>> 0; });
+    const opts = [1, 2, 3, 4].map(function (i) { return { t: q[i], ok: i === 1 }; });
+    for (let i = opts.length - 1; i > 0; i--) { h = (h * 1103515245 + 12345) >>> 0; const j = h % (i + 1); const t = opts[i]; opts[i] = opts[j]; opts[j] = t; }
+    return [
+      '<div class="ls-body"><span class="eyebrow">Exercício anterior · ' + esc(prev.levelName) + ' ' + prev.pos + '/50</span><h3 class="ls-h">Como foi resolvido: ' + esc(prev.n) + '</h3>' +
+        '<div class="ls-split"><div class="ls-prev"><p>' + esc(prev.s) + '</p><div class="goal">' + icon('target') + '<div><h3 class="card-k">Objetivo</h3><p>' + esc(prev.g) + '</p></div></div></div>' +
+        '<div class="ls-sol">' + (sol.label ? '<span class="ls-badge">' + icon('check') + esc(sol.label) + '</span>' : '') + (sol.code ? '<pre class="code-block">' + pack.codeHtml(sol.code) + '</pre>' : '') + (sol.html || '') + (sol.note ? '<p class="muted sm">' + esc(sol.note) + '</p>' : '') + '</div></div></div>',
+      '<div class="ls-body"><h3 class="ls-h">Teste rápido · ' + esc(les.titulo) + '</h3><p class="ls-q">' + esc(q[0]) + '</p>' +
+        '<div class="ls-quiz" role="group" aria-label="Alternativas">' + opts.map(function (o, i) { return '<button type="button" class="ls-qo" data-ok="' + (o.ok ? 1 : 0) + '"><span>' + 'ABCD'[i] + '</span>' + esc(o.t) + '</button>'; }).join('') + '</div>' +
+        '<p class="ls-qexp" hidden></p><p class="ls-qexp-src" hidden>' + esc(q[5]) + '</p></div>',
+      '<div class="ls-body"><h3 class="ls-h">Dicas para o seu desafio</h3><ol class="ls-cards">' +
+        '<li><span class="ls-num">' + icon('bulb') + '</span><p><b>Dica</b><br>' + esc(hintOf(ex, les, oc.k)) + '</p></li>' +
+        '<li><span class="ls-num">!</span><p><b>Atenção</b><br>' + esc(pick(les.cuidados, oc.k)) + '</p></li>' +
+        '<li><span class="ls-num">' + icon('book') + '</span><p><b>Ideia-chave</b><br>' + esc(pick(les.notas, oc.k)) + '</p></li></ol></div>',
+      finalSlide(ex, pack, tags),
+    ];
+  }
+  function mountOnce(host, ex, opts, forceFull, onFull) {
     const { esc, icon, highlightSql } = global.UI;
     const G = global.Gamification;
     const les = forExercise(ex);
     const pack = packOf(ex);
     const exm = pack.example(les);
     const tags = pack.tags(ex);
-    const slides = [
+    const oc = occurrence(ex);
+    const review = !forceFull && oc.k > 0;
+    const STEPS_NOW = review ? ['Exemplo resolvido', 'Teste rápido', 'Dicas', 'Seu desafio'] : (pack.steps || STEPS);
+    const LAST = STEPS_NOW.length - 1;
+    const slides = review ? reviewSlides(ex, les, pack, oc, tags) : [
       // 1 · Conceito
       '<div class="ls-body"><span class="ls-ghost" aria-hidden="true">' + esc(les.kw) + '</span>' +
         '<h2 class="ls-title">' + esc(les.titulo) + '</h2><p class="ls-lead">' + esc(les.ideia) + '</p>' +
@@ -478,24 +548,20 @@
       '<div class="ls-body"><h3 class="ls-h">Cuidados e boas práticas</h3><ol class="ls-cards">' +
         les.cuidados.map(function (c, i) { return '<li><span class="ls-num">' + (i + 1) + '</span><p>' + esc(c) + '</p></li>'; }).join('') + '</ol></div>',
       // 5 · Seu desafio
-      '<div class="ls-body ls-final"><span class="eyebrow">' + esc(ex.levelName) + ' · exercício ' + ex.pos + ' de 50</span><h2 class="ls-title">' + esc(ex.n) + '</h2>' +
-        '<p class="ls-lead">' + esc(ex.s) + '</p>' +
-        '<div class="goal">' + icon('target') + '<div><h3 class="card-k">' + esc(pack.goalLabel) + '</h3><p>' + esc(ex.g) + '</p></div></div>' +
-        '<div class="ls-meta"><span class="tag d-' + ex.diff + '">' + G.DIFF_LABEL[ex.diff] + ' · ' + G.XP[ex.diff] + ' XP</span>' +
-        tags.map(function (t) { return '<span class="tag tag-topic">' + icon(t.icon) + esc(t.label) + '</span>'; }).join('') + '</div></div>',
+      finalSlide(ex, pack, tags),
     ];
 
-    const scripts = narration(ex);
+    const scripts = narration(ex, !review);
     const N = global.Narrator;
     const rates = [0.75, 1, 1.25, 1.5];
 
     host.innerHTML =
       '<section class="lesson glass" tabindex="-1" aria-roledescription="carrossel" aria-label="Conteúdo: ' + esc(les.titulo) + '">' +
-        '<header class="ls-top"><div class="ls-kicker">' + icon('book') + '<span>Conteúdo · <b>' + esc(les.titulo) + '</b></span></div>' +
-        '<div class="ls-top-r"><button class="btn btn-ghost sm ls-voice" data-a="voice" aria-pressed="false">' + icon('volume') + '<span>Ouvir narração</span></button>' +
+        '<header class="ls-top"><div class="ls-kicker">' + icon('book') + '<span>' + (review ? 'Revisão · ' : 'Conteúdo · ') + '<b>' + esc(les.titulo) + '</b></span></div>' +
+        '<div class="ls-top-r">' + (review ? '<button class="btn btn-quiet sm" data-a="full">' + icon('book') + '<span>Ver aula completa</span></button>' : '') + '<button class="btn btn-ghost sm ls-voice" data-a="voice" aria-pressed="false">' + icon('volume') + '<span>Ouvir narração</span></button>' +
         '<button class="btn btn-quiet sm" data-a="skip">Pular para o exercício' + icon('chevR') + '</button></div></header>' +
-        '<ol class="ls-steps">' + STEPS.map(function (s, i) { return '<li><button data-go="' + i + '" aria-label="Slide ' + (i + 1) + ': ' + s + '"><i></i><span>' + s + '</span></button></li>'; }).join('') + '</ol>' +
-        '<div class="ls-viewport"><div class="ls-track">' + slides.map(function (s, i) { return '<article class="ls-slide" aria-label="' + (i + 1) + ' de 5" ' + (i ? 'aria-hidden="true"' : '') + '>' + s + '</article>'; }).join('') + '</div></div>' +
+        '<ol class="ls-steps' + (review ? ' four' : '') + '">' + STEPS_NOW.map(function (s, i) { return '<li><button data-go="' + i + '" aria-label="Slide ' + (i + 1) + ': ' + s + '"><i></i><span>' + s + '</span></button></li>'; }).join('') + '</ol>' +
+        '<div class="ls-viewport"><div class="ls-track">' + slides.map(function (s, i) { return '<article class="ls-slide" aria-label="' + (i + 1) + ' de ' + slides.length + '" ' + (i ? 'aria-hidden="true"' : '') + '>' + s + '</article>'; }).join('') + '</div></div>' +
         '<div class="ls-narr" hidden>' +
           '<button class="icon-btn sm" data-a="toggle" aria-label="Pausar narração">' + icon('pause') + '</button>' +
           '<span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>' +
@@ -508,7 +574,7 @@
           '<p class="ls-hint" hidden>' + icon('bulb') + '<span>A voz deste navegador é sintética. Para uma narração mais humana, abra no Microsoft Edge (vozes "Natural"), no Chrome conectado à internet (voz Google) ou ative uma voz "Aprimorada" no iPhone/Mac.</span></p>' +
         '</div>' +
         '<footer class="ls-foot"><button class="btn btn-ghost sm" data-a="prev">' + icon('chevL') + 'Anterior</button>' +
-        '<span class="ls-count"><b>1</b> / 5</span>' +
+        '<span class="ls-count"><b>1</b> / ' + slides.length + '</span>' +
         '<button class="btn btn-primary sm" data-a="next">Próximo' + icon('chevR') + '</button></footer>' +
       '</section>';
 
@@ -542,7 +608,7 @@
       const my = idx;
       N.speak(scripts[idx], function () {
         setSpeaking(false);
-        if (narrOn && N.prefs().auto && my === idx && idx < 4) setTimeout(function () { if (narrOn && my === idx) go(idx + 1); }, 700);
+        if (narrOn && N.prefs().auto && my === idx && idx < LAST) setTimeout(function () { if (narrOn && my === idx) go(idx + 1); }, 700);
       });
     }
     function setNarration(on) {
@@ -575,7 +641,7 @@
     if (!N.supported) voiceBtn.classList.add('unavailable');
 
     function go(i) {
-      idx = Math.max(0, Math.min(4, i));
+      idx = Math.max(0, Math.min(LAST, i));
       track.style.transform = 'translateX(' + (-idx * 100) + '%)';
       // a altura acompanha o slide atual (slides curtos não deixam espaço vazio)
       viewport.style.height = slideEls[idx].offsetHeight + 'px';
@@ -583,10 +649,23 @@
       root.querySelectorAll('.ls-steps li').forEach(function (li, k) { li.classList.toggle('on', k === idx); li.classList.toggle('done', k < idx); });
       root.querySelector('.ls-count b').textContent = idx + 1;
       prev.disabled = idx === 0;
-      next.innerHTML = idx === 4 ? icon('play') + 'Começar exercício' : 'Próximo' + icon('chevR');
+      next.innerHTML = idx === LAST ? icon('play') + 'Começar exercício' : 'Próximo' + icon('chevR');
       if (narrOn) narrate();
     }
-    next.onclick = function () { if (idx === 4) { N.stop(); opts.onStart(); } else go(idx + 1); };
+    next.onclick = function () { if (idx === LAST) { N.stop(); opts.onStart(); } else go(idx + 1); };
+    const fullBtn = root.querySelector('[data-a=full]'); if (fullBtn && onFull) fullBtn.onclick = function () { N.stop(); onFull(); };
+    // teste rápido: responde e mostra a explicação
+    root.querySelectorAll('.ls-qo').forEach(function (b) {
+      b.onclick = function () {
+        const box = b.closest('.ls-body'); if (box.classList.contains('answered')) return;
+        box.classList.add('answered');
+        box.querySelectorAll('.ls-qo').forEach(function (o) { o.disabled = true; o.classList.add(o.dataset.ok === '1' ? 'right' : (o === b ? 'wrong' : 'dim')); });
+        const e = box.querySelector('.ls-qexp'); e.hidden = false;
+        e.innerHTML = icon(b.dataset.ok === '1' ? 'check' : 'x') + '<span><b>' + (b.dataset.ok === '1' ? 'Isso mesmo.' : 'Não foi dessa vez.') + '</b> ' + esc(box.querySelector('.ls-qexp-src').textContent) + '</span>';
+        e.className = 'ls-qexp ' + (b.dataset.ok === '1' ? 'ok' : 'no');
+        viewport.style.height = slideEls[idx].offsetHeight + 'px';
+      };
+    });
     prev.onclick = function () { go(idx - 1); };
     root.querySelector('[data-a=skip]').onclick = function () { N.stop(); opts.onStart(); };
     root.querySelectorAll('[data-go]').forEach(function (b) { b.onclick = function () { go(+b.dataset.go); }; });
@@ -594,7 +673,7 @@
     // teclado (setas) e gesto de arrastar no celular
     const onKey = function (e) {
       if (e.target.closest && e.target.closest('input, textarea, .CodeMirror')) return;
-      if (e.key === 'ArrowRight') { e.preventDefault(); if (idx < 4) go(idx + 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); if (idx < LAST) go(idx + 1); }
       if (e.key === 'ArrowLeft') { e.preventDefault(); go(idx - 1); }
     };
     document.addEventListener('keydown', onKey);
@@ -612,5 +691,5 @@
     return function () { document.removeEventListener('keydown', onKey); global.removeEventListener('resize', onResize); offNarr(); N.stop(true); };
   }
 
-  global.Lessons = { LESSONS: L, MAP: MAP, PACKS: PACKS, registerPack: registerPack, packOf: packOf, forExercise: forExercise, narration: narration, mount: mount, miniTable: miniTable };
+  global.Lessons = { LESSONS: L, MAP: MAP, PACKS: PACKS, registerPack: registerPack, packOf: packOf, forExercise: forExercise, narration: narration, mount: mount, miniTable: miniTable, occurrence: occurrence };
 })(typeof window !== 'undefined' ? window : globalThis);

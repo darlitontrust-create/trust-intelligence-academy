@@ -1,7 +1,7 @@
 # Trust Intelligence Academy
 
-Academia gamificada de dados, BI e IA. Trilhas disponíveis: **SQL Prático**, **Excel Prático**, **Power BI & DAX** e **Gestão da Qualidade**.
-Em breve: Python para Dados, IA para Dados e Estatística Aplicada.
+Academia gamificada de dados, BI e IA. Trilhas disponíveis: **SQL Prático**, **Excel Prático**, **Power BI & DAX**, **Gestão da Qualidade** e **Python para Dados**.
+Em breve: IA para Dados e Estatística Aplicada.
 Cada trilha tem 150 exercícios em 3 níveis, aulas em slides narradas, correção automática, carreira com 10 promoções,
 conquistas, ranking, painel, provas e 13 certificados.
 
@@ -39,6 +39,14 @@ O conteúdo pode ser reaberto pelo botão "Conteúdo" e desligado em Perfil > Pr
 - `js/gq-exercises.js` — os 150 casos de Gestão: estudo de caso, múltipla escolha, ordenar, classificar e cálculo com dados reais
 - `js/gq-lessons.js` — as 40 aulas de Gestão (PDCA, 7 ferramentas, MASP, 8D, A3, Lean, CEP, Seis Sigma, FMEA, ISO 9001, Hoshin), com 3 questões de prova por aula
 - `js/gq-ui.js` — tela de prática da Gestão: dados do caso, resposta interativa, correção com explicação
+- `js/py-engine.js` — Python 3.12 de verdade no navegador (Pyodide, carregado do CDN sob demanda) num Web Worker: executa o código, interrompe laços infinitos (12 s) e traduz os erros; o pandas é carregado só no nível Avançado
+- `js/py-runner.py` — executor Python (dados da NexusMarket + código do aluno, captura do print e do erro com a linha)
+- `js/py-data.js` — dados da trilha de Python (vendas, produtos, clientes, textos sujos, CSV e DataFrames)
+- `js/py-lang.js` — Python no editor: cores, sugestões (funções, métodos, pandas, variáveis e campos), dica de argumentos e recuo automático
+- `js/py-exercises.js` — os 150 exercícios de Python (fundamentos, biblioteca padrão e pandas)
+- `js/py-lessons.js` e `js/py-outputs.js` — as 44 aulas de Python e a saída real dos exemplos (gerada por `build/py_build.js`)
+- `js/py-ui.js` — tela de prática do Python: dados disponíveis, editor, saída e correção pela saída do print()
+- `js/calculator.js` — calculadora dos exercícios de cálculo
 - `js/quiz-sql.js` — 3 questões de prova para cada uma das 43 aulas de SQL
 - `js/exams.js` — provas de 15 questões que liberam os certificados (mínimo 11 acertos, 70%)
 - `js/profile.js` — perfil público: foto (reduzida para 256 px) ou avatar, bio de até 280 caracteres e até 5 hobbies
@@ -60,6 +68,11 @@ O conteúdo pode ser reaberto pelo botão "Conteúdo" e desligado em Perfil > Pr
 ## Publicando uma atualização
 Antes de cada upload, rode `python build/bump_version.py`. Ele coloca `?v=<data-hora>` nos arquivos js/css do
 `index.html`, e assim os navegadores baixam a versão nova em vez de usar a do cache.
+
+## Validando a trilha de Python
+`node build/py_build.js` executa os 150 gabaritos e os exemplos das aulas no Pyodide local
+(baixe o pyodide-core 0.26.4 e os wheels de numpy/pandas e aponte PYODIDE_DIR para a pasta)
+e regrava `js/py-outputs.js`.
 
 ## Adicionando um novo tema
 1. Em `js/tracks.js`, mude o `status` do tema para `'ativo'` e defina `start` e `total`.

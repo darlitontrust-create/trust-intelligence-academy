@@ -97,6 +97,12 @@
     return { status: 'wrong', title: near ? 'Quase lá' : 'Valor diferente do esperado', explain: explain };
   }
 
+  /** Nome do material de apoio do caso, para o aviso da missão. */
+  function lookLabel(d) {
+    const nome = { table: 'a tabela', matrix: 'a tabela', pareto: 'o gráfico de Pareto', control: 'a carta de controle', hist: 'o histograma', scatter: 'o diagrama de dispersão', vsm: 'o mapa do fluxo de valor', oee: 'o gráfico de OEE', normal: 'a curva de capabilidade', bars: 'o gráfico', flow: 'o fluxograma' }[d.type] || 'os dados';
+    return nome + (d.title ? ' “' + esc(d.title) + '”' : '');
+  }
+
   /* -------------------------------- Tela -------------------------------- */
   function render(view, ex, ctx) {
     const st = ctx.st, S = ctx.S, G = global.Gamification;
@@ -117,6 +123,7 @@
         '<div class="ex-brief">' +
           '<section class="card glass"><h3 class="card-k">Cenário</h3><p class="story">' + esc(ex.s) + '</p>' +
             '<div class="goal">' + icon('target') + '<div><h3 class="card-k">Sua missão</h3><p>' + esc(ex.g) + '</p></div></div>' +
+            (fig ? '<p class="gq-look">' + icon(ex.d.type === 'table' || ex.d.type === 'matrix' ? 'table' : 'bars') + '<span>Para responder, consulte ' + lookLabel(ex.d) + ' em <b>Dados do caso</b>, logo abaixo.</span></p>' : '') +
             '<ul class="xl-facts">' + tags.map(function (t) { return '<li>' + icon(t.icon) + esc(t.label) + '</li>'; }).join('') + '</ul>' +
           '</section>' +
           (fig ? '<section class="card glass gq-data"><header class="card-h"><h3 class="card-k">Dados do caso</h3><span class="muted sm">NexusMarket</span></header>' + fig.html + '</section>' : '') +
@@ -139,7 +146,7 @@
     const host = view.querySelector('#gq-input'), fb = view.querySelector('#feedback'), why = view.querySelector('#gq-why');
     let draftTimer = null;
     function save() { clearTimeout(draftTimer); draftTimer = setTimeout(function () { st.progress.drafts[ex.id] = JSON.stringify(state); S.save(); }, 300); }
-    ctx.setCleanup(function () { clearTimeout(draftTimer); st.progress.drafts[ex.id] = JSON.stringify(state); S.save(); });
+    ctx.setCleanup(function () { if (global.Calculator) global.Calculator.close(); clearTimeout(draftTimer); st.progress.drafts[ex.id] = JSON.stringify(state); S.save(); });
     function changed() { marks = null; save(); paint(); }
 
     /* ---- Desenho da resposta ---- */
@@ -191,13 +198,19 @@
         host.querySelectorAll('.gq-chip').forEach(function (b) { b.onclick = function () { state.cat[+b.dataset.i] = +b.dataset.k; changed(); const nb = host.querySelector('.gq-chip[data-i="' + b.dataset.i + '"][data-k="' + b.dataset.k + '"]'); if (nb) nb.focus(); }; });
         host.querySelectorAll('.gq-sel').forEach(function (s) { s.onchange = function () { if (s.value === '') delete state.cat[+s.dataset.i]; else state.cat[+s.dataset.i] = +s.value; changed(); }; });
       } else {
-        host.innerHTML = '<label class="gq-calc"><span class="sr-only">Resultado</span>' + (ex.unit === 'R$' ? '<span class="gq-u pre">R$</span>' : '') +
+        host.innerHTML = '<div class="gq-calc-row"><label class="gq-calc"><span class="sr-only">Resultado</span>' + (ex.unit === 'R$' ? '<span class="gq-u pre">R$</span>' : '') +
           '<input id="gq-num" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="Digite o resultado" value="' + esc(state.v) + '">' +
           (ex.unit && ex.unit !== 'R$' ? '<span class="gq-u">' + esc(ex.unit) + '</span>' : '') + '</label>' +
+          '<button type="button" class="btn btn-ghost" data-calc-open aria-expanded="false">' + icon('grid') + 'Calculadora</button></div>' +
           '<p class="muted sm">' + (ex.dec != null ? (ex.dec === 0 ? 'Resultado inteiro. ' : 'Use ' + ex.dec + (ex.dec === 1 ? ' casa decimal' : ' casas decimais') + '. ') : '') + 'Vírgula ou ponto como separador decimal.</p>';
         const inp = host.querySelector('#gq-num');
         inp.oninput = function () { state.v = inp.value; marks = null; save(); };
         inp.onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); doSubmit(); } };
+        const cb = host.querySelector('[data-calc-open]');
+        cb.onclick = function () {
+          cb.setAttribute('aria-expanded', 'true');
+          global.Calculator.open({ title: 'Calculadora · ' + ex.n, onUse: function (v) { inp.value = v; state.v = v; marks = null; save(); inp.focus(); } });
+        };
       }
     }
 

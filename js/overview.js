@@ -110,7 +110,7 @@
     const lastTrack = started.slice().sort(function (a, b) { return (a.last || '') < (b.last || '') ? 1 : -1; })[0];
     const pendings = [].concat.apply([], sum.map(function (s) { return s.pending.map(function (c) { return { s: s, c: c }; }); }));
 
-    view.innerHTML =
+    view.innerHTML = global.Profile.summaryHtml(st.profile) +
       '<section class="dash-hero glass ov-hero">' +
         '<div class="dash-hero-top"><div>' +
           '<p class="eyebrow">' + hi + ', ' + esc(st.profile.apelido || st.profile.nome) + ' · Visão geral</p>' +

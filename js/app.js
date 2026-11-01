@@ -325,7 +325,7 @@
                 const ps = G.PROMOTIONS.filter(function (p) { return p.level === l.id; }).map(function (p) { return p.nome; });
                 return '<li><span class="hl-n">' + l.id + '</span><span class="hl-t"><b>' + esc(l.nome) + '</b><small>' + esc(ps.join(' · ')) + '</small></span><span class="hl-c">' + c + '/50</span></li>';
               }).join('') + '</ul>' +
-              '<ul class="hub-feats"><li>' + icon('book') + nLessons + ' aulas narradas</li><li>' + icon('code') + (t.kind === 'excel' ? 'Planilha com correção automática' : t.kind === 'powerbi' ? 'Editor DAX com correção automática' : t.kind === 'gestao' ? 'Casos práticos com correção automática' : 'Editor com correção automática') + '</li>' +
+              '<ul class="hub-feats"><li>' + icon('book') + nLessons + ' aulas narradas</li><li>' + icon('code') + (t.kind === 'excel' ? 'Planilha com correção automática' : t.kind === 'powerbi' ? 'Editor DAX com correção automática' : t.kind === 'gestao' ? 'Casos práticos com correção automática' : t.kind === 'python' ? 'Python no navegador com correção automática' : 'Editor com correção automática') + '</li>' +
               '<li>' + icon('award') + gotC + '/' + certs.length + ' certificados com prova</li><li>' + icon('trophy') + 'Carreira até ' + esc(G.FINAL.nome) + '</li></ul>';
           });
         }
@@ -475,8 +475,8 @@
     if (currentCleanup) { currentCleanup(); currentCleanup = null; }
     const wantsLesson = mode === 'lesson' || (!mode && st.settings.showLessons !== false && !st.progress.solved[ex.id] && !st.progress.lessonsSeen[ex.id]);
     if (wantsLesson) return renderLessonStage(view, ex);
-    if (ex.track === 'excel' || ex.track === 'powerbi' || ex.track === 'gestao') {
-      ({ excel: global.ExcelPractice, powerbi: global.DaxPractice, gestao: global.GQPractice })[ex.track].render(view, ex, {
+    if (ex.track === 'excel' || ex.track === 'powerbi' || ex.track === 'gestao' || ex.track === 'python') {
+      ({ excel: global.ExcelPractice, powerbi: global.DaxPractice, gestao: global.GQPractice, python: global.PyPractice })[ex.track].render(view, ex, {
         st: st, S: S,
         header: exHeader(st, ex, '<button class="btn btn-ghost sm" id="b-lesson">' + icon('book') + 'Conteúdo</button>'),
         setCleanup: function (fn) { currentCleanup = fn; },

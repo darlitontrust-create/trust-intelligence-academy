@@ -46,9 +46,12 @@
       summary: 'dos conceitos de qualidade e do PDCA às ferramentas da qualidade, MASP, 8D, Lean, controle estatístico, Seis Sigma, FMEA e ISO 9001',
     },
     {
-      id: 'python', status: 'em-breve', icon: 'code', nome: 'Python para Dados', short: 'Python', tag: 'Programação',
+      id: 'python', status: 'ativo', icon: 'code', start: 'dashboard', kind: 'python',
+      nome: 'Python para Dados', short: 'Python', tag: 'Programação',
       color: { a: '#fff59d', b: '#d4c21a' },            // amarelo em outro tom (limão)
-      desc: 'pandas, limpeza de dados, análises exploratórias e automação de relatórios.', facts: ['pandas', 'Automação', 'Gráficos'],
+      desc: 'Do primeiro print() ao pandas: listas, dicionários, funções, limpeza de dados, groupby e merge, com Python de verdade no navegador.',
+      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'PyBank',
+      summary: 'dos fundamentos (variáveis, listas, dicionários, laços e funções) à análise de dados com a biblioteca padrão e com pandas: filtros, groupby, merge, tabelas dinâmicas e datas',
     },
     {
       id: 'ia', status: 'em-breve', icon: 'sparkle', nome: 'IA para Dados', short: 'IA', tag: 'Inteligência Artificial',

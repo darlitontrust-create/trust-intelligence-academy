@@ -91,7 +91,7 @@
       return '<div class="lvl-row"><span>' + l.nome + '</span><div class="mini-bar"><i style="width:' + (c / 50 * 100) + '%"></i></div><b>' + c + '/50</b></div>';
     }).join('');
 
-    el.innerHTML =
+    el.innerHTML = global.Profile.summaryHtml(st.profile) +
       '<section class="dash-hero glass">' +
         '<div class="dash-hero-top">' +
           '<div>' +

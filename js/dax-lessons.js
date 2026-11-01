@@ -473,6 +473,7 @@
     global.Lessons.registerPack('powerbi', {
       LESSONS: L, MAP: MAP, fallback: 'medidas', goalLabel: 'Objetivo da medida',
       codeHtml: function (code) { return global.DaxLang.highlight(code); },
+      solution: function (ex) { return { label: ex.kind === 'measure' ? 'Medida' : ex.kind === 'column' ? 'Coluna calculada em ' + ex.table : 'Tabela calculada', code: global.DaxLang.pretty(ex.q), speech: 'Repare na estrutura da expressão DAX no código.' }; },
       example: function (les) { const pv = preview(les.exemplo); return { code: global.DaxLang.pretty(les.exemplo.f), badge: 'Calculado agora no modelo NexusMarket', liveHtml: pv.html, speech: pv.speech }; },
       tags: function (ex) {
         const t = [];
