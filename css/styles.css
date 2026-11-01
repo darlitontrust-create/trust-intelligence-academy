@@ -1282,7 +1282,7 @@ a, button, label, .tile, .exam-opt, .chip, .av-opt { touch-action: manipulation;
 .ck { all: unset; box-sizing: border-box; height: 46px; border-radius: 12px; display: grid; place-items: center; font: 600 18px var(--f-mono); color: var(--ink); background: rgba(255,255,255,.05); border: 1px solid var(--line); cursor: pointer; user-select: none; transition: background .12s, transform .06s; }
 .ck:hover { background: rgba(255,255,255,.09); } .ck:active { transform: scale(.96); } .ck:focus-visible { outline: 2px solid #8fa8ff; outline-offset: 1px; }
 .ck.op { color: #fdba74; } .ck.fn { color: #fca5a5; } .ck.eq { background: linear-gradient(135deg, #4d7cff, #a46bff); color: #fff; border-color: transparent; }
-.calc-foot { display: flex; justify-content: space-between; gap: 8px; }
+.calc-foot { display: flex; justify-content: flex-end; gap: 8px; } .calc-foot [data-use] { flex: 1; justify-content: center; }
 .calc-tip { margin: 0; text-align: center; }
 @media (max-width: 640px) {
   .calc { left: 0; right: 0; bottom: 0; width: auto; border-radius: 22px 22px 0 0; padding: 14px 16px calc(14px + env(safe-area-inset-bottom, 0px)); }
@@ -1355,3 +1355,10 @@ a, button, label, .tile, .exam-opt, .chip, .av-opt { touch-action: manipulation;
 @media (max-width: 1180px) { .ex-grid.py .ex-brief > .py-data { order: 1; } }
 @media (max-width: 640px) { .py-editor .fe-hl, .py-editor .fe-input { font-size: 16px; } .py-out { font-size: 12px; } }
 .hub-card.soon { align-self: start; }
+
+.calc-row { display: flex; align-items: center; gap: 10px; }
+.calc-row .calc-expr { flex: 1; min-width: 0; }
+.calc-bs { all: unset; box-sizing: border-box; flex: none; width: 40px; height: 34px; border-radius: 9px; display: grid; place-items: center; cursor: pointer; color: var(--ink-2); background: rgba(255,255,255,.06); border: 1px solid var(--line-2); transition: background .12s, color .12s; }
+.calc-bs:hover { background: rgba(248,113,113,.14); color: #fca5a5; border-color: rgba(248,113,113,.4); }
+.calc-bs:active { transform: scale(.95); } .calc-bs:focus-visible { outline: 2px solid #8fa8ff; outline-offset: 2px; }
+.calc-bs .ic { width: 20px; height: 20px; }

@@ -46,7 +46,7 @@
   function fmt(v) { const r = Math.round(v * 1e10) / 1e10; return r.toLocaleString('pt-BR', { maximumFractionDigits: 10, useGrouping: false }); }
 
   /* -------------------------------- Painel -------------------------------- */
-  const KEYS = [['C', 'clear'], ['(', '('], [')', ')'], ['÷', '÷'], ['7'], ['8'], ['9'], ['×', '×'], ['4'], ['5'], ['6'], ['−', '−'], ['1'], ['2'], ['3'], ['+', '+'], ['0'], [',', ','], ['%', '%'], ['=', 'eq']];
+  const KEYS = [['C', 'clear'], ['(', '('], [')', ')'], ['÷', '÷'], ['7'], ['8'], ['9'], ['×', '×'], ['4'], ['5'], ['6'], ['−', '−'], ['1'], ['2'], ['3'], ['+', '+'], ['%', '%'], ['0'], [',', ','], ['=', 'eq']];
   function paint(err) {
     if (!panel) return;
     let preview = '';
@@ -79,9 +79,9 @@
     panel = document.createElement('div');
     panel.className = 'calc glass'; panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Calculadora');
     panel.innerHTML = '<header class="calc-h"><span>' + icon('code') + esc(opts.title || 'Calculadora') + '</span><button class="icon-btn sm" data-close aria-label="Fechar calculadora">' + icon('x') + '</button></header>' +
-      '<div class="calc-screen"><div class="calc-expr" tabindex="0" aria-live="polite">0</div><div class="calc-prev"> </div></div>' +
+      '<div class="calc-screen"><div class="calc-row"><div class="calc-expr" tabindex="0" aria-live="polite">0</div><button type="button" class="calc-bs" data-k="back" aria-label="Apagar o último caractere" title="Apagar (Backspace)">' + icon('backspace') + '</button></div><div class="calc-prev"> </div></div>' +
       '<div class="calc-keys">' + KEYS.map(function (k) { const v = k[1] || k[0]; const cls = v === 'eq' ? ' eq' : /[÷×−+%()]/.test(v) ? ' op' : v === 'clear' ? ' fn' : ''; return '<button type="button" class="ck' + cls + '" data-k="' + v + '">' + k[0] + '</button>'; }).join('') + '</div>' +
-      '<div class="calc-foot"><button type="button" class="btn btn-quiet sm" data-k="back">⌫ Apagar</button>' + (opts.onUse ? '<button type="button" class="btn btn-primary sm" data-use>' + icon('check') + 'Usar resultado</button>' : '') + '</div>' +
+      '<div class="calc-foot">' + (opts.onUse ? '<button type="button" class="btn btn-primary sm" data-use>' + icon('check') + 'Usar resultado</button>' : '') + '</div>' +
       '<p class="calc-tip muted sm">Teclado: números, + − * / ( ) %, Enter calcula, Esc fecha.</p>';
     document.body.appendChild(panel);
     panel.querySelectorAll('[data-k]').forEach(function (b) { b.onclick = function () { press(b.dataset.k); }; });
