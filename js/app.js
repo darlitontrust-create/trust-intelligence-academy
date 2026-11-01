@@ -97,8 +97,8 @@
     refreshChrome();
     const h = (location.hash || '#temas').slice(1);
     const busy = h.indexOf('ex-') === 0 || h === 'perfil' || document.body.classList.contains('exam-open') || document.querySelector('.modal-wrap');
-    if (!busy) route();
-    if (Date.now() - remoteToastAt > 30000) { remoteToastAt = Date.now(); toast('Progresso sincronizado com seus outros aparelhos.', 'info'); }
+    if (!busy) { const y = global.scrollY; route({ quiet: true }); global.scrollTo(0, y); }
+    if (!remoteToastAt) { remoteToastAt = Date.now(); toast('Progresso sincronizado com seus outros aparelhos.', 'info'); }
   }
   function onCloudEvent(type, info) {
     const el = document.getElementById('save-state'); if (!el) return;
@@ -254,14 +254,17 @@
     document.addEventListener('focusout', function () { setTimeout(function () { if (!isField(document.activeElement)) document.body.classList.remove('kb-open'); }, 80); });
   })();
   let currentCleanup = null;
-  function route() {
+  /** Desenha a tela do endereço atual. quiet: redesenho da mesma tela (troca de escopo, sincronização)
+      — sem animação de entrada e sem voltar ao topo, para a atualização passar quase despercebida. */
+  function route(opts) {
+    const quiet = !!(opts && opts.quiet === true);
     if (!S.state || !document.getElementById('view')) return;
     const h = (location.hash || '#temas').slice(1);
     const view = document.getElementById('view');
     if (currentCleanup) { currentCleanup(); currentCleanup = null; }
     const navId = h.indexOf('ex-') === 0 ? 'trilha' : h;
     document.querySelectorAll('[data-nav]').forEach(function (a) { a.classList.toggle('on', a.dataset.nav === navId); });
-    view.classList.remove('enter'); void view.offsetWidth; view.classList.add('enter');
+    if (!quiet) { view.classList.remove('enter'); void view.offsetWidth; view.classList.add('enter'); } else view.classList.remove('enter');
     const O = global.Overview;
     const page = O.PAGES.indexOf(h) >= 0 ? h : (h === 'temas' || h === 'perfil' || h.indexOf('ex-') === 0) ? null : 'dashboard';
     if (h.indexOf('ex-') === 0) {
@@ -279,13 +282,13 @@
     else if (page === 'certificado') global.Certificate.render(view, S.state);
     else global.Dashboard.render(view, S.state);
     if (page) { view.insertAdjacentHTML('afterbegin', O.scopeBar(S.state, page)); O.bindScope(view, page, rerender); }
-    view.scrollTop = 0; global.scrollTo(0, 0);
+    if (!quiet) { view.scrollTop = 0; global.scrollTo(0, 0); }
     refreshChrome();
   }
   /** Redesenha a página atual mantendo a rolagem (troca de escopo). */
   function rerender() {
     const y = global.scrollY;
-    route();
+    route({ quiet: true });
     global.scrollTo(0, Math.min(y, 120));
   }
 

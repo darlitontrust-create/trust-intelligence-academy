@@ -165,5 +165,30 @@
     }
   }
 
-  global.Sfx = { play: play, enabled: enabled, setEnabled: setEnabled, get supported() { return !!AC; } };
+
+  /** Sons curtos das respostas: 'ok' (acerto) e 'no' (erro). Suaves, para não cansar em sequência. */
+  function blip(hz, t, dur, vel, type) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type || 'sine'; o.frequency.setValueAtTime(hz, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vel, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.05);
+    return o;
+  }
+  function answer(kind) {
+    if (!enabled() || !init()) return;
+    const t = ctx.currentTime + 0.02;
+    if (kind === 'ok') {
+      // duas notas subindo (Mi → Lá), com um brilho de oitava
+      blip(midi(76), t, 0.16, 0.5, 'triangle'); blip(midi(88), t, 0.12, 0.08, 'sine');
+      blip(midi(81), t + 0.09, 0.32, 0.55, 'triangle'); blip(midi(93), t + 0.09, 0.24, 0.1, 'sine');
+    } else {
+      // duas notas graves descendo, abafadas
+      const a = blip(midi(55), t, 0.2, 0.45, 'triangle'); a.frequency.exponentialRampToValueAtTime(midi(53), t + 0.2);
+      const b = blip(midi(50), t + 0.14, 0.34, 0.45, 'triangle'); b.frequency.exponentialRampToValueAtTime(midi(48), t + 0.46);
+    }
+  }
+
+  global.Sfx = { play: play, answer: answer, enabled: enabled, setEnabled: setEnabled, get supported() { return !!AC; } };
 })(window);

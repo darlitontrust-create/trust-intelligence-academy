@@ -117,7 +117,7 @@
   }
 
   function run(st, cert, qs) {
-    let i = 0, done = false;
+    let i = 0, done = false, shown = -1;
     function dots() {
       return '<ol class="exam-dots">' + qs.map(function (q, k) {
         const cls = q.answer == null ? (k === i ? 'cur' : '') : (q.answer === q.correct ? 'ok' : 'no');
@@ -142,6 +142,10 @@
           (q.answer != null ? '<div class="exam-exp ' + (q.answer === q.correct ? 'ok' : 'no') + '">' + icon(q.answer === q.correct ? 'check' : 'x') + '<p><b>' + (q.answer === q.correct ? 'Correto.' : 'Incorreto.') + '</b> ' + esc(q.exp) + '</p></div>' +
             '<div class="exam-next"><button class="btn btn-primary" data-next>' + (i < N - 1 ? 'Próxima questão' + icon('chevR') : icon('award') + 'Ver resultado') + '</button></div>' : '') +
         '</div>');
+      // sem "pulo" a cada clique: o cartão só anima ao abrir; ao trocar de questão, um esmaecer curto
+      const fresh = shown !== i; shown = i;
+      if (fresh) { const b = overlay.querySelector('.exam-body'); if (b) b.classList.add('swap'); }
+      overlay.classList.add('steady');
       bindClose(function () { return !done; });
       overlay.querySelectorAll('[data-o]').forEach(function (b) { b.onclick = function () { pick(+b.dataset.o); }; });
       const cf = overlay.querySelector('[data-confirm]'); if (cf) cf.onclick = confirm;
@@ -153,7 +157,7 @@
     }
     // escolher marca a alternativa; só o botão Confirmar registra a resposta
     function pick(k) { if (qs[i].answer != null) return; qs[i].pick = k; paint(); }
-    function confirm() { const q = qs[i]; if (q.answer != null || q.pick == null) return; q.answer = q.pick; paint(); }
+    function confirm() { const q = qs[i]; if (q.answer != null || q.pick == null) return; q.answer = q.pick; if (global.Sfx && global.Sfx.answer) global.Sfx.answer(q.answer === q.correct ? 'ok' : 'no'); paint(); }
     function next() { if (qs[i].answer == null) return; if (i < N - 1) { i++; paint(); } else { done = true; finish(st, cert, qs); } }
     keyHandler = function (e) {
       if (!overlay || done) return;

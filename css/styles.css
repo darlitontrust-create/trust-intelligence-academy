@@ -223,8 +223,9 @@ p { margin: 0; }
 .avatar { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; overflow: hidden; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--blue), var(--violet)); box-shadow: 0 0 0 2px rgba(255,255,255,.08); }
 .avatar img { width: 100%; height: 100%; object-fit: cover; }
 .view { padding-block: 28px 64px; padding-left: max(28px, env(safe-area-inset-left, 0px)); padding-right: max(28px, env(safe-area-inset-right, 0px)); max-width: 1440px; width: 100%; margin: 0 auto; outline: none; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; align-content: start; }
-.view.enter > * { animation: rise .45s cubic-bezier(.2,.8,.2,1) both; }
-.view.enter > *:nth-child(2) { animation-delay: .04s; } .view.enter > *:nth-child(3) { animation-delay: .08s; } .view.enter > *:nth-child(4) { animation-delay: .12s; }
+.view.enter > * { animation: softIn .3s ease-out both; }
+.view.enter > *:nth-child(2) { animation-delay: .02s; } .view.enter > *:nth-child(3) { animation-delay: .04s; } .view.enter > *:nth-child(4) { animation-delay: .06s; }
+@keyframes softIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
 @keyframes rise { from { opacity: .001; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .bottom-nav { display: none; }
 #print-area { display: none; }
@@ -404,7 +405,7 @@ a.tile:not(.locked):hover { transform: translateY(-2px); border-color: rgba(150,
 .editor-actions .btn-primary { margin-left: auto; order: 2; }
 .editor-actions #b-clear { order: 1; }
 
-.fb { padding: 18px 20px; display: grid; gap: 12px; animation: rise .35s cubic-bezier(.2,.8,.2,1); }
+.fb { padding: 18px 20px; display: grid; gap: 12px; animation: softIn .25s ease-out; }
 .fb-h { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .fb-h > .ic { width: 34px; height: 34px; padding: 7px; border-radius: 10px; }
 .fb-h b { display: block; font-size: 15.5px; }
@@ -797,8 +798,10 @@ body.exam-open { overflow: hidden; }
 .exam-overlay { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 20px; overflow: auto; background: radial-gradient(1000px 600px at 20% 0%, color-mix(in srgb, var(--ta) 16%, transparent), transparent 60%), radial-gradient(900px 600px at 100% 100%, color-mix(in srgb, var(--tb) 14%, transparent), transparent 60%), rgba(3,4,8,.86); backdrop-filter: blur(8px); animation: fadeIn .25s ease; }
 .exam-overlay.out { opacity: 0; transition: opacity .2s; }
 @keyframes fadeIn { from { opacity: 0; } }
-.exam { position: relative; width: min(760px, 100%); padding: 22px 26px 26px; background: rgba(14,18,30,.9); border-color: color-mix(in srgb, var(--ta) 35%, transparent); box-shadow: 0 0 80px -30px var(--ta); animation: rise .35s cubic-bezier(.2,.8,.2,1); }
-@keyframes rise { from { transform: translateY(14px) scale(.98); opacity: 0; } }
+.exam { position: relative; width: min(760px, 100%); padding: 22px 26px 26px; background: rgba(14,18,30,.9); border-color: color-mix(in srgb, var(--ta) 35%, transparent); box-shadow: 0 0 80px -30px var(--ta); animation: riseCard .35s cubic-bezier(.2,.8,.2,1); }
+@keyframes riseCard { from { transform: translateY(14px) scale(.98); opacity: 0; } }
+.exam-overlay.steady, .exam-overlay.steady .exam { animation: none; }
+.exam-body.swap { animation: softIn .22s ease-out both; }
 .exam-h { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin-bottom: 18px; }
 .exam-h > div { display: grid; gap: 2px; }
 .exam-h .eyebrow { color: var(--ta); }
@@ -834,7 +837,7 @@ body.exam-open { overflow: hidden; }
 .exam-opt[disabled] { cursor: default; }
 @keyframes pop { 50% { transform: scale(1.02); } }
 @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-.exam-exp { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; margin-top: 14px; padding: 12px 14px; border-radius: 12px; font-size: 14px; animation: rise .3s ease; }
+.exam-exp { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; margin-top: 14px; padding: 12px 14px; border-radius: 12px; font-size: 14px; animation: softIn .25s ease-out; }
 .exam-exp p { margin: 0; }
 .exam-exp.ok { background: rgba(52,211,153,.08); border: 1px solid rgba(52,211,153,.3); } .exam-exp.ok .ic { color: var(--ok); }
 .exam-exp.no { background: rgba(248,113,113,.07); border: 1px solid rgba(248,113,113,.28); } .exam-exp.no .ic { color: var(--err); }
