@@ -513,7 +513,7 @@
         '<div class="ls-split"><div class="ls-prev"><p>' + R(prev.s) + '</p><div class="goal">' + icon('target') + '<div><h3 class="card-k">Objetivo</h3><p>' + R(prev.g) + '</p></div></div></div>' +
         '<div class="ls-sol">' + (sol.label ? '<span class="ls-badge">' + icon('check') + esc(sol.label) + '</span>' : '') + (sol.code ? '<pre class="code-block">' + pack.codeHtml(sol.code) + '</pre>' : '') + (sol.html || '') + (sol.note ? '<p class="muted sm">' + R(sol.note) + '</p>' : '') + '</div></div></div>',
       '<div class="ls-body"><h3 class="ls-h">Teste rápido · ' + esc(les.titulo) + '</h3><p class="ls-q">' + R(q[0]) + '</p>' +
-        '<div class="ls-quiz" role="group" aria-label="Alternativas">' + opts.map(function (o, i) { return '<button type="button" class="ls-qo" data-ok="' + (o.ok ? 1 : 0) + '"><span>' + 'ABCD'[i] + '</span>' + R(o.t) + '</button>'; }).join('') + '</div>' +
+        '<div class="ls-quiz" role="group" aria-label="Alternativas">' + opts.map(function (o, i) { return '<button type="button" class="ls-qo" data-ok="' + (o.ok ? 1 : 0) + '"><span>' + 'ABCD'[i] + '</span><span class="ls-qt">' + R(o.t) + '</span></button>'; }).join('') + '</div>' +
         '<p class="ls-qexp" hidden></p><p class="ls-qexp-src" hidden>' + R(q[5]) + '</p></div>',
       '<div class="ls-body"><h3 class="ls-h">Dicas para o seu desafio</h3><ol class="ls-cards">' +
         '<li><span class="ls-num">' + icon('bulb') + '</span><p><b>Dica</b><br>' + R(hintOf(ex, les, oc.k)) + '</p></li>' +
