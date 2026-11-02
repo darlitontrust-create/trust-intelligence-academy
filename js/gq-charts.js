@@ -11,7 +11,8 @@
   'use strict';
   const esc = function (x) { return String(x == null ? '' : x).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   const FS = 1.18; // escala das fontes dos gráficos (legibilidade em colunas estreitas)
-  const COL = { a: '#ff9a76', b: '#ff5e3a', line: '#7dd3fc', ok: '#4ade80', bad: '#f87171', warn: '#fbbf24', ink: '#e8ebf6', ink2: '#b6bdd6', ink3: '#7e86a6', grid: 'rgba(255,255,255,0.08)' };
+  const THEMES = { gestao: { a: '#ff9a76', b: '#ff5e3a', rgb: '255,154,118', rgb2: '255,94,58' }, sixsigma: { a: '#5eead4', b: '#14b8a6', rgb: '94,234,212', rgb2: '20,184,166' } };
+  const COL = { a: '#ff9a76', b: '#ff5e3a', rgb: '255,154,118', rgb2: '255,94,58', line: '#7dd3fc', ok: '#4ade80', bad: '#f87171', warn: '#fbbf24', ink: '#e8ebf6', ink2: '#b6bdd6', ink3: '#7e86a6', grid: 'rgba(255,255,255,0.08)' };
 
   /* ------------------------------ Números ------------------------------ */
   function round(v, d) { const k = Math.pow(10, d == null ? 2 : d); return Math.round((v + Number.EPSILON) * k) / k; }
@@ -83,6 +84,70 @@
     },
     takt: function (avail, demand) { return avail / demand; },
   };
+
+  /* --------------------- Estatística (Lean Six Sigma) --------------------- */
+  function erf(x) { const s = x < 0 ? -1 : 1; x = Math.abs(x); const t1 = 1 / (1 + 0.3275911 * x); const y = 1 - (((((1.061405429 * t1 - 1.453152027) * t1) + 1.421413741) * t1 - 0.284496736) * t1 + 0.254829592) * t1 * Math.exp(-x * x); return s * y; }
+  function normCdf(z) { return 0.5 * (1 + erf(z / Math.SQRT2)); }
+  function gammaln(x) { const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5]; let y = x, tmp = x + 5.5; tmp -= (x + 0.5) * Math.log(tmp); let ser = 1.000000000190015; for (let j = 0; j < 6; j++) ser += c[j] / ++y; return -tmp + Math.log(2.5066282746310005 * ser / x); }
+  function betacf(a, b, x) { let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap; if (Math.abs(d) < 1e-30) d = 1e-30; d = 1 / d; let h = d; for (let m = 1; m <= 200; m++) { const m2 = 2 * m; let aa = m * (b - m) * x / ((qam + m2) * (a + m2)); d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d; h *= d * c; aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2)); d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d; const del = d * c; h *= del; if (Math.abs(del - 1) < 3e-12) break; } return h; }
+  function betainc(x, a, b) { if (x <= 0) return 0; if (x >= 1) return 1; const bt = Math.exp(gammaln(a + b) - gammaln(a) - gammaln(b) + a * Math.log(x) + b * Math.log(1 - x)); return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b; }
+  function gammaincQ(a, x) { // Q(a,x) = 1 - P(a,x)
+    if (x <= 0) return 1;
+    if (x < a + 1) { let sum = 1 / a, del = sum, ap = a; for (let n = 0; n < 300; n++) { ap++; del *= x / ap; sum += del; if (Math.abs(del) < Math.abs(sum) * 1e-14) break; } return 1 - sum * Math.exp(-x + a * Math.log(x) - gammaln(a)); }
+    let b = x + 1 - a, c = 1e30, d = 1 / b, h = d; for (let i = 1; i < 300; i++) { const an = -i * (i - a); b += 2; d = an * d + b; if (Math.abs(d) < 1e-30) d = 1e-30; c = b + an / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d; const del = d * c; h *= del; if (Math.abs(del - 1) < 1e-14) break; } return Math.exp(-x + a * Math.log(x) - gammaln(a)) * h;
+  }
+  /** Valor-p bicaudal do t de Student. */
+  function tP(t, df) { return betainc(df / (df + t * t), df / 2, 0.5); }
+  /** Valor-p da cauda superior do F. */
+  function fP(F, d1, d2) { return betainc(d2 / (d2 + d1 * F), d2 / 2, d1 / 2); }
+  function chiP(x, df) { return gammaincQ(df / 2, x / 2); }
+  /** t crítico bicaudal (por bissecção). */
+  function tInv(alpha, df) { let lo = 0, hi = 50; for (let i = 0; i < 80; i++) { const m = (lo + hi) / 2; if (tP(m, df) > alpha) lo = m; else hi = m; } return (lo + hi) / 2; }
+  function quant(sorted, q) { const pos = (sorted.length - 1) * q, b = Math.floor(pos), r = pos - b; return sorted[b + 1] !== undefined ? sorted[b] + r * (sorted[b + 1] - sorted[b]) : sorted[b]; }
+  function solve(A, y) { // eliminação de Gauss
+    const n = A.length, M = A.map(function (r, i) { return r.concat([y[i]]); });
+    for (let c = 0; c < n; c++) { let p = c; for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r; const tmp = M[c]; M[c] = M[p]; M[p] = tmp; for (let r = 0; r < n; r++) { if (r === c) continue; const f = M[r][c] / M[c][c]; for (let k = c; k <= n; k++) M[r][k] -= f * M[c][k]; } }
+    return M.map(function (r, i) { return r[n] / r[i]; });
+  }
+  const A2 = { 2: 1.880, 3: 1.023, 4: 0.729, 5: 0.577, 6: 0.483 }, D4 = { 2: 3.267, 3: 2.574, 4: 2.282, 5: 2.114, 6: 2.004 };
+  Object.assign(calc, {
+    describe: function (v) { const so = v.slice().sort(function (a, b) { return a - b; }); return { n: v.length, mean: mean(v), median: quant(so, 0.5), sd: sd(v), min: so[0], max: so[so.length - 1], q1: quant(so, 0.25), q3: quant(so, 0.75), range: so[so.length - 1] - so[0] }; },
+    t1: function (v, mu0) { const n = v.length, t = (mean(v) - mu0) / (sd(v) / Math.sqrt(n)); return { t: t, df: n - 1, p: tP(Math.abs(t), n - 1), mean: mean(v) }; },
+    t2: function (a, b) { const va = sd(a) * sd(a) / a.length, vb = sd(b) * sd(b) / b.length, t = (mean(a) - mean(b)) / Math.sqrt(va + vb), df = Math.pow(va + vb, 2) / (va * va / (a.length - 1) + vb * vb / (b.length - 1)); return { t: t, df: df, p: tP(Math.abs(t), df), diff: mean(a) - mean(b), ma: mean(a), mb: mean(b) }; },
+    tpaired: function (a, b) { const d = a.map(function (x, i) { return x - b[i]; }); const r = calc.t1(d, 0); r.diff = mean(d); return r; },
+    prop2: function (x1, n1, x2, n2) { const p1 = x1 / n1, p2 = x2 / n2, pp = (x1 + x2) / (n1 + n2), z = (p1 - p2) / Math.sqrt(pp * (1 - pp) * (1 / n1 + 1 / n2)); return { z: z, p: 2 * (1 - normCdf(Math.abs(z))), p1: p1, p2: p2 }; },
+    anova: function (groups) {
+      const all = [].concat.apply([], groups), gm = mean(all), k = groups.length, N = all.length;
+      const ssb = sum(groups.map(function (g) { return g.length * Math.pow(mean(g) - gm, 2); })), ssw = sum(groups.map(function (g) { const m = mean(g); return sum(g.map(function (x) { return (x - m) * (x - m); })); }));
+      const dfb = k - 1, dfw = N - k, msb = ssb / dfb, msw = ssw / dfw, F = msb / msw;
+      return { ssb: ssb, ssw: ssw, sst: ssb + ssw, dfb: dfb, dfw: dfw, msb: msb, msw: msw, F: F, p: fP(F, dfb, dfw), means: groups.map(mean) };
+    },
+    regress: function (pairs) { const c = corr(pairs), n = pairs.length, t = c.r * Math.sqrt((n - 2) / (1 - c.r * c.r)); return { a: c.a, b: c.b, r: c.r, r2: c.r * c.r, n: n, t: t, p: tP(Math.abs(t), n - 2) }; },
+    mreg: function (X, y) {
+      const n = y.length, k = X[0].length, Z = X.map(function (r) { return [1].concat(r); }), p = k + 1;
+      const XtX = [], Xty = []; for (let i = 0; i < p; i++) { XtX.push([]); Xty.push(sum(Z.map(function (r, j) { return r[i] * y[j]; }))); for (let j = 0; j < p; j++) XtX[i].push(sum(Z.map(function (r) { return r[i] * r[j]; }))); }
+      const b = solve(XtX, Xty), my = mean(y), fit = Z.map(function (r) { return sum(r.map(function (v, i) { return v * b[i]; })); });
+      const sse = sum(y.map(function (v, i) { return Math.pow(v - fit[i], 2); })), sst = sum(y.map(function (v) { return Math.pow(v - my, 2); }));
+      const r2 = 1 - sse / sst; return { b: b, r2: r2, r2adj: 1 - (1 - r2) * (n - 1) / (n - p) };
+    },
+    chi2: function (tab) {
+      const rs = tab.map(function (r) { return sum(r); }), cs = tab[0].map(function (_, j) { return sum(tab.map(function (r) { return r[j]; })); }), N = sum(rs);
+      let x = 0; tab.forEach(function (r, i) { r.forEach(function (o, j) { const e = rs[i] * cs[j] / N; x += (o - e) * (o - e) / e; }); });
+      const df = (tab.length - 1) * (tab[0].length - 1); return { chi2: x, df: df, p: chiP(x, df) };
+    },
+    nMean: function (sigma, E, conf) { const z = invNorm(1 - (1 - (conf || 0.95)) / 2); return Math.ceil(Math.pow(z * sigma / E, 2)); },
+    nProp: function (p, E, conf) { const z = invNorm(1 - (1 - (conf || 0.95)) / 2); return Math.ceil(z * z * p * (1 - p) / (E * E)); },
+    ciMean: function (v, conf) { const n = v.length, tc = tInv(1 - (conf || 0.95), n - 1), h = tc * sd(v) / Math.sqrt(n); return { lo: mean(v) - h, hi: mean(v) + h, half: h }; },
+    pchart: function (defs, n) { const pb = sum(defs) / (n * defs.length), s = Math.sqrt(pb * (1 - pb) / n); return { lc: pb, lsc: pb + 3 * s, lic: Math.max(0, pb - 3 * s) }; },
+    xbarr: function (subs) { const k = subs[0].length, xb = subs.map(mean), rs = subs.map(function (g) { return Math.max.apply(null, g) - Math.min.apply(null, g); }), xbb = mean(xb), rb = mean(rs); return { means: xb, ranges: rs, lc: xbb, lsc: xbb + A2[k] * rb, lic: xbb - A2[k] * rb, rbar: rb, rUcl: D4[k] * rb }; },
+    effects: function (runs, k) { // runs: [x1, x2, …, y] com níveis −1/+1
+      const out = []; for (let i = 0; i < k; i++) { const hi = runs.filter(function (r) { return r[i] > 0; }).map(function (r) { return r[k]; }), lo = runs.filter(function (r) { return r[i] < 0; }).map(function (r) { return r[k]; }); out.push(mean(hi) - mean(lo)); }
+      const ab = runs.map(function (r) { return [r[0] * r[1], r[k]]; }), hi = ab.filter(function (r) { return r[0] > 0; }).map(function (r) { return r[1]; }), lo = ab.filter(function (r) { return r[0] < 0; }).map(function (r) { return r[1]; });
+      return { main: out, ab: mean(hi) - mean(lo) };
+    },
+    ppm: function (mu, s, lie, lse) { let p = 0; if (lie != null) p += normCdf((lie - mu) / s); if (lse != null) p += 1 - normCdf((lse - mu) / s); return p * 1e6; },
+    rty: function (yields) { return yields.reduce(function (a, b) { return a * b; }, 1); },
+  });
   /* Inversa da normal padrão (Acklam). */
   function invNorm(p) {
     const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
@@ -130,7 +195,7 @@
     if (withCum) for (let i = 0; i <= 4; i++) s += t(x1 + 4, y0 - (y0 - y1) * i / 4 + 4, (i * 25) + '%', { s: 9.5, c: COL.ink3 });
     p.rows.forEach(function (r, i) {
       const h = (y0 - y1) * r.v / max, x = x0 + i * bw + bw * 0.14, vital = withCum && i < p.vital;
-      s += '<rect x="' + x + '" y="' + (y0 - h) + '" width="' + (bw * 0.72) + '" height="' + h + '" rx="3" fill="' + (vital ? COL.b : 'rgba(255,154,118,0.45)') + '"/>';
+      s += '<rect x="' + x + '" y="' + (y0 - h) + '" width="' + (bw * 0.72) + '" height="' + h + '" rx="3" fill="' + (vital ? COL.b : 'rgba(' + COL.rgb + ',0.45)') + '"/>';
       s += withCum && h > 22 ? t(x + bw * 0.36, y0 - h + 15, fmt(r.v), { a: 'middle', s: 10.5, c: vital ? '#1a0b05' : COL.ink, w: 700 }) : t(x + bw * 0.36, y0 - h - 5, fmt(r.v), { a: 'middle', s: 10, c: COL.ink });
       s += f.rot ? t(x + bw * 0.36, y0 + 12, r.label, { a: 'end', s: 10, r: -35 }) : tml(x + bw * 0.36, y0 + 14, r.label, Math.max(8, Math.round(bw / 6.2)), { a: 'middle', s: 10 });
     });
@@ -141,7 +206,7 @@
       pts.forEach(function (q, i) { s += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="3.2" fill="' + COL.line + '"/>' + (f.cumLabels === false ? '' : t(q[0] + (i ? 0 : 0), q[1] - 8, pct(p.rows[i].cum, 0), { a: 'middle', s: 9.5, c: COL.line, w: 600 })); });
     }
     return {
-      html: svg(W, H, s, 'Diagrama de Pareto') + (f.cum !== false ? legend([[COL.b, 'Poucos vitais (até 80%)'], ['rgba(255,154,118,0.45)', 'Muitos triviais'], [COL.line, '% acumulado']]) : ''),
+      html: svg(W, H, s, 'Diagrama de Pareto') + (f.cum !== false ? legend([[COL.b, 'Poucos vitais (até 80%)'], ['rgba(' + COL.rgb + ',0.45)', 'Muitos triviais'], [COL.line, '% acumulado']]) : ''),
       speech: f.cum === false ? 'O gráfico mostra as categorias da maior para a menor.' : 'Calculado agora: ' + p.vital + ' de ' + n + ' categorias somam ' + pct(p.rows[p.vital - 1].cum) + ' do total de ' + fmt(p.total) + '.',
       stats: p,
     };
@@ -175,7 +240,7 @@
     const W = 580, H = 260, L = 40, Rr = 18, T = 16, B = 44, x0 = L, x1 = W - Rr, y0 = H - B, y1 = T, max = niceMax(Math.max.apply(null, bins)), bw = (x1 - x0) / nb;
     const X = function (val) { return x0 + (val - lo) / (w * nb) * (x1 - x0); };
     let s = grid(x0, x1, y0, y1, nTicks(max)) + axisY(x0, y0, y1, max, nTicks(max));
-    bins.forEach(function (c, i) { const h = (y0 - y1) * c / max; s += '<rect x="' + (x0 + i * bw + 1) + '" y="' + (y0 - h) + '" width="' + (bw - 2) + '" height="' + h + '" fill="rgba(255,154,118,0.75)"/>' + (c ? t(x0 + i * bw + bw / 2, y0 - h - 4, String(c), { a: 'middle', s: 10, c: COL.ink }) : ''); });
+    bins.forEach(function (c, i) { const h = (y0 - y1) * c / max; s += '<rect x="' + (x0 + i * bw + 1) + '" y="' + (y0 - h) + '" width="' + (bw - 2) + '" height="' + h + '" fill="rgba(' + COL.rgb + ',0.75)"/>' + (c ? t(x0 + i * bw + bw / 2, y0 - h - 4, String(c), { a: 'middle', s: 10, c: COL.ink }) : ''); });
     for (let i = 0; i <= nb; i++) s += t(x0 + i * bw, y0 + 14, fmt(lo + i * w, w % 1 ? 1 : 0), { a: 'middle', s: 9.5, c: COL.ink3 });
     s += t((x0 + x1) / 2, H - 8, f.xlab || '', { a: 'middle', s: 10.5 });
     [['LIE', f.lie], ['LSE', f.lse]].forEach(function (l) { if (l[1] != null) s += ln(X(l[1]), y1, X(l[1]), y0, COL.bad, { dash: '5 4', w: 1.4 }) + t(X(l[1]), y1 + 10, l[0], { a: 'middle', s: 10, c: COL.bad }); });
@@ -195,13 +260,13 @@
     s += t(x0, y0 + 16, fmt(xmin), { a: 'middle', s: 10, c: COL.ink3 }) + t(x1, y0 + 16, fmt(xmax), { a: 'middle', s: 10, c: COL.ink3 });
     s += t((x0 + x1) / 2, H - 6, f.xlab || 'X', { a: 'middle', s: 10.5 }) + t(12, (y0 + y1) / 2, f.ylab || 'Y', { a: 'middle', s: 10.5, r: -90 });
     const forca = Math.abs(c.r) >= 0.7 ? 'forte' : Math.abs(c.r) >= 0.4 ? 'moderada' : 'fraca';
-    return { html: svg(W, H, s, 'Diagrama de dispersão') + (f.showR === false ? '' : '<p class="gq-cap">Correlação r = <b>' + fmt(c.r, 2) + '</b> (' + forca + ', ' + (c.r >= 0 ? 'positiva' : 'negativa') + ')</p>'), speech: 'Calculado agora: correlação ' + forca + ' e ' + (c.r >= 0 ? 'positiva' : 'negativa') + ', r igual a ' + fmt(c.r, 2) + '.', stats: c };
+    return { html: svg(W, H, s, 'Diagrama de dispersão') + (f.showR === false ? '' : f.eq ? '<p class="gq-cap">Reta: <b>y = ' + fmt(c.a, 2) + (c.b >= 0 ? ' + ' : ' − ') + fmt(Math.abs(c.b), 3) + '·x</b> · R² = <b>' + fmt(c.r * c.r, 2) + '</b></p>' : '<p class="gq-cap">Correlação r = <b>' + fmt(c.r, 2) + '</b> (' + forca + ', ' + (c.r >= 0 ? 'positiva' : 'negativa') + ')</p>'), speech: 'Calculado agora: correlação ' + forca + ' e ' + (c.r >= 0 ? 'positiva' : 'negativa') + ', r igual a ' + fmt(c.r, 2) + '.', stats: c };
   };
 
   R.ishikawa = function (f) {
     const cats = f.cats, keys = Object.keys(cats), W = 640, H = 300, sy = 150, hx = 500;
     let s = ln(30, sy, hx, sy, COL.ink2, { w: 2.4 }) + '<polygon points="' + hx + ',' + (sy - 7) + ' ' + (hx + 12) + ',' + sy + ' ' + hx + ',' + (sy + 7) + '" fill="' + COL.ink2 + '"/>';
-    s += '<rect x="' + (hx + 14) + '" y="' + (sy - 34) + '" width="104" height="68" rx="10" fill="rgba(255,94,58,0.18)" stroke="' + COL.b + '"/>' + tml(hx + 66, sy - (wrap(f.effect, 14).length - 1) * 6.5 + 4, f.effect, 14, { a: 'middle', s: 11, c: COL.ink, w: 600 });
+    s += '<rect x="' + (hx + 14) + '" y="' + (sy - 34) + '" width="104" height="68" rx="10" fill="rgba(' + COL.rgb2 + ',0.18)" stroke="' + COL.b + '"/>' + tml(hx + 66, sy - (wrap(f.effect, 14).length - 1) * 6.5 + 4, f.effect, 14, { a: 'middle', s: 11, c: COL.ink, w: 600 });
     const per = Math.ceil(keys.length / 2), gap = (hx - 110) / per;
     keys.forEach(function (k, i) {
       const top = i < per, j = top ? i : i - per, bx = 110 + j * gap + gap * 0.42, by = top ? 40 : 260;
@@ -298,7 +363,7 @@
     for (let i = 0; i <= 60; i++) { const v = lo + (f.lie - lo) * i / 60; outL += (i ? 'L' : 'M') + X(v).toFixed(1) + ' ' + (y0 - (y0 - y1) * pdf(v)).toFixed(1); }
     for (let i = 0; i <= 60; i++) { const v = f.lse + (hi - f.lse) * i / 60; outR += (i ? 'L' : 'M') + X(v).toFixed(1) + ' ' + (y0 - (y0 - y1) * pdf(v)).toFixed(1); }
     let s = '<path d="' + outL + 'L' + X(f.lie) + ' ' + y0 + 'L' + X(lo) + ' ' + y0 + 'Z" fill="rgba(248,113,113,0.35)"/><path d="M' + X(f.lse) + ' ' + y0 + outR.replace('M', 'L') + 'L' + X(hi) + ' ' + y0 + 'Z" fill="rgba(248,113,113,0.35)"/>';
-    s += '<path d="' + curve + '" fill="rgba(255,154,118,0.14)" stroke="' + COL.a + '" stroke-width="2"/>' + ln(x0, y0, x1, y0, COL.ink3);
+    s += '<path d="' + curve + '" fill="rgba(' + COL.rgb + ',0.14)" stroke="' + COL.a + '" stroke-width="2"/>' + ln(x0, y0, x1, y0, COL.ink3);
     [['LIE', f.lie, COL.bad], ['LSE', f.lse, COL.bad], ['Média', mu, COL.ok]].forEach(function (l) { s += ln(X(l[1]), y1 - 10, X(l[1]), y0, l[2], { dash: l[0] === 'Média' ? '' : '5 4', w: 1.4 }) + t(X(l[1]), y1 - 14, l[0] + ' ' + fmt(l[1], f.d == null ? 1 : f.d), { a: 'middle', s: 10, c: l[2] }); });
     if (f.alvo != null) s += ln(X(f.alvo), y0 - 8, X(f.alvo), y0 + 8, COL.ink) + t(X(f.alvo), y0 + 20, 'Alvo', { a: 'middle', s: 10, c: COL.ink2 });
     return { html: svg(W, H, s, 'Capabilidade do processo') + (f.show === false ? '' : '<ul class="gq-kpis"><li><small>Cp</small><b>' + fmt(c.cp, 2) + '</b></li><li><small>Cpk</small><b>' + fmt(c.cpk, 2) + '</b></li><li><small>Desvio padrão</small><b>' + fmt(s0, 2) + '</b></li></ul>'), speech: 'Calculado agora: Cp de ' + fmt(c.cp, 2) + ' e Cpk de ' + fmt(c.cpk, 2) + '.', stats: c };
@@ -345,10 +410,66 @@
     return { html: html, speech: f.speech || '', stats: {} };
   };
 
+
+  R.box = function (f) {
+    const G = f.groups, W = 580, H = 260, L = 50, Rr = 18, T = 16, B = 40, x0 = L, x1 = W - Rr, y0 = H - B, y1 = T;
+    const all = [].concat.apply([], G.map(function (g) { return g.v; })), lo0 = Math.min.apply(null, all), hi0 = Math.max.apply(null, all), pad = (hi0 - lo0) * 0.1 || 1, vmin = lo0 - pad, vmax = hi0 + pad;
+    const Y = function (v) { return y0 - (y0 - y1) * (v - vmin) / (vmax - vmin); }, gw = (x1 - x0) / G.length;
+    let s = ''; for (let i = 0; i <= 4; i++) { const v = vmin + (vmax - vmin) * i / 4; s += ln(x0, Y(v), x1, Y(v), COL.grid) + t(x0 - 4, Y(v) + 4, fmt(v, f.d == null ? 1 : f.d), { a: 'end', s: 10, c: COL.ink3 }); }
+    const ds = G.map(function (g, i) {
+      const d = calc.describe(g.v), cx = x0 + gw * i + gw / 2, bw = Math.min(70, gw * 0.45), iqr = d.q3 - d.q1, wlo = Math.min.apply(null, g.v.filter(function (x) { return x >= d.q1 - 1.5 * iqr; })), whi = Math.max.apply(null, g.v.filter(function (x) { return x <= d.q3 + 1.5 * iqr; }));
+      s += ln(cx, Y(whi), cx, Y(d.q3), COL.ink2) + ln(cx, Y(d.q1), cx, Y(wlo), COL.ink2) + ln(cx - bw / 4, Y(whi), cx + bw / 4, Y(whi), COL.ink2) + ln(cx - bw / 4, Y(wlo), cx + bw / 4, Y(wlo), COL.ink2);
+      s += '<rect x="' + (cx - bw / 2) + '" y="' + Y(d.q3) + '" width="' + bw + '" height="' + Math.max(1, Y(d.q1) - Y(d.q3)) + '" rx="4" fill="rgba(' + COL.rgb + ',0.28)" stroke="' + COL.a + '"/>' + ln(cx - bw / 2, Y(d.median), cx + bw / 2, Y(d.median), COL.b, { w: 2.4 });
+      g.v.filter(function (x) { return x < wlo || x > whi; }).forEach(function (x) { s += '<circle cx="' + cx + '" cy="' + Y(x) + '" r="3.4" fill="none" stroke="' + COL.bad + '" stroke-width="1.4"/>'; });
+      s += t(cx, y0 + 16, g.n, { a: 'middle', s: 10.5, c: COL.ink }) + t(cx + bw / 2 + 4, Y(d.median) + 4, fmt(d.median, f.d == null ? 1 : f.d), { s: 9.5, c: COL.ink2 });
+      return d;
+    });
+    if (f.lse != null) s += ln(x0, Y(f.lse), x1, Y(f.lse), COL.bad, { dash: '5 4', w: 1.3 }) + t(x1, Y(f.lse) - 4, 'LSE ' + fmt(f.lse), { a: 'end', s: 10, c: COL.bad });
+    s += t(x0 - 6, T - 4 + 8, f.unit || '', { a: 'end', s: 10, c: COL.ink3 });
+    const best = ds.reduce(function (m, d, i) { return d.median < ds[m].median ? i : m; }, 0);
+    return { html: svg(W, H, s, 'Boxplot'), speech: 'Calculado agora: medianas de ' + ds.map(function (d, i) { return G[i].n + ' ' + fmt(d.median, 1); }).join(', ') + '.', stats: { d: ds, best: best } };
+  };
+
+  R.effects = function (f) {
+    const runs = f.runs, k = f.factors.length, e = calc.effects(runs, k), W = 580, H = 240, T = 22, B = 40, y0 = H - B, y1 = T;
+    const ys = runs.map(function (r) { return r[k]; }), panels = f.mode === 'inter' ? 1 : k;
+    let lo = Infinity, hi = -Infinity; const lines = [];
+    if (f.mode === 'inter') {
+      [-1, 1].forEach(function (bv) { const pts = [-1, 1].map(function (av) { return mean(runs.filter(function (r) { return r[0] === av && r[1] === bv; }).map(function (r) { return r[k]; })); }); lines.push({ pts: pts, name: f.factors[1] + (bv > 0 ? ' alto' : ' baixo') }); pts.forEach(function (v) { lo = Math.min(lo, v); hi = Math.max(hi, v); }); });
+    } else for (let i = 0; i < k; i++) { const pts = [-1, 1].map(function (lv) { return mean(runs.filter(function (r) { return r[i] === lv; }).map(function (r) { return r[k]; })); }); lines.push({ pts: pts, name: f.factors[i] }); pts.forEach(function (v) { lo = Math.min(lo, v); hi = Math.max(hi, v); }); }
+    const pad = (hi - lo) * 0.2 || 1, vmin = lo - pad, vmax = hi + pad, Y = function (v) { return y0 - (y0 - y1) * (v - vmin) / (vmax - vmin); };
+    const pw = (W - 60) / panels; let s = '';
+    for (let i = 0; i <= 3; i++) { const v = vmin + (vmax - vmin) * i / 3; s += ln(50, Y(v), W - 10, Y(v), COL.grid) + t(46, Y(v) + 4, fmt(v, 1), { a: 'end', s: 10, c: COL.ink3 }); }
+    const cols = [COL.b, COL.line, COL.warn, COL.ok];
+    lines.forEach(function (l, i) {
+      const px = f.mode === 'inter' ? 50 : 50 + pw * i, xa = px + pw * 0.2, xb = px + pw * 0.8, c = f.mode === 'inter' ? cols[i] : COL.b;
+      s += ln(xa, Y(l.pts[0]), xb, Y(l.pts[1]), c, { w: 2.4 }) + '<circle cx="' + xa + '" cy="' + Y(l.pts[0]) + '" r="4" fill="' + c + '"/><circle cx="' + xb + '" cy="' + Y(l.pts[1]) + '" r="4" fill="' + c + '"/>';
+      if (f.mode !== 'inter') s += t(xa, y0 + 15, '−', { a: 'middle', s: 12, c: COL.ink3 }) + t(xb, y0 + 15, '+', { a: 'middle', s: 12, c: COL.ink3 }) + t((xa + xb) / 2, y0 + 30, l.name, { a: 'middle', s: 10.5, c: COL.ink, w: 600 }) + t((xa + xb) / 2, Math.min(Y(l.pts[0]), Y(l.pts[1])) - 8, 'efeito ' + fmt(e.main[i], 1), { a: 'middle', s: 10, c: COL.ink2 });
+      else s += t(xb + 6, Y(l.pts[1]) + 4, l.name, { s: 10, c: c, w: 600 });
+    });
+    if (f.mode === 'inter') s += t(50 + pw * 0.2, y0 + 15, f.factors[0] + ' −', { a: 'middle', s: 10.5, c: COL.ink3 }) + t(50 + pw * 0.8, y0 + 15, f.factors[0] + ' +', { a: 'middle', s: 10.5, c: COL.ink3 });
+    const sp = f.mode === 'inter' ? 'Calculado agora: o efeito da interação ' + f.factors[0] + ' com ' + f.factors[1] + ' é ' + fmt(e.ab, 1) + '; linhas que se cruzam ou se afastam indicam interação.' : 'Calculado agora: efeitos principais de ' + f.factors.map(function (n, i) { return n + ' ' + fmt(e.main[i], 1); }).join(', ') + '.';
+    return { html: svg(W, H, s, f.mode === 'inter' ? 'Gráfico de interação' : 'Gráfico de efeitos principais'), speech: sp, stats: e };
+  };
+
+  R.pchart = function (f) {
+    const lim = calc.pchart(f.defs, f.n), pts = f.defs.map(function (d) { return d / f.n * 100; });
+    const out = R.control({ pts: pts, lim: { lc: lim.lc * 100, lsc: lim.lsc * 100, lic: lim.lic * 100 }, labels: f.labels, unit: '%', d: 2 });
+    out.speech = 'Calculado agora: proporção média de ' + fmt(lim.lc * 100, 2) + '%, com limite superior de ' + fmt(lim.lsc * 100, 2) + '%. ' + out.speech.split('. ').slice(1).join('. ');
+    out.stats.p = lim; return out;
+  };
+
+  R.xbar = function (f) {
+    const x = calc.xbarr(f.subgroups), out = R.control({ pts: x.means, lim: { lc: x.lc, lsc: x.lsc, lic: x.lic }, labels: f.labels, unit: f.unit, d: f.d == null ? 2 : f.d });
+    out.stats.xbarr = x; return out;
+  };
   function legend(items) { return '<ul class="gq-leg">' + items.map(function (i) { return '<li><i style="background:' + i[0] + '"></i>' + esc(i[1]) + '</li>'; }).join('') + '</ul>'; }
 
+  /** Paleta da trilha atual (Gestão: coral · Lean Six Sigma: verde-água). */
+  function theme(id) { const th = THEMES[id] || THEMES.gestao; COL.a = th.a; COL.b = th.b; COL.rgb = th.rgb; COL.rgb2 = th.rgb2; }
   function render(fig) {
     if (!fig) return { html: '', speech: '', stats: {} };
+    theme(fig.theme || (global.Tracks && global.Tracks.activeId ? global.Tracks.activeId() : 'gestao'));
     const fn = R[fig.type];
     if (!fn) return { html: '<p class="muted">Figura desconhecida.</p>', speech: '', stats: {} };
     const out = fn(fig);
@@ -374,5 +495,5 @@
     }).join('\n');
   }
 
-  global.GQCharts = { render: render, calc: calc, fmt: fmt, pct: pct, round: round, mean: mean, sd: sd, corr: corr, highlight: highlight, invNorm: invNorm };
+  global.GQCharts = { render: render, calc: calc, normCdf: normCdf, tP: tP, fP: fP, chiP: chiP, tInv: tInv, fmt: fmt, pct: pct, round: round, mean: mean, sd: sd, corr: corr, highlight: highlight, invNorm: invNorm };
 })(typeof window !== 'undefined' ? window : globalThis);

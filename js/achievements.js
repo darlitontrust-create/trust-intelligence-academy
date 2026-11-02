@@ -51,6 +51,13 @@
         'Conduz DMAIC e mede o nível sigma e a capabilidade.', 'Antecipa riscos com FMEA, CTQ e MSA.', 'Concluiu o nível Avançado.'],
       { key: 'trainee', nome: 'Assistente da Qualidade', desc: 'Primeiros passos na operação da NexusMarket.' },
       'Lenda da Melhoria Contínua', 'Concluiu os 150 exercícios da trilha de Gestão da Qualidade.'),
+    sixsigma: career(
+      ['White Belt · Fundamentos', 'Yellow Belt · Definição de Projetos', 'Yellow Belt · Ferramentas de Melhoria', 'Green Belt · Medição (Measure)', 'Green Belt · Análise (Analyze)', 'Green Belt · Melhoria e Controle', 'Black Belt · Estatística Avançada', 'Black Belt · Experimentos e DFSS', 'Black Belt · Liderança de Programa'],
+      ['Conhece Lean, Six Sigma, VOC, desperdícios, variação e DMAIC.', 'Define projetos com carta, SIPOC e CTQ.', 'Concluiu o conteúdo de Yellow Belt: Pareto, Ishikawa, 5S e kaizen.',
+        'Mede com amostragem, MSA, DPMO e nível sigma.', 'Analisa com VSM, fluxo, OEE, testes de hipótese e regressão.', 'Concluiu o conteúdo de Green Belt: soluções, FMEA, CEP e Cpk.',
+        'Aplica ANOVA, qui-quadrado, regressão múltipla e poder.', 'Planeja experimentos (DOE), DFSS e QFD.', 'Concluiu o conteúdo de Black Belt: portfólio, ganhos e liderança.'],
+      { key: 'trainee', nome: 'Aprendiz de Melhoria', desc: 'Primeiros passos no Lean Six Sigma.' },
+      'Lenda Lean Six Sigma', 'Concluiu os 150 exercícios, do White ao Black Belt, com visão de Master Black Belt.'),
     python: career(
       ['Programador Iniciante', 'Explorador de Estruturas', 'Desenvolvedor Python Júnior', 'Organizador de Dados', 'Limpador de Dados', 'Analista Python Pleno', 'Analista de Dados com pandas', 'Engenheiro de Análises', 'Cientista de Dados'],
       ['Domina print, variáveis, operadores e textos.', 'Usa listas, fatias, decisões e laços.', 'Concluiu o nível Iniciante com dicionários e funções.',
@@ -128,6 +135,15 @@
       { key: 'first-pandas', nome: 'Panda Domado', desc: 'Resolva seu primeiro exercício com pandas.', icon: 'table', test: function (st) { return solvedList(st).some(function (e) { return e.level === 3; }); } },
       { key: 'first-groupby', nome: 'Agrupador', desc: 'Use groupby ou pivot_table.', icon: 'bars', test: has(['GROUPBY', 'AGG', 'PIVOT']) },
       { key: 'py-master', nome: 'Pythonista', desc: 'Conclua os 150 exercícios.', icon: 'trophy', test: function (st) { return solvedList(st).length >= 150; } },
+    ],
+    sixsigma: [
+      { key: 'first-belt', nome: 'Primeira Faixa', desc: 'Resolva seu primeiro caso de Lean Six Sigma.', icon: 'play', test: function (st) { return solvedList(st).length >= 1; } },
+      { key: 'first-muda', nome: 'Caçador de Desperdícios', desc: 'Resolva um caso de desperdícios ou VSM.', icon: 'flame', test: has(['DESPERDÍCIOS', 'VSM', 'FLUXO']) },
+      { key: 'first-dmaic', nome: 'Roteiro DMAIC', desc: 'Resolva um caso de DMAIC ou carta de projeto.', icon: 'map', test: has(['DMAIC', 'CARTA DE PROJETO']) },
+      { key: 'first-test', nome: 'Valor-p na Mão', desc: 'Resolva um caso de teste de hipótese, ANOVA ou qui-quadrado.', icon: 'search', test: has(['TESTES DE HIPÓTESE', 'ANOVA', 'QUI-QUADRADO']) },
+      { key: 'first-doe', nome: 'Experimentador', desc: 'Resolva um caso de DOE.', icon: 'target', test: has(['DOE', 'FATORIAL']) },
+      { key: 'ss-black', nome: 'Faixa Preta', desc: 'Conclua o nível Avançado (Black Belt).', icon: 'medal', test: function (st) { return levelCount(st, 3) >= 50; } },
+      { key: 'ss-master', nome: 'Rumo ao Master', desc: 'Conclua os 150 casos.', icon: 'trophy', test: function (st) { return solvedList(st).length >= 150; } },
     ],
     ingles: [
       { key: 'first-hello', nome: 'Hello, World!', desc: 'Resolva seu primeiro exercício de inglês.', icon: 'play', test: function (st) { return solvedList(st).length >= 1; } },

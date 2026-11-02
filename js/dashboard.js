@@ -166,7 +166,9 @@
             return '<li><span class="role-chip' + (r.final ? ' legend' : '') + '">' + icon('award') + esc(r.nome) + '</span><span class="muted">' + fmtDate(h.at) + '</span></li>';
           }).join('') + '</ul>' : '<p class="muted">Sua primeira promoção, ' + esc(G.PROMOTIONS[0].nome) + ', chega com 17 exercícios do nível Iniciante.</p>') +
         '</section>' +
+        (global.Related && global.Tracks.active().related ? '<section class="card glass span2 related-card"><header class="card-h"><h2>Cursos relacionados</h2></header>' + global.Related.html(global.Tracks.active(), true) + '</section>' : '') +
       '</div>';
+    if (global.Related) global.Related.bind(el);
     const eb = el.querySelector('#dash-exam');
     if (eb) eb.onclick = function () { global.Exams.start(eb.dataset.cert); };
   }

@@ -87,6 +87,7 @@
     const out = [];
     const tr = global.Tracks.active();
     const TONES = tonesFor(tr);
+    const SS = tr.id === 'sixsigma', BELTS = { 1: 'Yellow Belt', 2: 'Green Belt', 3: 'Black Belt' };
     [1, 2, 3].forEach(function (lv) {
       const list = BANK.EXERCISES.filter(function (e) { return e.level === lv; });
       const have = G.levelCount(st, lv);
@@ -96,7 +97,7 @@
         const exs = list.filter(function (e) { return e.pos >= range[0] && e.pos <= range[1]; });
         out.push({
           id: 'stage-' + lv + '-' + (i + 1), type: 'stage', level: lv, stage: i + 1, tone: TONES[lv], track: tr, medal: MEDALS[lv], lessons: lessonKeys(exs),
-          title: p.nome, kicker: 'Certificado de Etapa', scope: 'Nível ' + TONES[lv].name + ' · Etapa ' + (i + 1) + ' de 3',
+          title: p.nome, kicker: 'Certificado de Etapa', scope: (SS ? 'Formação no conteúdo · ' : '') + 'Nível ' + TONES[lv].name + ' · Etapa ' + (i + 1) + ' de 3',
           exCount: exs.length, range: range, topics: topicsOf(exs), hours: hoursTxt(exs.length),
           xp: exs.reduce(function (s, e) { return s + (st.progress.solved[e.id] ? st.progress.solved[e.id].xp : 0); }, 0),
           role: p.nome, have: have, need: p.need, date: promoDate(st, p.key),
@@ -106,7 +107,7 @@
       const last = promos[promos.length - 1];
       out.push({
         id: 'level-' + lv, type: 'level', level: lv, tone: TONES[lv], track: tr, medal: MEDALS[lv], lessons: lessonKeys(list),
-        title: 'Nível ' + TONES[lv].name, kicker: 'Certificado de Nível', scope: tr.nome + ' · Nível ' + lv + ' de 3',
+        title: SS ? BELTS[lv] : 'Nível ' + TONES[lv].name, kicker: 'Certificado de Nível', scope: SS ? 'Formação no conteúdo de ' + BELTS[lv] + (lv === 1 ? ' (inclui White Belt)' : '') + ' · Nível ' + lv + ' de 3' : tr.nome + ' · Nível ' + lv + ' de 3',
         exCount: list.length, topics: topicsOf(list), hours: hoursTxt(list.length),
         xp: list.reduce(function (s, e) { return s + (st.progress.solved[e.id] ? st.progress.solved[e.id].xp : 0); }, 0),
         role: last.nome, have: have, need: 50, date: promoDate(st, last.key),
@@ -116,7 +117,7 @@
     const total = G.solvedList(st).length;
     out.push({
       id: 'final', type: 'final', level: 3, tone: TONES.final, track: tr, medal: MEDALS[3], lessons: lessonKeys(BANK.EXERCISES),
-      title: 'Certificado de Conclusão em ' + tr.nome, kicker: 'Certificado Final', scope: tr.nome + ' · Trilha completa · 3 níveis',
+      title: 'Certificado de Conclusão em ' + tr.nome, kicker: 'Certificado Final', scope: SS ? 'Formação completa: White, Yellow, Green e Black Belt' : tr.nome + ' · Trilha completa · 3 níveis',
       exCount: 150, topics: topicsOf(BANK.EXERCISES), hours: '50 horas', xp: st.progress.xp,
       role: G.FINAL.nome, have: total, need: 150, date: st.progress.completedAt,
     });
@@ -341,6 +342,15 @@
     } else if (kind === 'python') {
       c.font = '700 ' + Math.round(s * 0.7) + 'px ' + F.mono; c.textAlign = 'center'; c.textBaseline = 'middle';
       c.fillText('{ }', cx, cy + s * 0.02);
+    } else if (kind === 'sixsigma') {
+      // faixa amarrada (nó + duas pontas) com σ ao centro
+      const w = s * 0.86, h = s * 0.2, y = cy - s * 0.02;
+      rr(c, cx - w / 2, y - h / 2, w, h, s * 0.04); c.globalAlpha = 0.85; c.fill(); c.globalAlpha = 1;
+      c.beginPath(); c.moveTo(cx - s * 0.05, y + h / 2); c.lineTo(cx - s * 0.2, y + s * 0.42); c.lineTo(cx - s * 0.07, y + s * 0.4); c.closePath(); c.fill();
+      c.beginPath(); c.moveTo(cx + s * 0.05, y + h / 2); c.lineTo(cx + s * 0.2, y + s * 0.42); c.lineTo(cx + s * 0.07, y + s * 0.4); c.closePath(); c.fill();
+      rr(c, cx - s * 0.12, y - h / 2 - s * 0.04, s * 0.24, h + s * 0.08, s * 0.05); c.fillStyle = '#0a0d18'; c.fill(); c.strokeStyle = color; c.lineWidth = s * 0.05; c.stroke();
+      c.fillStyle = color; c.font = '700 ' + Math.round(s * 0.24) + 'px ' + F.display; c.textAlign = 'center'; c.textBaseline = 'middle';
+      c.fillText('σ', cx, y + s * 0.01);
     } else if (kind === 'ingles') {
       const w = s * 0.84, h = s * 0.6, x = cx - w / 2, y = cy - h / 2 - s * 0.06;
       rr(c, x, y, w, h, s * 0.16); c.stroke();
@@ -535,7 +545,7 @@
   function signature(c, x, y, name, role, color) {
     c.save(); c.strokeStyle = 'rgba(195,200,222,0.35)'; c.lineWidth = 1.5;
     c.beginPath(); c.moveTo(x - 170, y); c.lineTo(x + 170, y); c.stroke(); c.restore();
-    txt(c, name, x, y - 14, '34px ' + F.display, color || '#ffffff', 'center');
+    txt(c, name, x, y - 14, fitFont(c, name, 330, 34, F.display, '', 20), color || '#ffffff', 'center');
     txt(c, role, x, y + 30, '16px ' + F.sans, 'rgba(195,200,222,0.7)', 'center');
   }
   function brandMark(c, x, y, size, align) {
@@ -691,13 +701,13 @@
     crestLevel(c, W - 250, 262, 170, t, cert.level);
     txt(c, 'CERTIFICADO DE CONCLUSÃO', x, 222, '600 17px ' + F.mono, t.a, 'left', 5);
     txt(c, 'DE NÍVEL', x, 248, '600 17px ' + F.mono, t.a, 'left', 5);
-    txt(c, 'Nível ' + t.name, x, 326, fitFont(c, 'Nível ' + t.name, maxW - 300, 80, F.display), lin(c, x, 0, x + 560, 0, [[0, '#ffffff'], [0.6, t.a], [1, t.b]]), 'left', 0, alpha(t.b, 0.5), 22);
-    txt(c, cert.track.nome + ' · Nível ' + cert.level + ' de 3', x, 368, '21px ' + F.sans, 'rgba(195,200,222,0.85)', 'left');
+    txt(c, cert.title, x, 326, fitFont(c, cert.title, maxW - 300, 80, F.display), lin(c, x, 0, x + 560, 0, [[0, '#ffffff'], [0.6, t.a], [1, t.b]]), 'left', 0, alpha(t.b, 0.5), 22);
+    txt(c, cert.track.id === 'sixsigma' ? cert.scope : cert.track.nome + ' · Nível ' + cert.level + ' de 3', x, 368, fitFont(c, cert.track.id === 'sixsigma' ? cert.scope : cert.track.nome, maxW - 290, 21, F.sans, '', 14), 'rgba(195,200,222,0.85)', 'left');
     txt(c, 'Certificamos que', x, 440, '21px ' + F.sans, 'rgba(195,200,222,0.75)', 'left');
     txt(c, person.full, x, 510, fitFont(c, person.full, maxW, 64, F.display), '#ffffff', 'left');
     c.save(); c.fillStyle = lin(c, x, 0, x + 520, 0, [[0, t.a], [1, 'rgba(0,0,0,0)']]); c.fillRect(x, 530, 520, 2); c.restore();
     if (person.social) txt(c, 'Nome social: ' + person.social, x, 564, '18px ' + F.sans, 'rgba(195,200,222,0.7)', 'left');
-    const y = wrap(c, 'concluiu os ' + cert.exCount + ' exercícios práticos do nível ' + t.name + ' da trilha ' + cert.track.nome + ', cumpriu as três etapas, foi aprovado na prova do nível e alcançou o cargo de ' + cert.role + '.', x, 612, maxW, 32, '21px ' + F.sans, 'rgba(232,234,246,0.9)', 'left');
+    const y = wrap(c, (cert.track.id === 'sixsigma' ? 'concluiu a formação no conteúdo de ' + cert.title + ' (' + cert.exCount + ' exercícios práticos do nível ' + t.name + ' da trilha ' + cert.track.nome + ')' : 'concluiu os ' + cert.exCount + ' exercícios práticos do nível ' + t.name + ' da trilha ' + cert.track.nome) + ', cumpriu as três etapas, foi aprovado na prova do nível e alcançou o cargo de ' + cert.role + '.', x, 612, maxW, 32, '21px ' + F.sans, 'rgba(232,234,246,0.9)', 'left');
     leftChips(c, cert.topics, x, y + 26, maxW, t, 2);
     const sw = (maxW - 4 * 12) / 5, sy = 818;
     [['Exercícios', String(cert.exCount)], ['Carga horária', cert.hours], ['XP no nível', fmt(cert.xp) + ' XP'], ['Prova', examTxt(cert)], ['Data', new Date(cert.date || Date.now()).toLocaleDateString('pt-BR')]].forEach(function (st, i) {

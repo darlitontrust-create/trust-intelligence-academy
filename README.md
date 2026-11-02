@@ -2,7 +2,7 @@
 
 Documentação completa da plataforma: https://claude.ai/artifact/A7jAk5ZxZDs4NBD22y4MUi
 
-Academia gamificada de dados, BI e IA. Trilhas disponíveis: **SQL Prático**, **Excel Prático**, **Power BI & DAX**, **Gestão da Qualidade**, **Python para Dados** e **Inglês para o Dia a Dia**.
+Academia gamificada de dados, BI e IA. Trilhas disponíveis: **SQL Prático**, **Excel Prático**, **Power BI & DAX**, **Gestão da Qualidade**, **Lean Six Sigma**, **Python para Dados** e **Inglês para o Dia a Dia**.
 Em breve: IA para Dados e Estatística Aplicada.
 Cada trilha tem 150 exercícios em 3 níveis, aulas em slides narradas, correção automática, carreira com 10 promoções,
 conquistas, ranking, painel, provas e 13 certificados.
@@ -48,6 +48,7 @@ O conteúdo pode ser reaberto pelo botão "Conteúdo" e desligado em Perfil > Pr
 - `js/py-exercises.js` — os 150 exercícios de Python (fundamentos, biblioteca padrão e pandas)
 - `js/py-lessons.js` e `js/py-outputs.js` — as 44 aulas de Python e a saída real dos exemplos (gerada por `build/py_build.js`)
 - `js/py-ui.js` — tela de prática do Python: dados disponíveis, editor, saída e correção pela saída do print()
+- `js/ss-data.js`, `js/ss-exercises.js`, `js/ss-lessons.js` — trilha de Lean Six Sigma: 150 casos e 42 aulas, do White ao Black Belt (usa a tela e os gráficos da Gestão; estatística em `gq-charts.js`)
 - `js/en-exercises.js` — os 150 exercícios de Inglês (escolher a resposta, completar, montar a frase, ouvir, ditado, ordenar o diálogo, classificar)
 - `js/en-lessons.js` — as 39 aulas de Inglês (Situação, Frases-chave, Diálogo com áudio, Cuidados, Sua vez), com 3 questões de prova por aula
 - `js/en-ui.js` — tela de prática do Inglês: áudio em inglês, montar frase, correção tolerante a contrações e prática de fala (reconhecimento de voz)
@@ -141,5 +142,5 @@ No seu computador, com internet:
     pip install edge-tts
     cd build
     python gen_audio.py            # Francisca (pt-BR) + Ava (en-US)
-Envie a pasta `assets/audio` (≈260 MP3 + manifest.json) para o GitHub em até 3 envios (o site aceita 100 arquivos por vez).
+Envie a pasta `assets/audio` (≈310 MP3 + manifest.json) para o GitHub em até 4 envios (o site aceita 100 arquivos por vez).
 Depois de mudar o texto das aulas: `node export_narration.js` e `python gen_audio.py` de novo (só o que mudou é regerado).

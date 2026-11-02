@@ -283,9 +283,17 @@
     else global.Dashboard.render(view, S.state);
     if (page) { view.insertAdjacentHTML('afterbegin', O.scopeBar(S.state, page)); O.bindScope(view, page, rerender); }
     if (!quiet) { view.scrollTop = 0; global.scrollTo(0, 0); }
+    trackColors();
     refreshChrome();
   }
   /** Redesenha a página atual mantendo a rolagem (troca de escopo). */
+  /** Cores da trilha atual para as telas compartilhadas (Gestão e Lean Six Sigma usam a mesma tela). */
+  function trackColors() {
+    const id = S.state && !global.Overview.isOverview(S.state) ? S.state.currentTrack : null;
+    const de = document.documentElement.style;
+    if (id === 'sixsigma') { de.setProperty('--tk-a', '#5eead4'); de.setProperty('--tk-b', '#14b8a6'); de.setProperty('--tk-c', '#99f6e4'); de.setProperty('--tk-ink', '#042f2e'); }
+    else ['--tk-a', '--tk-b', '--tk-c', '--tk-ink'].forEach(function (k) { de.removeProperty(k); });
+  }
   function rerender() {
     const y = global.scrollY;
     route({ quiet: true });
@@ -297,6 +305,19 @@
     if (st.settings.freeMode || ex.index === 0 || st.progress.solved[ex.id]) return true;
     return !!st.progress.solved[BANK.EXERCISES[ex.index - 1].id];
   }
+
+  /** Cursos relacionados (hub e painel): botões que levam ao outro tema. */
+  function relatedHtml(t, big) {
+    const list = (t.related || []).map(function (r) { return { r: r, t: global.Tracks.get(r.id) }; }).filter(function (x) { return x.t && x.t.status === 'ativo'; });
+    if (!list.length) return '';
+    return '<div class="related' + (big ? ' big' : '') + '"><span class="related-k">' + icon('book') + 'Cursos relacionados</span>' + list.map(function (x) {
+      return '<button type="button" class="related-b" data-related="' + x.t.id + '" style="--ta:' + x.t.color.a + ';--tb:' + x.t.color.b + '"><i>' + icon(x.t.icon) + '</i><span><small>' + esc(x.r.label) + '</small><b>' + esc(x.t.nome) + '</b></span></button>';
+    }).join('') + '</div>';
+  }
+  function bindRelated(root) {
+    root.querySelectorAll('[data-related]').forEach(function (b) { b.onclick = function (e) { e.stopPropagation(); global.Overview.focus(b.dataset.related); location.hash = 'dashboard'; global.dispatchEvent(new HashChangeEvent('hashchange')); }; });
+  }
+  global.Related = { html: relatedHtml, bind: bindRelated };
 
   /* ---------------------------- Hub de temas ---------------------------- */
   function renderHub(view) {
@@ -328,7 +349,7 @@
                 const ps = G.PROMOTIONS.filter(function (p) { return p.level === l.id; }).map(function (p) { return p.nome; });
                 return '<li><span class="hl-n">' + l.id + '</span><span class="hl-t"><b>' + esc(l.nome) + '</b><small>' + esc(ps.join(' · ')) + '</small></span><span class="hl-c">' + c + '/50</span></li>';
               }).join('') + '</ul>' +
-              '<ul class="hub-feats"><li>' + icon('book') + nLessons + ' aulas narradas</li><li>' + icon('code') + (t.kind === 'excel' ? 'Planilha com correção automática' : t.kind === 'powerbi' ? 'Editor DAX com correção automática' : t.kind === 'gestao' ? 'Casos práticos com correção automática' : t.kind === 'python' ? 'Python no navegador com correção automática' : t.kind === 'ingles' ? 'Diálogos com áudio e prática de fala' : 'Editor com correção automática') + '</li>' +
+              '<ul class="hub-feats"><li>' + icon('book') + nLessons + ' aulas narradas</li><li>' + icon('code') + (t.kind === 'excel' ? 'Planilha com correção automática' : t.kind === 'powerbi' ? 'Editor DAX com correção automática' : t.kind === 'gestao' ? 'Casos práticos com correção automática' : t.kind === 'sixsigma' ? 'Casos com dados reais e estatística na hora' : t.kind === 'python' ? 'Python no navegador com correção automática' : t.kind === 'ingles' ? 'Diálogos com áudio e prática de fala' : 'Editor com correção automática') + '</li>' +
               '<li>' + icon('award') + gotC + '/' + certs.length + ' certificados com prova</li><li>' + icon('trophy') + 'Carreira até ' + esc(G.FINAL.nome) + '</li></ul>';
           });
         }
@@ -336,11 +357,12 @@
           '<div class="hub-card-h"><span class="hub-ic">' + icon(t.icon) + '</span><span class="hub-tag">' + (active ? esc(t.tag) : 'Em breve') + '</span></div>' +
           '<h2>' + esc(t.nome) + '</h2><p class="muted">' + esc(t.desc) + '</p>' +
           '<ul class="hub-facts">' + t.facts.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul>' +
-          prog +
+          prog + relatedHtml(t) +
           (active ? '<button class="btn btn-primary" data-track="' + t.id + '">' + icon('play') + (solved ? 'Continuar' : 'Começar') + '</button>'
                   : '<button class="btn btn-ghost" disabled>' + icon('lock') + 'Disponível em breve</button>') +
         '</article>';
       }).join('') + '</section>';
+    bindRelated(view);
     view.querySelectorAll('[data-track]').forEach(function (b) {
       b.onclick = function () { global.Overview.focus(b.dataset.track); location.hash = global.Tracks.get(b.dataset.track).start; };
     });
@@ -478,8 +500,8 @@
     if (currentCleanup) { currentCleanup(); currentCleanup = null; }
     const wantsLesson = mode === 'lesson' || (!mode && st.settings.showLessons !== false && !st.progress.solved[ex.id] && !st.progress.lessonsSeen[ex.id]);
     if (wantsLesson) return renderLessonStage(view, ex);
-    if (ex.track === 'excel' || ex.track === 'powerbi' || ex.track === 'gestao' || ex.track === 'python' || ex.track === 'ingles') {
-      ({ excel: global.ExcelPractice, powerbi: global.DaxPractice, gestao: global.GQPractice, python: global.PyPractice, ingles: global.EnPractice })[ex.track].render(view, ex, {
+    if (ex.track === 'excel' || ex.track === 'powerbi' || ex.track === 'gestao' || ex.track === 'python' || ex.track === 'ingles' || ex.track === 'sixsigma') {
+      ({ excel: global.ExcelPractice, powerbi: global.DaxPractice, gestao: global.GQPractice, python: global.PyPractice, ingles: global.EnPractice, sixsigma: global.GQPractice })[ex.track].render(view, ex, {
         st: st, S: S,
         header: exHeader(st, ex, '<button class="btn btn-ghost sm" id="b-lesson">' + icon('book') + 'Conteúdo</button>'),
         setCleanup: function (fn) { currentCleanup = fn; },

@@ -9,7 +9,7 @@ Opções:
     --en en-US-AndrewNeural                outra voz em inglês
     --rate -5%                             falar um pouco mais devagar
 
-Resultado: assets/audio/ com um MP3 por aula (cerca de 260 arquivos) e o
+Resultado: assets/audio/ com um MP3 por aula (cerca de 310 arquivos) e o
 manifest.json. A plataforma detecta o manifest sozinha e passa a usar a voz
 gravada; qualquer trecho que faltar continua na voz do navegador.
 

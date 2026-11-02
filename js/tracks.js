@@ -44,6 +44,7 @@
       desc: 'PDCA, Pareto, Ishikawa, Lean, CEP, Seis Sigma e FMEA, com casos práticos e correção automática na operação da NexusMarket.',
       facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'GQBank',
       summary: 'dos conceitos de qualidade e do PDCA às ferramentas da qualidade, MASP, 8D, Lean, controle estatístico, Seis Sigma, FMEA e ISO 9001',
+      related: [{ id: 'sixsigma', label: 'Próximo passo' }],
     },
     {
       id: 'python', status: 'ativo', icon: 'code', start: 'dashboard', kind: 'python',
@@ -52,6 +53,15 @@
       desc: 'Do primeiro print() ao pandas: listas, dicionários, funções, limpeza de dados, groupby e merge, com Python de verdade no navegador.',
       facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'PyBank',
       summary: 'dos fundamentos (variáveis, listas, dicionários, laços e funções) à análise de dados com a biblioteca padrão e com pandas: filtros, groupby, merge, tabelas dinâmicas e datas',
+    },
+    {
+      id: 'sixsigma', status: 'ativo', icon: 'target', start: 'dashboard', kind: 'sixsigma',
+      nome: 'Lean Six Sigma', short: 'Six Sigma', tag: 'White ao Black Belt',
+      color: { a: '#5eead4', b: '#14b8a6' },            // verde-água
+      desc: 'Do White ao Black Belt: DMAIC, Lean, estatística, testes de hipótese, DOE e liderança de projetos, com casos reais da NexusMarket.',
+      facts: ['150 exercícios', '3 níveis', '4 faixas'], total: 150, bankName: 'SSBank',
+      summary: 'do White e Yellow Belt (fundamentos, Lean e ferramentas) ao Green Belt (DMAIC completo) e ao Black Belt (estatística avançada, DOE e liderança do programa)',
+      related: [{ id: 'gestao', label: 'Base' }, { id: 'python', label: 'Ferramenta para as análises' }, { id: 'powerbi', label: 'Ferramenta para os painéis' }],
     },
     {
       id: 'ingles', status: 'ativo', icon: 'chat', start: 'dashboard', kind: 'ingles',
