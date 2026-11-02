@@ -54,6 +54,14 @@
       summary: 'dos fundamentos (variáveis, listas, dicionários, laços e funções) à análise de dados com a biblioteca padrão e com pandas: filtros, groupby, merge, tabelas dinâmicas e datas',
     },
     {
+      id: 'ingles', status: 'ativo', icon: 'chat', start: 'dashboard', kind: 'ingles',
+      nome: 'Inglês para o Dia a Dia', short: 'Inglês', tag: 'Idiomas',
+      color: { a: '#ff9fd2', b: '#e8459b' },            // rosa
+      desc: 'Conversação para viagem, vida social e trabalho: ouça diálogos, monte frases, pratique a fala e use o inglês em situações reais.',
+      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'EnBank',
+      summary: 'das apresentações e pedidos no café às viagens, à conversa social e ao inglês do trabalho: reuniões, e-mails, apresentação de dados, entrevistas e negociação',
+    },
+    {
       id: 'ia', status: 'em-breve', icon: 'sparkle', nome: 'IA para Dados', short: 'IA', tag: 'Inteligência Artificial',
       color: { a: '#d8b4fe', b: '#a46bff' },            // violeta
       desc: 'Prompts para análise, automação de relatórios e integração de IA com bancos e painéis.', facts: ['Prompts', 'Automação', 'Integrações'],

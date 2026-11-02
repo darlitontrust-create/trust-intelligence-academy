@@ -58,6 +58,13 @@
         'Filtra, cria colunas e agrega com pandas.', 'Usa groupby, agg, merge e tabelas dinâmicas.', 'Concluiu o nível Avançado.'],
       { key: 'trainee', nome: 'Estagiário de Dados', desc: 'Primeiras linhas de código na NexusMarket.' },
       'Lenda do Python', 'Concluiu os 150 exercícios da trilha de Python para Dados.'),
+    ingles: career(
+      ['Viajante Iniciante', 'Comunicador do Dia a Dia', 'Falante Básico', 'Viajante Independente', 'Conversador Social', 'Falante Intermediário', 'Profissional Bilíngue', 'Negociador Internacional', 'Falante Fluente'],
+      ['Se apresenta, pergunta preços e horários.', 'Pede no café, faz compras e pede direções.', 'Concluiu o nível Iniciante: conta o fim de semana e faz planos.',
+        'Resolve aeroporto, hotel, transporte e farmácia.', 'Conversa sobre experiências, convida e reclama com educação.', 'Concluiu o nível Intermediário.',
+        'Participa de reuniões, escreve e-mails e apresenta dados.', 'Faz entrevistas, negocia e dá feedback em inglês.', 'Concluiu o nível Avançado.'],
+      { key: 'trainee', nome: 'Turista Curioso', desc: 'Primeiras palavras em inglês.' },
+      'Lenda do Inglês', 'Concluiu os 150 exercícios da trilha de Inglês para o Dia a Dia.'),
   };
   function C() { return CAREERS[global.Tracks.activeId()] || CAREERS.sql; }
 
@@ -121,6 +128,15 @@
       { key: 'first-pandas', nome: 'Panda Domado', desc: 'Resolva seu primeiro exercício com pandas.', icon: 'table', test: function (st) { return solvedList(st).some(function (e) { return e.level === 3; }); } },
       { key: 'first-groupby', nome: 'Agrupador', desc: 'Use groupby ou pivot_table.', icon: 'bars', test: has(['GROUPBY', 'AGG', 'PIVOT']) },
       { key: 'py-master', nome: 'Pythonista', desc: 'Conclua os 150 exercícios.', icon: 'trophy', test: function (st) { return solvedList(st).length >= 150; } },
+    ],
+    ingles: [
+      { key: 'first-hello', nome: 'Hello, World!', desc: 'Resolva seu primeiro exercício de inglês.', icon: 'play', test: function (st) { return solvedList(st).length >= 1; } },
+      { key: 'first-cafe', nome: 'Coffee, Please', desc: 'Resolva um exercício no café ou nas compras.', icon: 'heart', test: has(['CAFÉ', 'COMPRAS']) },
+      { key: 'first-trip', nome: 'Pé na Estrada', desc: 'Resolva um exercício de aeroporto, hotel ou transporte.', icon: 'map', test: has(['AEROPORTO', 'HOTEL', 'TRANSPORTE']) },
+      { key: 'first-ear', nome: 'Ouvido Afiado', desc: 'Acerte um exercício de ditado.', icon: 'volume', test: function (st) { return solvedList(st).some(function (e) { return e.kind === 'dictation'; }); } },
+      { key: 'first-meeting', nome: 'Voz na Reunião', desc: 'Resolva um exercício de reunião ou videochamada.', icon: 'user', test: has(['REUNIÕES', 'VIDEOCHAMADAS']) },
+      { key: 'first-deal', nome: 'Negócio Fechado', desc: 'Resolva um exercício de negociação.', icon: 'target', test: has(['NEGOCIAÇÃO']) },
+      { key: 'en-master', nome: 'Fluent Speaker', desc: 'Conclua os 150 exercícios.', icon: 'trophy', test: function (st) { return solvedList(st).length >= 150; } },
     ],
   };
   function achievements() { return (SPECIFIC[global.Tracks.activeId()] || SPECIFIC.sql).slice(0, 1).concat(COMMON, (SPECIFIC[global.Tracks.activeId()] || SPECIFIC.sql).slice(1)); }

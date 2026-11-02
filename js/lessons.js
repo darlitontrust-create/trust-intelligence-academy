@@ -458,7 +458,7 @@
     const pk = packOf(ex), exm = pk.example(les);
     const parts = [
       [les.titulo + '.', les.ideia, 'Uma comparação que ajuda: ' + les.analogia],
-      [pk.syntaxSpeech || 'Agora, a sintaxe. Repare na estrutura do comando no código.'].concat(les.notas),
+      [typeof pk.syntaxSpeech === 'function' ? pk.syntaxSpeech(les) : (pk.syntaxSpeech || 'Agora, a sintaxe. Repare na estrutura do comando no código.')].concat(les.notas),
       ['Vamos ver na prática. ' + les.exemplo.p.replace(/:\s*$/, '.'),
         exm.speech,
         pk.compareSpeech || 'Compare o código com o resultado na tabela.'],
@@ -495,14 +495,14 @@
   function finalSlide(ex, pack, tags) {
     const { esc, icon } = global.UI, G = global.Gamification;
     return '<div class="ls-body ls-final"><span class="eyebrow">' + esc(ex.levelName) + ' · exercício ' + ex.pos + ' de 50</span><h2 class="ls-title">' + esc(ex.n) + '</h2>' +
-      '<p class="ls-lead">' + esc(ex.s) + '</p>' +
-      '<div class="goal">' + icon('target') + '<div><h3 class="card-k">' + esc(pack.goalLabel) + '</h3><p>' + esc(ex.g) + '</p></div></div>' +
+      '<p class="ls-lead">' + global.UI.rich(ex.s) + '</p>' +
+      '<div class="goal">' + icon('target') + '<div><h3 class="card-k">' + esc(pack.goalLabel) + '</h3><p>' + global.UI.rich(ex.g) + '</p></div></div>' +
       '<div class="ls-meta"><span class="tag d-' + ex.diff + '">' + G.DIFF_LABEL[ex.diff] + ' · ' + G.XP[ex.diff] + ' XP</span>' +
       tags.map(function (t) { return '<span class="tag tag-topic">' + icon(t.icon) + esc(t.label) + '</span>'; }).join('') + '</div></div>';
   }
   /** Slides de revisão (2º, 3º… exercício do mesmo tema): exemplo resolvido, teste rápido e dicas. */
   function reviewSlides(ex, les, pack, oc, tags) {
-    const { esc, icon } = global.UI;
+    const { esc, icon } = global.UI, R = global.UI.rich;
     const prev = oc.prev, sol = solutionOf(prev), q = pick(les.quiz, oc.k);
     // alternativas do teste rápido em ordem fixa por exercício
     let h = 7; String(ex.id).split('').forEach(function (c) { h = (h * 31 + c.charCodeAt(0)) >>> 0; });
@@ -510,15 +510,15 @@
     for (let i = opts.length - 1; i > 0; i--) { h = (h * 1103515245 + 12345) >>> 0; const j = h % (i + 1); const t = opts[i]; opts[i] = opts[j]; opts[j] = t; }
     return [
       '<div class="ls-body"><span class="eyebrow">Exercício anterior · ' + esc(prev.levelName) + ' ' + prev.pos + '/50</span><h3 class="ls-h">Como foi resolvido: ' + esc(prev.n) + '</h3>' +
-        '<div class="ls-split"><div class="ls-prev"><p>' + esc(prev.s) + '</p><div class="goal">' + icon('target') + '<div><h3 class="card-k">Objetivo</h3><p>' + esc(prev.g) + '</p></div></div></div>' +
-        '<div class="ls-sol">' + (sol.label ? '<span class="ls-badge">' + icon('check') + esc(sol.label) + '</span>' : '') + (sol.code ? '<pre class="code-block">' + pack.codeHtml(sol.code) + '</pre>' : '') + (sol.html || '') + (sol.note ? '<p class="muted sm">' + esc(sol.note) + '</p>' : '') + '</div></div></div>',
-      '<div class="ls-body"><h3 class="ls-h">Teste rápido · ' + esc(les.titulo) + '</h3><p class="ls-q">' + esc(q[0]) + '</p>' +
-        '<div class="ls-quiz" role="group" aria-label="Alternativas">' + opts.map(function (o, i) { return '<button type="button" class="ls-qo" data-ok="' + (o.ok ? 1 : 0) + '"><span>' + 'ABCD'[i] + '</span>' + esc(o.t) + '</button>'; }).join('') + '</div>' +
-        '<p class="ls-qexp" hidden></p><p class="ls-qexp-src" hidden>' + esc(q[5]) + '</p></div>',
+        '<div class="ls-split"><div class="ls-prev"><p>' + R(prev.s) + '</p><div class="goal">' + icon('target') + '<div><h3 class="card-k">Objetivo</h3><p>' + R(prev.g) + '</p></div></div></div>' +
+        '<div class="ls-sol">' + (sol.label ? '<span class="ls-badge">' + icon('check') + esc(sol.label) + '</span>' : '') + (sol.code ? '<pre class="code-block">' + pack.codeHtml(sol.code) + '</pre>' : '') + (sol.html || '') + (sol.note ? '<p class="muted sm">' + R(sol.note) + '</p>' : '') + '</div></div></div>',
+      '<div class="ls-body"><h3 class="ls-h">Teste rápido · ' + esc(les.titulo) + '</h3><p class="ls-q">' + R(q[0]) + '</p>' +
+        '<div class="ls-quiz" role="group" aria-label="Alternativas">' + opts.map(function (o, i) { return '<button type="button" class="ls-qo" data-ok="' + (o.ok ? 1 : 0) + '"><span>' + 'ABCD'[i] + '</span>' + R(o.t) + '</button>'; }).join('') + '</div>' +
+        '<p class="ls-qexp" hidden></p><p class="ls-qexp-src" hidden>' + R(q[5]) + '</p></div>',
       '<div class="ls-body"><h3 class="ls-h">Dicas para o seu desafio</h3><ol class="ls-cards">' +
-        '<li><span class="ls-num">' + icon('bulb') + '</span><p><b>Dica</b><br>' + esc(hintOf(ex, les, oc.k)) + '</p></li>' +
-        '<li><span class="ls-num">!</span><p><b>Atenção</b><br>' + esc(pick(les.cuidados, oc.k)) + '</p></li>' +
-        '<li><span class="ls-num">' + icon('book') + '</span><p><b>Ideia-chave</b><br>' + esc(pick(les.notas, oc.k)) + '</p></li></ol></div>',
+        '<li><span class="ls-num">' + icon('bulb') + '</span><p><b>Dica</b><br>' + R(hintOf(ex, les, oc.k)) + '</p></li>' +
+        '<li><span class="ls-num">!</span><p><b>Atenção</b><br>' + R(pick(les.cuidados, oc.k)) + '</p></li>' +
+        '<li><span class="ls-num">' + icon('book') + '</span><p><b>Ideia-chave</b><br>' + R(pick(les.notas, oc.k)) + '</p></li></ol></div>',
       finalSlide(ex, pack, tags),
     ];
   }
@@ -536,17 +536,17 @@
     const slides = review ? reviewSlides(ex, les, pack, oc, tags) : [
       // 1 · Conceito
       '<div class="ls-body"><span class="ls-ghost" aria-hidden="true">' + esc(les.kw) + '</span>' +
-        '<h2 class="ls-title">' + esc(les.titulo) + '</h2><p class="ls-lead">' + esc(les.ideia) + '</p>' +
-        '<div class="ls-analogy">' + icon('bulb') + '<p>' + esc(les.analogia) + '</p></div></div>',
+        '<h2 class="ls-title">' + esc(les.titulo) + '</h2><p class="ls-lead">' + global.UI.rich(les.ideia) + '</p>' +
+        '<div class="ls-analogy">' + icon('bulb') + '<p>' + global.UI.rich(les.analogia) + '</p></div></div>',
       // 2 · Sintaxe
       '<div class="ls-body"><h3 class="ls-h">' + esc(pack.syntaxTitle || 'Como se escreve') + '</h3><div class="ls-split"><pre class="code-block">' + pack.codeHtml(les.sintaxe) + '</pre>' +
-        '<ul class="ls-notes">' + les.notas.map(function (n) { return '<li>' + icon('chevR') + '<span>' + esc(n) + '</span></li>'; }).join('') + '</ul></div></div>',
+        '<ul class="ls-notes">' + les.notas.map(function (n) { return '<li>' + icon('chevR') + '<span>' + global.UI.rich(n) + '</span></li>'; }).join('') + '</ul></div></div>',
       // 3 · Exemplo ao vivo
-      '<div class="ls-body"><h3 class="ls-h">' + esc(les.exemplo.p) + '</h3><div class="ls-split ex"><pre class="code-block">' + pack.codeHtml(exm.code) + '</pre>' +
+      '<div class="ls-body"><h3 class="ls-h">' + global.UI.rich(les.exemplo.p) + '</h3><div class="ls-split ex"><pre class="code-block">' + pack.codeHtml(exm.code) + '</pre>' +
         '<div class="ls-live"><span class="ls-badge">' + icon('play') + esc(exm.badge) + '</span>' + exm.liveHtml + '</div></div></div>',
       // 4 · Cuidados
       '<div class="ls-body"><h3 class="ls-h">Cuidados e boas práticas</h3><ol class="ls-cards">' +
-        les.cuidados.map(function (c, i) { return '<li><span class="ls-num">' + (i + 1) + '</span><p>' + esc(c) + '</p></li>'; }).join('') + '</ol></div>',
+        les.cuidados.map(function (c, i) { return '<li><span class="ls-num">' + (i + 1) + '</span><p>' + global.UI.rich(c) + '</p></li>'; }).join('') + '</ol></div>',
       // 5 · Seu desafio
       finalSlide(ex, pack, tags),
     ];
@@ -661,7 +661,7 @@
         box.classList.add('answered');
         box.querySelectorAll('.ls-qo').forEach(function (o) { o.disabled = true; o.classList.add(o.dataset.ok === '1' ? 'right' : (o === b ? 'wrong' : 'dim')); });
         const e = box.querySelector('.ls-qexp'); e.hidden = false;
-        e.innerHTML = icon(b.dataset.ok === '1' ? 'check' : 'x') + '<span><b>' + (b.dataset.ok === '1' ? 'Isso mesmo.' : 'Não foi dessa vez.') + '</b> ' + esc(box.querySelector('.ls-qexp-src').textContent) + '</span>';
+        e.innerHTML = icon(b.dataset.ok === '1' ? 'check' : 'x') + '<span><b>' + (b.dataset.ok === '1' ? 'Isso mesmo.' : 'Não foi dessa vez.') + '</b> ' + box.querySelector('.ls-qexp-src').innerHTML + '</span>';
         e.className = 'ls-qexp ' + (b.dataset.ok === '1' ? 'ok' : 'no');
         viewport.style.height = slideEls[idx].offsetHeight + 'px';
       };

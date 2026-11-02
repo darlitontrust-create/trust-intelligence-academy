@@ -2,7 +2,7 @@
 
 Documentação completa da plataforma: https://claude.ai/artifact/A7jAk5ZxZDs4NBD22y4MUi
 
-Academia gamificada de dados, BI e IA. Trilhas disponíveis: **SQL Prático**, **Excel Prático**, **Power BI & DAX**, **Gestão da Qualidade** e **Python para Dados**.
+Academia gamificada de dados, BI e IA. Trilhas disponíveis: **SQL Prático**, **Excel Prático**, **Power BI & DAX**, **Gestão da Qualidade**, **Python para Dados** e **Inglês para o Dia a Dia**.
 Em breve: IA para Dados e Estatística Aplicada.
 Cada trilha tem 150 exercícios em 3 níveis, aulas em slides narradas, correção automática, carreira com 10 promoções,
 conquistas, ranking, painel, provas e 13 certificados.
@@ -48,12 +48,15 @@ O conteúdo pode ser reaberto pelo botão "Conteúdo" e desligado em Perfil > Pr
 - `js/py-exercises.js` — os 150 exercícios de Python (fundamentos, biblioteca padrão e pandas)
 - `js/py-lessons.js` e `js/py-outputs.js` — as 44 aulas de Python e a saída real dos exemplos (gerada por `build/py_build.js`)
 - `js/py-ui.js` — tela de prática do Python: dados disponíveis, editor, saída e correção pela saída do print()
+- `js/en-exercises.js` — os 150 exercícios de Inglês (escolher a resposta, completar, montar a frase, ouvir, ditado, ordenar o diálogo, classificar)
+- `js/en-lessons.js` — as 39 aulas de Inglês (Situação, Frases-chave, Diálogo com áudio, Cuidados, Sua vez), com 3 questões de prova por aula
+- `js/en-ui.js` — tela de prática do Inglês: áudio em inglês, montar frase, correção tolerante a contrações e prática de fala (reconhecimento de voz)
 - `js/calculator.js` — calculadora dos exercícios de cálculo
 - `js/quiz-sql.js` — 3 questões de prova para cada uma das 43 aulas de SQL
 - `js/exams.js` — provas de 15 questões que liberam os certificados (mínimo 11 acertos, 70%)
 - `js/profile.js` — perfil público: foto (reduzida para 256 px) ou avatar, bio de até 280 caracteres e até 5 hobbies
 - `js/lessons.js` — as 43 aulas de SQL, o roteiro de narração de cada slide e o componente de carrossel
-- `js/narrator.js` — narração: toca a voz gravada (assets/audio) quando existe; senão usa a melhor voz neural do navegador
+- `js/narrator.js` — narração bilíngue (português e inglês): toca a voz gravada (assets/audio, um MP3 por aula) quando existe; senão usa a melhor voz neural do navegador
 - `js/sfx.js` — comemorações sonoras originais (fanfarra, torcida e buzina) sintetizadas com Web Audio
 - `js/exercises.js` — os 150 exercícios de SQL
 - `js/seed.js` — banco de exemplo da NexusMarket (gerado por `build/gen_seed.py`)
@@ -132,3 +135,11 @@ O ícone de alto-falante no topo liga e desliga os sons; em Perfil dá para ouvi
 - Prova: 15 questões sorteadas das aulas do escopo, alternativas embaralhadas. O certificado é liberado com 11 acertos (70%).
   Abaixo disso, a revisão mostra os erros com explicação e o botão "Refazer prova" sorteia uma prova nova.
 Carga horária = exercícios × 20 min (etapa ≈ 5h40, nível 16h40, final 50 horas).
+
+## Narração gravada (opcional, voz neural)
+No seu computador, com internet:
+    pip install edge-tts
+    cd build
+    python gen_audio.py            # Francisca (pt-BR) + Ava (en-US)
+Envie a pasta `assets/audio` (≈260 MP3 + manifest.json) para o GitHub em até 3 envios (o site aceita 100 arquivos por vez).
+Depois de mudar o texto das aulas: `node export_narration.js` e `python gen_audio.py` de novo (só o que mudou é regerado).

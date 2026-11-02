@@ -341,6 +341,12 @@
     } else if (kind === 'python') {
       c.font = '700 ' + Math.round(s * 0.7) + 'px ' + F.mono; c.textAlign = 'center'; c.textBaseline = 'middle';
       c.fillText('{ }', cx, cy + s * 0.02);
+    } else if (kind === 'ingles') {
+      const w = s * 0.84, h = s * 0.6, x = cx - w / 2, y = cy - h / 2 - s * 0.06;
+      rr(c, x, y, w, h, s * 0.16); c.stroke();
+      c.beginPath(); c.moveTo(x + w * 0.22, y + h); c.lineTo(x + w * 0.16, y + h + s * 0.2); c.lineTo(x + w * 0.42, y + h); c.stroke();
+      c.font = '700 ' + Math.round(s * 0.3) + 'px ' + F.sans; c.textAlign = 'center'; c.textBaseline = 'middle';
+      c.fillText('EN', cx, y + h / 2 + s * 0.01);
     } else if (kind === 'estatistica') {
       const w = s * 0.86, base = cy + s * 0.3, top = s * 0.62;
       c.beginPath();

@@ -66,6 +66,9 @@
     book: '<path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/>',
     bell: '<path d="M3 19.5h18"/><path d="M3.5 18.5c3.5 0 4.6-11 8.5-11s5 11 8.5 11"/><path d="M8 19.5v-4M16 19.5v-4"/>',
     camera: '<path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2.2L9.5 5h5l1.8 2h2.2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.3"/>',
+    chat: '<path d="M4 5.5h11a2 2 0 0 1 2 2V13a2 2 0 0 1-2 2H9l-4 3.5V15H4a2 2 0 0 1-2-2V7.5a2 2 0 0 1 2-2z"/><path d="M19 9.5h1a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2h-1v2.5L16 19h-4"/>',
+    mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/>',
+    headphones: '<path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="6.5" rx="1.6"/><rect x="17" y="14" width="4" height="6.5" rx="1.6"/>',
     heart: '<path d="M12 19.5s-7.5-4.4-7.5-10A4 4 0 0 1 12 7a4 4 0 0 1 7.5 2.5c0 5.6-7.5 10-7.5 10z"/>',
     plus: '<path d="M12 5v14M5 12h14"/>',
     grid: '<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
@@ -232,5 +235,9 @@
   /** O app está rodando dentro de um visualizador (iframe)? Downloads/impressão podem estar bloqueados. */
   const framed = (function () { try { return global.self !== global.top; } catch (e) { return true; } })();
 
-  global.UI = { ICON_PATHS: P, logo: logo, esc: esc, fmt: fmt, fmtDate: fmtDate, icon: icon, toast: toast, modal: modal, dataTable: dataTable, highlightSql: highlightSql, confetti: confetti, copyText: copyText, framed: framed };
+  /** Texto com trechos em inglês marcados por ⟦…⟧ → HTML (inglês destacado e com lang="en"). */
+  function rich(s) { return esc(s).replace(/⟦([^⟧]*)⟧/g, '<span class="en" lang="en">$1</span>'); }
+  /** Remove as marcas de inglês. */
+  function plain(s) { return String(s == null ? '' : s).replace(/[⟦⟧]/g, ''); }
+  global.UI = { ICON_PATHS: P, logo: logo, esc: esc, rich: rich, plain: plain, fmt: fmt, fmtDate: fmtDate, icon: icon, toast: toast, modal: modal, dataTable: dataTable, highlightSql: highlightSql, confetti: confetti, copyText: copyText, framed: framed };
 })(window);

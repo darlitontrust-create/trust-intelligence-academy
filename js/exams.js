@@ -17,6 +17,7 @@
 
   /** A questão envolve conta? (vários números no enunciado ou alternativas numéricas) */
   function needsCalc(q) {
+    if (global.Tracks && global.Tracks.activeId() === 'ingles') return false;   // inglês não tem questões de conta
     const nums = (String(q.q).match(/\d+(?:[.,]\d+)*/g) || []).length;
     const numericOpts = q.opts.filter(function (o) { const t = String(o.t); return /\d/.test(t) && t.replace(/[^\d]/g, '').length >= t.replace(/\s/g, '').length * 0.4; }).length;
     return nums >= 2 || numericOpts >= 3;
@@ -131,15 +132,15 @@
         '<div class="exam-body">' +
           '<div class="exam-prog"><span>Questão <b>' + (i + 1) + '</b> de ' + N + '</span>' + (needsCalc(q) && global.Calculator ? '<button class="btn btn-ghost sm exam-calc" data-calc>' + icon('grid') + 'Calculadora</button>' : '') + '<span class="muted sm">' + hits + ' acerto(s)</span></div>' + dots() +
           '<span class="tag tag-topic">' + icon('book') + esc(q.lesson) + '</span>' +
-          '<h2 class="exam-q">' + esc(q.q) + '</h2>' +
+          '<h2 class="exam-q">' + global.UI.rich(q.q) + '</h2>' +
           '<div class="exam-opts" role="group">' + q.opts.map(function (o, k) {
             let cls = '';
             if (q.answer != null) { if (k === q.correct) cls = ' right'; else if (k === q.answer) cls = ' wrong'; else cls = ' dim'; }
             else if (q.pick === k) cls = ' picked';
-            return '<button class="exam-opt' + cls + '" data-o="' + k + '"' + (q.answer != null ? ' disabled' : ' aria-pressed="' + (q.pick === k) + '"') + '><span class="eo-l">' + LETTERS[k] + '</span><span>' + esc(o.t) + '</span></button>';
+            return '<button class="exam-opt' + cls + '" data-o="' + k + '"' + (q.answer != null ? ' disabled' : ' aria-pressed="' + (q.pick === k) + '"') + '><span class="eo-l">' + LETTERS[k] + '</span><span>' + global.UI.rich(o.t) + '</span></button>';
           }).join('') + '</div>' +
           (q.answer == null ? '<div class="exam-next"><span class="muted sm hide-sm">' + (q.pick == null ? 'Escolha uma alternativa' : 'Você pode trocar a alternativa antes de confirmar') + '</span><button class="btn btn-primary" data-confirm' + (q.pick == null ? ' disabled' : '') + '>' + icon('check') + 'Confirmar resposta</button></div>' : '') +
-          (q.answer != null ? '<div class="exam-exp ' + (q.answer === q.correct ? 'ok' : 'no') + '">' + icon(q.answer === q.correct ? 'check' : 'x') + '<p><b>' + (q.answer === q.correct ? 'Correto.' : 'Incorreto.') + '</b> ' + esc(q.exp) + '</p></div>' +
+          (q.answer != null ? '<div class="exam-exp ' + (q.answer === q.correct ? 'ok' : 'no') + '">' + icon(q.answer === q.correct ? 'check' : 'x') + '<p><b>' + (q.answer === q.correct ? 'Correto.' : 'Incorreto.') + '</b> ' + global.UI.rich(q.exp) + '</p></div>' +
             '<div class="exam-next"><button class="btn btn-primary" data-next>' + (i < N - 1 ? 'Próxima questão' + icon('chevR') : icon('award') + 'Ver resultado') + '</button></div>' : '') +
         '</div>');
       // sem "pulo" a cada clique: o cartão só anima ao abrir; ao trocar de questão, um esmaecer curto
@@ -193,7 +194,7 @@
     const pct = Math.round(score / N * 100);
     const wrong = qs.filter(function (q) { return q.answer !== q.correct; });
     const review = wrong.length ? '<details class="exam-review"' + (pass ? '' : ' open') + '><summary>' + (pass ? 'Revisar as ' + wrong.length + ' questão(ões) que errou' : 'Revise o que errou (' + wrong.length + ')') + '</summary><ol>' + wrong.map(function (q) {
-      return '<li><p class="rv-q">' + esc(q.q) + '</p><p class="rv-a">' + icon('x') + 'Sua resposta: ' + esc(q.opts[q.answer].t) + '</p><p class="rv-c">' + icon('check') + 'Correta: ' + esc(q.opts[q.correct].t) + '</p><p class="muted sm">' + esc(q.exp) + ' · Aula: ' + esc(q.lesson) + '</p></li>';
+      return '<li><p class="rv-q">' + global.UI.rich(q.q) + '</p><p class="rv-a">' + icon('x') + 'Sua resposta: ' + global.UI.rich(q.opts[q.answer].t) + '</p><p class="rv-c">' + icon('check') + 'Correta: ' + global.UI.rich(q.opts[q.correct].t) + '</p><p class="muted sm">' + global.UI.rich(q.exp) + ' · Aula: ' + esc(q.lesson) + '</p></li>';
     }).join('') + '</ol></details>' : '';
     overlay.innerHTML = shell(cert,
       '<div class="exam-result ' + (pass ? 'pass' : 'fail') + '">' +
