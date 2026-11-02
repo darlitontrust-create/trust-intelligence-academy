@@ -435,9 +435,11 @@
   function pick(list, k) { return list && list.length ? list[(k - 1) % list.length] : ''; }
   /** Solução de um exercício para o slide "Exemplo resolvido". */
   function solutionOf(ex) {
-    const pk = packOf(ex);
-    if (pk.solution) return pk.solution(ex);
-    return { code: String(ex.q || '').replace(/;\s+(?=\S)/g, ';\n'), speech: 'Repare na solução no código.' };
+    const pk = packOf(ex), CF = global.CodeFormat;
+    const sol = pk.solution ? Object.assign({}, pk.solution(ex)) : { code: String(ex.q || '').replace(/;\s+(?=\S)/g, ';\n'), speech: 'Repare na solução no código.' };
+    // quebra e recua a resposta para caber na caixa sem barra de rolagem
+    if (sol.code && CF) sol.code = CF.forTrack(sol.code, (ex && ex.track) || 'sql');
+    return sol;
   }
   function hintOf(ex, les, k) { return ex.h || pick(les.notas, k + 1) || les.notas[0]; }
   function narrationReview(ex, les, oc) {
