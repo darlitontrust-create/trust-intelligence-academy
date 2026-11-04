@@ -63,5 +63,46 @@
     return typeof a.seen !== 'number' && typeof b.seen !== 'number' ? undefined : { seen: seen, history: h };
   }
 
-  global.Overall = { LEVELS: LEVELS, RANKS: RANKS, MAX: MAX, rankOf: rankOf, totalXp: totalXp, info: info, of: of, check: check, merge: merge };
+  /* ------------------------------ Brasões ------------------------------ */
+  // Um brasão por patente, cada vez mais ornamentado: escudo e numeral romano;
+  // depois borda dupla, louros, estrelas, asas, coroa e, na última, ouro.
+  const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
+  let uid = 0;
+  function crest(i, opts) {
+    opts = opts || {};
+    const id = 'cr' + (++uid), gold = i === 6, locked = !!opts.locked;
+    const c = locked ? ['#5d6382', '#3a3f58', '#262a3d'] : gold ? ['#fff1c2', '#f5c040', '#a8650f'] : ['#e4d4ff', '#a46bff', '#5b3fd6'];
+    const ink = locked ? '#8e94b0' : gold ? '#3a2405' : '#ffffff', acc = locked ? '#6b7192' : gold ? '#ffe39a' : '#d9c6ff';
+    let s = '<defs><linearGradient id="' + id + 'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + c[0] + '"/><stop offset=".55" stop-color="' + c[1] + '"/><stop offset="1" stop-color="' + c[2] + '"/></linearGradient>' +
+      '<linearGradient id="' + id + 'h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>';
+    // asas (Mestre em diante)
+    if (i >= 4) [1, -1].forEach(function (d) {
+      const t = d < 0 ? ' transform="translate(120 0) scale(-1 1)"' : '';
+      s += '<g' + t + ' fill="' + acc + '" opacity="' + (locked ? '.5' : '.9') + '"><path d="M30 50 C14 46 6 36 4 26 C14 32 22 34 30 36 Z"/><path d="M30 60 C12 58 4 50 2 40 C13 46 22 48 30 48 Z"/><path d="M31 70 C15 70 7 63 5 55 C15 60 23 61 31 60 Z"/></g>';
+    });
+    // louros (Analista em diante)
+    if (i >= 2) [1, -1].forEach(function (d) {
+      const t = d < 0 ? ' transform="translate(120 0) scale(-1 1)"' : '';
+      let leaves = '';
+      for (let k = 0; k < 5; k++) { const a = 200 + k * 22, r = 41, cx = 60 + r * Math.cos(a * Math.PI / 180), cy = 66 + r * Math.sin(a * Math.PI / 180) * -1;
+        leaves += '<ellipse cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" rx="3.4" ry="7" transform="rotate(' + (a - 270 + 30) + ' ' + cx.toFixed(1) + ' ' + cy.toFixed(1) + ')"/>'; }
+      s += '<g' + t + ' fill="' + acc + '" opacity="' + (locked ? '.45' : '.85') + '">' + leaves + '</g>';
+    });
+    // escudo
+    s += '<path d="M60 16 L92 26 V58 C92 80 78 94 60 104 C42 94 28 80 28 58 V26 Z" fill="url(#' + id + 'g)" stroke="' + (locked ? '#4a5070' : 'rgba(255,255,255,.55)') + '" stroke-width="2"/>';
+    s += '<path d="M60 16 L92 26 V58 C92 80 78 94 60 104 C42 94 28 80 28 58 V26 Z" fill="url(#' + id + 'h)"/>';
+    // borda interna (Explorador em diante)
+    if (i >= 1) s += '<path d="M60 23 L86 31 V58 C86 76 75 88 60 97 C45 88 34 76 34 58 V31 Z" fill="none" stroke="' + ink + '" stroke-opacity=".45" stroke-width="1.4"/>';
+    // estrelas (Especialista em diante)
+    const star = function (x, y, r) { let p = ''; for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + k * Math.PI / 5, rr = k % 2 ? r * 0.45 : r; p += (k ? 'L' : 'M') + (x + rr * Math.cos(a)).toFixed(1) + ' ' + (y + rr * Math.sin(a)).toFixed(1); } return '<path d="' + p + 'Z"/>'; };
+    if (i >= 3) { const n = Math.min(3, i - 2), xs = n === 1 ? [60] : n === 2 ? [53, 67] : [47, 60, 73]; s += '<g fill="' + ink + '" opacity=".9">' + xs.map(function (x) { return star(x, 42, 4.6); }).join('') + '</g>'; }
+    // numeral
+    s += '<text x="60" y="' + (i >= 3 ? 76 : 70) + '" text-anchor="middle" font-family="Instrument Serif, Georgia, serif" font-size="' + (i >= 3 ? 26 : 30) + '" fill="' + ink + '">' + ROMAN[i] + '</text>';
+    // coroa (Grão-Mestre em diante)
+    if (i >= 5) s += '<path d="M44 14 L48 2 L54 10 L60 0 L66 10 L72 2 L76 14 Z" fill="' + acc + '" stroke="' + (locked ? '#4a5070' : 'rgba(255,255,255,.6)') + '" stroke-width="1"/>';
+    const size = opts.size || 48;
+    return '<svg class="crest' + (locked ? ' locked' : '') + '" viewBox="0 -4 120 112" width="' + size + '" height="' + size + '" role="img" aria-label="Brasão ' + RANKS[i].nome + (locked ? ' (bloqueado)' : '') + '">' + s + '</svg>';
+  }
+
+  global.Overall = { crest: crest, LEVELS: LEVELS, RANKS: RANKS, MAX: MAX, rankOf: rankOf, totalXp: totalXp, info: info, of: of, check: check, merge: merge };
 })(typeof window !== 'undefined' ? window : globalThis);

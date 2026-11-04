@@ -103,25 +103,25 @@
   /* ------------------------------ Nível geral ------------------------------ */
   /** Anel com o número do nível; o arco mostra o avanço até o próximo nível. */
   function levelRing(o, size) {
-    const grad = active().map(function (t, i, a) { return t.color.a + ' ' + (i / a.length * 100).toFixed(1) + '%'; }).concat([active()[0].color.a + ' 100%']).join(', ');
-    return '<div class="lv-ring' + (size ? ' ' + size : '') + '" style="--p:' + (o.pct * 100).toFixed(1) + ';--rg:conic-gradient(' + grad + ')"><div class="lv-core"><small>Nível</small><b>' + o.level + '</b></div></div>';
+    return '<div class="lv-ring' + (size ? ' ' + size : '') + '" style="--p:' + (o.pct * 100).toFixed(1) + '"><div class="lv-core"><small>Nível</small><b>' + o.level + '</b></div></div>';
   }
   function levelCard(st) {
     const O = global.Overall, o = O.of(st);
     if (!st.overall || typeof st.overall.seen !== 'number') O.check(st);
     const hist = (st.overall && st.overall.history) || {};
     return '<section class="ov-level glass" aria-label="Nível geral">' +
-      '<div class="ov-level-main">' + levelRing(o) +
+      '<div class="ov-level-main">' + levelRing(o) + '<span class="ov-level-crest">' + O.crest(O.RANKS.indexOf(o.rank), { size: 104 }) + '</span>' +
         '<div class="ov-level-txt"><p class="eyebrow">Nível geral da academia</p><h2>' + esc(o.rank.nome) + '</h2>' +
           '<p class="muted">' + esc(o.rank.desc) + '</p>' +
           '<div class="lv-bar"><i style="width:' + (o.pct * 100).toFixed(1) + '%"></i></div>' +
           '<p class="lv-meta"><span><b>' + fmt(o.xp) + '</b> XP somando todas as trilhas</span>' +
             (o.next ? '<span>Faltam <b>' + fmt(o.remaining) + ' XP</b> para o nível ' + o.next.level + (o.nextRank && o.nextRank.from === o.next.level ? ' · nova patente: ' + esc(o.nextRank.nome) : '') + '</span>' : '<span>Nível máximo alcançado</span>') + '</p>' +
         '</div></div>' +
-      '<ol class="lv-ranks">' + O.RANKS.map(function (r) {
+      '<ol class="lv-ranks" aria-label="Brasões das patentes">' + O.RANKS.map(function (r, i) {
         const got = o.level >= r.from, cur = o.rank === r;
-        return '<li class="' + (cur ? 'cur' : got ? 'got' : '') + '"><span class="lv-ic">' + icon(got ? r.icon : 'lock') + '</span><span><small>Nível ' + r.from + '</small><b>' + esc(r.nome) + '</b>' +
-          (got && hist[r.from] ? '<em>' + fmtDate(hist[r.from]) + '</em>' : '') + '</span></li>';
+        return '<li class="' + (cur ? 'cur' : got ? 'got' : '') + '">' + O.crest(i, { size: 64, locked: !got }) +
+          '<small>Nível ' + r.from + '</small><b>' + esc(r.nome) + '</b>' +
+          '<em>' + (got ? (hist[r.from] ? 'Conquistado em ' + fmtDate(hist[r.from]) : 'Conquistado') : 'Faltam ' + fmt(O.LEVELS[r.from - 1].min - o.xp) + ' XP') + '</em></li>';
       }).join('') + '</ol>' +
     '</section>';
   }
@@ -281,6 +281,7 @@
   function render(view, page, rerender) {
     const st = S().state;
     RENDER[page](view, st, rerender);
+    const cur = view.querySelector('.lv-ranks li.cur'); if (cur && cur.parentNode.scrollWidth > cur.parentNode.clientWidth) cur.parentNode.scrollLeft = Math.max(0, cur.offsetLeft - 8);
     bindGo(view, rerender);
   }
 

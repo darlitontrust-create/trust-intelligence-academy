@@ -241,7 +241,7 @@
     document.getElementById('avatar').innerHTML = global.Profile.avatarHtml(st.profile);
     document.getElementById('track-switch').innerHTML = icon('grid') + '<span><small>Visão geral</small><b>Todas as trilhas</b></span>' + icon('chevR');
     const lv = global.Overall.of(st);
-    document.getElementById('side-card').innerHTML = '<span class="eyebrow">Nível geral</span><a class="side-level" href="#dashboard"><b>Nível ' + lv.level + '</b><span>' + esc(lv.rank.nome) + '</span></a>' +
+    document.getElementById('side-card').innerHTML = '<span class="eyebrow">Nível geral</span><a class="side-level" href="#dashboard">' + global.Overall.crest(global.Overall.RANKS.indexOf(lv.rank), { size: 42 }) + '<span><b>Nível ' + lv.level + '</b><span>' + esc(lv.rank.nome) + '</span></span></a>' +
       '<div class="mini-bar"><i style="width:' + (lv.pct * 100) + '%"></i></div><span class="muted sm">' + (lv.next ? 'Faltam ' + fmt(lv.remaining) + ' XP para o nível ' + lv.next.level : 'Nível máximo') + '</span>' +
       '<span class="eyebrow side-sep">Cargos atuais</span><ul class="side-roles">' + o.sum.map(function (s) {
       return '<li style="--ta:' + s.t.color.a + '"><i></i><span><small>' + esc(s.t.short) + '</small><b>' + esc(s.role.nome) + '</b></span></li>';
@@ -717,7 +717,7 @@
     confetti(legend || newRank ? 'legend' : null);
     global.Sfx.play(legend ? 'legend' : 'promotion');
     const m = modal('<div class="promo lv-promo' + (newRank ? ' rank' : '') + '">' +
-      global.Overview.levelRing(Object.assign({}, o, { level: L, pct: 1 }), 'xl') +
+      (newRank ? '<div class="lv-crest-big">' + O.crest(O.RANKS.indexOf(newRank), { size: 150 }) + '<span class="lv-tag">Nível ' + L + '</span></div>' : global.Overview.levelRing(Object.assign({}, o, { level: L, pct: 1 }), 'xl')) +
       '<p class="eyebrow">' + (newRank ? 'Nova patente na academia' : 'Promoção geral') + '</p>' +
       '<h2>' + (newRank ? esc(newRank.nome) : 'Nível ' + L) + '</h2>' +
       '<p class="muted">' + (newRank ? 'Você chegou ao nível ' + L + '. ' + esc(newRank.desc) : 'Você subiu para o nível ' + L + ' somando ' + fmt(o.xp) + ' XP em todas as trilhas. Patente: ' + esc(o.rank.nome) + '.') + '</p>' +
