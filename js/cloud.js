@@ -35,6 +35,7 @@
   let status = 'idle';
   const listeners = [];
   const boards = {}, boardAt = {};
+  let rawAll = null;   // liga geral com o XP de cada trilha (para derivar as ligas por trilha)
 
   function S() { return global.AppStorage; }
   function enabled() { return !!FIREBASE_CONFIG.apiKey && !(global.UI && global.UI.framed); }
@@ -207,7 +208,16 @@
   }
 
   /* ------------------------------ Ranking ------------------------------ */
-  function board(track) { return boards[track] || null; }
+  /** Liga de uma trilha. Antes de a busca da trilha terminar, usa a liga geral
+      (que já traz o XP de cada trilha) para a posição já sair real. */
+  function board(track) {
+    if (boards[track]) return boards[track];
+    const all = rawAll;
+    if (track === '__all' || !all) return null;
+    return all.map(function (r) { return { uid: r.uid, nome: r.nome, xp: (r.xp && r.xp[track]) || 0 }; })
+      .filter(function (r) { return r.xp > 0 || r.uid === uid; })
+      .sort(function (a, b) { return b.xp - a.xp; });
+  }
   /** Busca os 50 melhores da trilha (no máximo a cada 20 segundos). */
   async function refreshBoard(track, force) {
     if (!uid) return null;
@@ -216,6 +226,7 @@
     boardAt[track] = Date.now();
     try {
       const snap = await withTimeout(db.collection('leaderboard').orderBy(track === '__all' ? 'total' : 'xp.' + track, 'desc').limit(50).get(), 10000);
+      if (track === '__all') rawAll = snap.docs.map(function (d) { const v = d.data(); return { uid: d.id, nome: v.nome || 'Aluno', xp: v.xp || {} }; });
       boards[track] = snap.docs.map(function (d) { const v = d.data(); return { uid: d.id, nome: v.nome || 'Aluno', xp: track === '__all' ? (v.total || 0) : ((v.xp && v.xp[track]) || 0) }; })
         .filter(function (r) { return r.xp > 0 || r.uid === uid; });
       return boards[track];
@@ -227,6 +238,7 @@
     detach();
     if (auth) { try { await auth.signOut(); } catch (e) { /* ignora */ } }
     Object.keys(boards).forEach(function (k) { delete boards[k]; delete boardAt[k]; });
+    rawAll = null;
   }
 
   if (typeof document !== 'undefined') {

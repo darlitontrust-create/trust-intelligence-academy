@@ -61,7 +61,7 @@
       desc: 'Do White ao Black Belt: DMAIC, Lean, estatística, testes de hipótese, DOE e liderança de projetos, com casos reais da NexusMarket.',
       facts: ['150 exercícios', '3 níveis', '4 faixas'], total: 150, bankName: 'SSBank',
       summary: 'do White e Yellow Belt (fundamentos, Lean e ferramentas) ao Green Belt (DMAIC completo) e ao Black Belt (estatística avançada, DOE e liderança do programa)',
-      related: [{ id: 'gestao', label: 'Base' }, { id: 'python', label: 'Ferramenta para as análises' }, { id: 'powerbi', label: 'Ferramenta para os painéis' }],
+      related: [{ id: 'gestao', label: 'Base' }, { id: 'estatistica', label: 'Base estatística' }, { id: 'python', label: 'Ferramenta para as análises' }, { id: 'powerbi', label: 'Ferramenta para os painéis' }],
     },
     {
       id: 'ingles', status: 'ativo', icon: 'chat', start: 'dashboard', kind: 'ingles',
@@ -72,14 +72,28 @@
       summary: 'das apresentações e pedidos no café às viagens, à conversa social e ao inglês do trabalho: reuniões, e-mails, apresentação de dados, entrevistas e negociação',
     },
     {
+      id: 'estatistica', status: 'ativo', icon: 'bell', start: 'dashboard', kind: 'estatistica',
+      nome: 'Estatística Aplicada', short: 'Estatística', tag: 'Análise de dados',
+      color: { a: '#a5b4fc', b: '#6366f1' },            // índigo
+      desc: 'Da estatística descritiva aos testes A/B, regressão e previsão, com dados reais e cálculos feitos na hora para decidir melhor.',
+      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'ESBank',
+      summary: 'da estatística descritiva (médias, dispersão, quartis e gráficos) à probabilidade, distribuições, intervalos de confiança, testes de hipótese, testes A/B, regressão e previsão de séries temporais',
+      related: [{ id: 'python', label: 'Ferramenta para as análises' }, { id: 'sixsigma', label: 'Aplicação em melhoria de processos' }, { id: 'powerbi', label: 'Ferramenta para os painéis' }],
+    },
+    {
       id: 'ia', status: 'em-breve', icon: 'sparkle', nome: 'IA para Dados', short: 'IA', tag: 'Inteligência Artificial',
       color: { a: '#d8b4fe', b: '#a46bff' },            // violeta
       desc: 'Prompts para análise, automação de relatórios e integração de IA com bancos e painéis.', facts: ['Prompts', 'Automação', 'Integrações'],
     },
     {
-      id: 'estatistica', status: 'em-breve', icon: 'bell', nome: 'Estatística Aplicada', short: 'Estatística', tag: 'Análise',
-      color: { a: '#d6dbe8', b: '#8e94b0' },            // cinza
-      desc: 'Médias, dispersão, correlação e testes para decisões de negócio.', facts: ['Descritiva', 'Correlação', 'Testes A/B'],
+      id: 'ml', status: 'em-breve', icon: 'nodes', nome: 'Machine Learning Aplicado', short: 'ML', tag: 'Ciência de dados',
+      color: { a: '#86efac', b: '#22c55e' },            // verde-menta
+      desc: 'Previsão de demanda, churn e segmentação de clientes: do modelo simples à avaliação, com Python e casos de negócio.', facts: ['Classificação', 'Previsão', 'Segmentação'],
+    },
+    {
+      id: 'storytelling', status: 'em-breve', icon: 'slides', nome: 'Storytelling com Dados', short: 'Storytelling', tag: 'Comunicação',
+      color: { a: '#fdba74', b: '#f97316' },            // laranja
+      desc: 'Transforme análises em decisões: escolha do gráfico, narrativa, painéis executivos e apresentações que convencem.', facts: ['Visualização', 'Narrativa', 'Apresentação'],
     },
   ];
 

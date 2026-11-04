@@ -29,13 +29,13 @@ globalThis.performance = globalThis.performance || require('perf_hooks').perform
 const js = (f) => eval(fs.readFileSync(path.join(__dirname, '..', 'js', f), 'utf8'));
 const esc = (x) => String(x == null ? '' : x).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 globalThis.UI = globalThis.UI || { esc, icon: () => '', rich: esc, plain: (x) => String(x == null ? '' : x).replace(/[⟦⟧]/g, '') };
-js('seed.js'); js('exercises.js'); js('excel-engine.js'); js('excel-data.js'); js('excel-exercises.js'); js('dax-data.js'); js('dax-engine.js'); js('dax-exercises.js'); js('gq-data.js'); js('gq-charts.js'); js('gq-exercises.js'); js('ss-data.js'); js('ss-exercises.js'); js('py-data.js'); js('py-exercises.js'); js('en-exercises.js'); js('narrator.js'); js('sql-engine.js'); js('formula-editor.js'); js('dax-lang.js'); js('lessons.js'); js('excel-lessons.js'); js('dax-lessons.js'); js('gq-lessons.js'); js('ss-lessons.js'); js('py-outputs.js'); js('py-lessons.js'); js('en-lessons.js'); js('en-ui.js');
+js('seed.js'); js('exercises.js'); js('excel-engine.js'); js('excel-data.js'); js('excel-exercises.js'); js('dax-data.js'); js('dax-engine.js'); js('dax-exercises.js'); js('gq-data.js'); js('gq-charts.js'); js('gq-exercises.js'); js('ss-data.js'); js('ss-exercises.js'); js('es-data.js'); js('es-exercises.js'); js('py-data.js'); js('py-exercises.js'); js('en-exercises.js'); js('narrator.js'); js('sql-engine.js'); js('formula-editor.js'); js('dax-lang.js'); js('lessons.js'); js('excel-lessons.js'); js('dax-lessons.js'); js('gq-lessons.js'); js('ss-lessons.js'); js('es-lessons.js'); js('py-outputs.js'); js('py-lessons.js'); js('en-lessons.js'); js('en-ui.js');
 (async () => {
   await SQLEngine.init();
   const seen = new Map();
   // grupo = um MP3 por aula (e um por nível para os desafios), para caber no upload do GitHub
   const groupOf = (clip, ex) => /^(?:[a-z]+-)?(?:ex|rv)-/.test(clip.id) || clip.id.indexOf('rv-') >= 0 ? (ex.track || 'sql') + '-ex' + ex.level : clip.id.replace(/-\d+$/, '');
-  SQLBank.EXERCISES.concat(ExcelBank.EXERCISES, PBIBank.EXERCISES, GQBank.EXERCISES, SSBank.EXERCISES, PyBank.EXERCISES, EnBank.EXERCISES).forEach((ex) => Lessons.narration(ex).forEach((clip) => {
+  SQLBank.EXERCISES.concat(ExcelBank.EXERCISES, PBIBank.EXERCISES, GQBank.EXERCISES, SSBank.EXERCISES, ESBank.EXERCISES, PyBank.EXERCISES, EnBank.EXERCISES).forEach((ex) => Lessons.narration(ex).forEach((clip) => {
     if (!seen.has(clip.id)) seen.set(clip.id, Object.assign({ group: groupOf(clip, ex) }, clip));
   }));
   // frases avulsas em inglês (botões "ouvir" das aulas e dos exercícios)

@@ -292,6 +292,7 @@
     const id = S.state && !global.Overview.isOverview(S.state) ? S.state.currentTrack : null;
     const de = document.documentElement.style;
     if (id === 'sixsigma') { de.setProperty('--tk-a', '#5eead4'); de.setProperty('--tk-b', '#14b8a6'); de.setProperty('--tk-c', '#99f6e4'); de.setProperty('--tk-ink', '#042f2e'); }
+    else if (id === 'estatistica') { de.setProperty('--tk-a', '#a5b4fc'); de.setProperty('--tk-b', '#6366f1'); de.setProperty('--tk-c', '#c7d2fe'); de.setProperty('--tk-ink', '#0f1240'); }
     else ['--tk-a', '--tk-b', '--tk-c', '--tk-ink'].forEach(function (k) { de.removeProperty(k); });
   }
   function rerender() {
@@ -349,7 +350,7 @@
                 const ps = G.PROMOTIONS.filter(function (p) { return p.level === l.id; }).map(function (p) { return p.nome; });
                 return '<li><span class="hl-n">' + l.id + '</span><span class="hl-t"><b>' + esc(l.nome) + '</b><small>' + esc(ps.join(' · ')) + '</small></span><span class="hl-c">' + c + '/50</span></li>';
               }).join('') + '</ul>' +
-              '<ul class="hub-feats"><li>' + icon('book') + nLessons + ' aulas narradas</li><li>' + icon('code') + (t.kind === 'excel' ? 'Planilha com correção automática' : t.kind === 'powerbi' ? 'Editor DAX com correção automática' : t.kind === 'gestao' ? 'Casos práticos com correção automática' : t.kind === 'sixsigma' ? 'Casos com dados reais e estatística na hora' : t.kind === 'python' ? 'Python no navegador com correção automática' : t.kind === 'ingles' ? 'Diálogos com áudio e prática de fala' : 'Editor com correção automática') + '</li>' +
+              '<ul class="hub-feats"><li>' + icon('book') + nLessons + ' aulas narradas</li><li>' + icon('code') + (t.kind === 'excel' ? 'Planilha com correção automática' : t.kind === 'powerbi' ? 'Editor DAX com correção automática' : t.kind === 'gestao' ? 'Casos práticos com correção automática' : t.kind === 'sixsigma' ? 'Casos com dados reais e estatística na hora' : t.kind === 'estatistica' ? 'Cálculos e gráficos com dados reais' : t.kind === 'python' ? 'Python no navegador com correção automática' : t.kind === 'ingles' ? 'Diálogos com áudio e prática de fala' : 'Editor com correção automática') + '</li>' +
               '<li>' + icon('award') + gotC + '/' + certs.length + ' certificados com prova</li><li>' + icon('trophy') + 'Carreira até ' + esc(G.FINAL.nome) + '</li></ul>';
           });
         }
@@ -500,8 +501,8 @@
     if (currentCleanup) { currentCleanup(); currentCleanup = null; }
     const wantsLesson = mode === 'lesson' || (!mode && st.settings.showLessons !== false && !st.progress.solved[ex.id] && !st.progress.lessonsSeen[ex.id]);
     if (wantsLesson) return renderLessonStage(view, ex);
-    if (ex.track === 'excel' || ex.track === 'powerbi' || ex.track === 'gestao' || ex.track === 'python' || ex.track === 'ingles' || ex.track === 'sixsigma') {
-      ({ excel: global.ExcelPractice, powerbi: global.DaxPractice, gestao: global.GQPractice, python: global.PyPractice, ingles: global.EnPractice, sixsigma: global.GQPractice })[ex.track].render(view, ex, {
+    if (ex.track === 'excel' || ex.track === 'powerbi' || ex.track === 'gestao' || ex.track === 'python' || ex.track === 'ingles' || ex.track === 'sixsigma' || ex.track === 'estatistica') {
+      ({ excel: global.ExcelPractice, powerbi: global.DaxPractice, gestao: global.GQPractice, python: global.PyPractice, ingles: global.EnPractice, sixsigma: global.GQPractice, estatistica: global.GQPractice })[ex.track].render(view, ex, {
         st: st, S: S,
         header: exHeader(st, ex, '<button class="btn btn-ghost sm" id="b-lesson">' + icon('book') + 'Conteúdo</button>'),
         setCleanup: function (fn) { currentCleanup = fn; },
@@ -732,7 +733,8 @@
     const st = S.state; const board = G.leaderboard(st); const tier = G.tierOf(st.progress.xp);
     const nextTier = G.TIERS.find(function (t) { return t.min > st.progress.xp; });
     const C = global.Cloud, real = C && C.uid && C.board(st.currentTrack);
-    if (C && C.uid) C.refreshBoard(st.currentTrack).then(function (b) { if (b && !real && location.hash === '#ranking') renderRanking(view); });
+    const seen = JSON.stringify(real || null);
+    if (C && C.uid) C.refreshBoard(st.currentTrack).then(function (b) { if (b && JSON.stringify(b) !== seen && location.hash === '#ranking' && !global.Overview.isOverview(S.state)) rerender(); });
     view.innerHTML = '<header class="page-h"><div><p class="eyebrow">Ranking · ' + esc(global.Tracks.active().nome) + '</p><h1>Liga Trust</h1><p class="muted">' + (real ? 'Sua posição entre os alunos da Trust Intelligence Academy nesta trilha (apelido e XP).' : 'Sua posição entre jogadores de referência (perfis fictícios usados como parâmetro de ritmo). Entre com Google para disputar com alunos reais.') + '</p></div></header>' +
       '<div class="rank-grid">' +
         '<section class="card glass"><ol class="board">' + board.map(global.Dashboard.boardRow).join('') + '</ol></section>' +

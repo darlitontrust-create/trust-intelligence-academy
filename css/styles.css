@@ -1472,3 +1472,4 @@ span.en { color: #ffc2e2; font-weight: 550; }
 .related-b i .ic { width: 15px; height: 15px; }
 .related-b span { display: grid; line-height: 1.2; } .related-b small { font-size: 10.5px; color: var(--ink-3); } .related-b b { font-size: 13px; color: var(--ink); font-weight: 600; }
 .related.big { margin: 0; } .related.big .related-k { display: none; }
+.ov-pos b.ov-wait { color: var(--ink-4); font-weight: 600; letter-spacing: 2px; animation: ovWait 1.2s ease-in-out infinite; } @keyframes ovWait { 50% { opacity: .35; } }

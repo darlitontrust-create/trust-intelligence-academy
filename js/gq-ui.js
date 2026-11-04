@@ -25,7 +25,7 @@
 
   /* ------------------------------ Números ------------------------------ */
   function parseNum(s) {
-    let t = String(s == null ? '' : s).trim().replace(/\s|R\$|%/g, '');
+    let t = String(s == null ? '' : s).trim().replace(/\s|R\$|%/g, '').replace(/\u2212/g, '-');
     if (!t) return NaN;
     if (t.indexOf(',') >= 0) t = t.replace(/\./g, '').replace(',', '.');
     else if (/^\d{1,3}(\.\d{3})+$/.test(t)) t = t.replace(/\./g, '');

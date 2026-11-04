@@ -58,6 +58,13 @@
         'Aplica ANOVA, qui-quadrado, regressão múltipla e poder.', 'Planeja experimentos (DOE), DFSS e QFD.', 'Concluiu o conteúdo de Black Belt: portfólio, ganhos e liderança.'],
       { key: 'trainee', nome: 'Aprendiz de Melhoria', desc: 'Primeiros passos no Lean Six Sigma.' },
       'Lenda Lean Six Sigma', 'Concluiu os 150 exercícios, do White ao Black Belt, com visão de Master Black Belt.'),
+    estatistica: career(
+      ['Analista Descritivo · Dados e Amostras', 'Analista Descritivo · Posição e Dispersão', 'Analista Descritivo · Distribuições e Gráficos', 'Analista Quantitativo · Probabilidade', 'Analista Quantitativo · Distribuições', 'Analista Quantitativo · Estimação', 'Estatístico Aplicado · Testes de Hipótese', 'Estatístico Aplicado · Correlação e Regressão', 'Estatístico Aplicado · Previsão e Decisão'],
+      ['Classifica variáveis, monta amostras, frequências e percentuais.', 'Resume dados com média, mediana, desvio e quartis.', 'Concluiu o nível Iniciante: histogramas, outliers, escore Z e gráficos.',
+        'Calcula probabilidades, condicionais, Bayes e valor esperado.', 'Usa as distribuições binomial, Poisson e normal e o TCL.', 'Concluiu o nível Intermediário: amostragem, intervalos e tamanho da amostra.',
+        'Conduz testes t, testes A/B e qui-quadrado.', 'Aplica ANOVA, correlação e regressão simples e múltipla.', 'Concluiu o nível Avançado: séries temporais, previsão e decisão.'],
+      { key: 'trainee', nome: 'Curioso dos Números', desc: 'Primeiros passos na estatística da NexusMarket.' },
+      'Lenda da Estatística', 'Concluiu os 150 exercícios da trilha de Estatística Aplicada.'),
     python: career(
       ['Programador Iniciante', 'Explorador de Estruturas', 'Desenvolvedor Python Júnior', 'Organizador de Dados', 'Limpador de Dados', 'Analista Python Pleno', 'Analista de Dados com pandas', 'Engenheiro de Análises', 'Cientista de Dados'],
       ['Domina print, variáveis, operadores e textos.', 'Usa listas, fatias, decisões e laços.', 'Concluiu o nível Iniciante com dicionários e funções.',
@@ -144,6 +151,15 @@
       { key: 'first-doe', nome: 'Experimentador', desc: 'Resolva um caso de DOE.', icon: 'target', test: has(['DOE', 'FATORIAL']) },
       { key: 'ss-black', nome: 'Faixa Preta', desc: 'Conclua o nível Avançado (Black Belt).', icon: 'medal', test: function (st) { return levelCount(st, 3) >= 50; } },
       { key: 'ss-master', nome: 'Rumo ao Master', desc: 'Conclua os 150 casos.', icon: 'trophy', test: function (st) { return solvedList(st).length >= 150; } },
+    ],
+    estatistica: [
+      { key: 'first-stat', nome: 'Primeiro Número', desc: 'Resolva seu primeiro exercício de estatística.', icon: 'play', test: function (st) { return solvedList(st).length >= 1; } },
+      { key: 'first-median', nome: 'Além da Média', desc: 'Resolva um exercício de mediana, dispersão ou quartis.', icon: 'bars', test: has(['MEDIANA', 'DISPERSÃO', 'QUARTIS']) },
+      { key: 'first-bayes', nome: 'Pensamento Bayesiano', desc: 'Resolva um exercício de Bayes ou probabilidade condicional.', icon: 'bulb', test: has(['BAYES', 'CONDICIONAL']) },
+      { key: 'first-ic', nome: 'Margem de Erro', desc: 'Resolva um exercício de intervalo de confiança.', icon: 'target', test: has(['INTERVALO DE CONFIANÇA', 'IC DE PROPORÇÃO']) },
+      { key: 'first-ab', nome: 'Teste A/B', desc: 'Resolva um exercício de teste A/B ou teste t.', icon: 'search', test: has(['TESTE A/B', 'TESTE T']) },
+      { key: 'first-reg', nome: 'Na Linha Certa', desc: 'Resolva um exercício de regressão.', icon: 'flame', test: has(['REGRESSÃO']) },
+      { key: 'es-master', nome: 'Mestre dos Dados', desc: 'Conclua os 150 exercícios.', icon: 'trophy', test: function (st) { return solvedList(st).length >= 150; } },
     ],
     ingles: [
       { key: 'first-hello', nome: 'Hello, World!', desc: 'Resolva seu primeiro exercício de inglês.', icon: 'play', test: function (st) { return solvedList(st).length >= 1; } },

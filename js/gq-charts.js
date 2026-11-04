@@ -11,7 +11,7 @@
   'use strict';
   const esc = function (x) { return String(x == null ? '' : x).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   const FS = 1.18; // escala das fontes dos gráficos (legibilidade em colunas estreitas)
-  const THEMES = { gestao: { a: '#ff9a76', b: '#ff5e3a', rgb: '255,154,118', rgb2: '255,94,58' }, sixsigma: { a: '#5eead4', b: '#14b8a6', rgb: '94,234,212', rgb2: '20,184,166' } };
+  const THEMES = { gestao: { a: '#ff9a76', b: '#ff5e3a', rgb: '255,154,118', rgb2: '255,94,58' }, sixsigma: { a: '#5eead4', b: '#14b8a6', rgb: '94,234,212', rgb2: '20,184,166' }, estatistica: { a: '#a5b4fc', b: '#6366f1', rgb: '165,180,252', rgb2: '99,102,241' } };
   const COL = { a: '#ff9a76', b: '#ff5e3a', rgb: '255,154,118', rgb2: '255,94,58', line: '#7dd3fc', ok: '#4ade80', bad: '#f87171', warn: '#fbbf24', ink: '#e8ebf6', ink2: '#b6bdd6', ink3: '#7e86a6', grid: 'rgba(255,255,255,0.08)' };
 
   /* ------------------------------ Números ------------------------------ */
@@ -147,6 +147,26 @@
     },
     ppm: function (mu, s, lie, lse) { let p = 0; if (lie != null) p += normCdf((lie - mu) / s); if (lse != null) p += 1 - normCdf((lse - mu) / s); return p * 1e6; },
     rty: function (yields) { return yields.reduce(function (a, b) { return a * b; }, 1); },
+  });
+  /* ------------------------ Estatística Aplicada ------------------------ */
+  function comb(n, k) { let c = 1; for (let i = 1; i <= k; i++) c = c * (n - k + i) / i; return c; }
+  Object.assign(calc, {
+    comb: comb,
+    binom: function (n, k, p) { return comb(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k); },
+    binomCdf: function (n, k, p) { let s = 0; for (let i = 0; i <= k; i++) s += calc.binom(n, i, p); return s; },
+    poisson: function (l, k) { let f = 1; for (let i = 2; i <= k; i++) f *= i; return Math.exp(-l) * Math.pow(l, k) / f; },
+    poissonCdf: function (l, k) { let s = 0; for (let i = 0; i <= k; i++) s += calc.poisson(l, i); return s; },
+    normBetween: function (mu, s, lo, hi) { return (hi == null ? 1 : normCdf((hi - mu) / s)) - (lo == null ? 0 : normCdf((lo - mu) / s)); },
+    ciProp: function (x, n, conf) { const p = x / n, z = invNorm(1 - (1 - (conf || 0.95)) / 2), h = z * Math.sqrt(p * (1 - p) / n); return { p: p, lo: p - h, hi: p + h, half: h }; },
+    ciZ: function (m, sig, n, conf) { const z = invNorm(1 - (1 - (conf || 0.95)) / 2), h = z * sig / Math.sqrt(n); return { lo: m - h, hi: m + h, half: h }; },
+    wmean: function (v, w) { return sum(v.map(function (x, i) { return x * w[i]; })) / sum(w); },
+    cv: function (v) { return sd(v) / mean(v); },
+    sdp: function (v) { const m = mean(v); return Math.sqrt(sum(v.map(function (x) { return (x - m) * (x - m); })) / v.length); },
+    mode: function (v) { const c = {}; v.forEach(function (x) { c[x] = (c[x] || 0) + 1; }); let best = null; Object.keys(c).forEach(function (k) { if (best == null || c[k] > c[best]) best = k; }); return +best; },
+    movAvg: function (v, k) { const out = []; for (let i = k - 1; i < v.length; i++) out.push(mean(v.slice(i - k + 1, i + 1))); return out; },
+    growth: function (a, b) { return (b - a) / a; },
+    expect: function (vals, probs) { return sum(vals.map(function (x, i) { return x * probs[i]; })); },
+    iqrFences: function (v) { const d = calc.describe(v), iqr = d.q3 - d.q1; return { q1: d.q1, q3: d.q3, iqr: iqr, lo: d.q1 - 1.5 * iqr, hi: d.q3 + 1.5 * iqr }; },
   });
   /* Inversa da normal padrão (Acklam). */
   function invNorm(p) {
@@ -463,6 +483,40 @@
     const x = calc.xbarr(f.subgroups), out = R.control({ pts: x.means, lim: { lc: x.lc, lsc: x.lsc, lic: x.lic }, labels: f.labels, unit: f.unit, d: f.d == null ? 2 : f.d });
     out.stats.xbarr = x; return out;
   };
+  /** Série temporal: f.values, f.labels; opcionais f.ma (janela da média móvel), f.trend (reta), f.fc (previsões), f.unit. */
+  R.line = function (f) {
+    const v = f.values, n = v.length, fc = f.fc || [], all = v.concat(fc), W = 580, H = 260, L = 46, Rr = 14, T = 16, B = 46, x0 = L, x1 = W - Rr, y0 = H - B, y1 = T;
+    const lo0 = Math.min.apply(null, all), hi0 = Math.max.apply(null, all), pad = (hi0 - lo0) * 0.12 || 1, lo = f.zero ? 0 : Math.max(0, Math.floor((lo0 - pad) / 10) * 10), hi = hi0 + pad;
+    const X = function (i) { return x0 + (x1 - x0) * i / Math.max(1, all.length - 1); }, Y = function (y) { return y0 - (y0 - y1) * (y - lo) / (hi - lo); };
+    let s = '';
+    for (let i = 0; i <= 4; i++) { const yv = lo + (hi - lo) * i / 4, yy = Y(yv); s += ln(x0, yy, x1, yy, COL.grid) + t(x0 - 6, yy + 4, fmt(yv, 0), { a: 'end', s: 9.5, c: COL.ink3 }); }
+    let d = ''; v.forEach(function (y, i) { d += (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(y).toFixed(1); });
+    s += '<path d="' + d + 'L' + X(n - 1).toFixed(1) + ' ' + y0 + 'L' + x0 + ' ' + y0 + 'Z" fill="rgba(' + COL.rgb + ',0.10)"/><path d="' + d + '" fill="none" stroke="' + COL.a + '" stroke-width="2.2"/>';
+    v.forEach(function (y, i) { s += '<circle cx="' + X(i) + '" cy="' + Y(y) + '" r="2.8" fill="' + COL.a + '"/>'; });
+    if (f.ma) { const m = calc.movAvg(v, f.ma); let dm = ''; m.forEach(function (y, i) { dm += (i ? 'L' : 'M') + X(i + f.ma - 1).toFixed(1) + ' ' + Y(y).toFixed(1); }); s += '<path d="' + dm + '" fill="none" stroke="' + COL.warn + '" stroke-width="2" stroke-dasharray="6 4"/>'; }
+    if (f.trend) { const c = corr(v.map(function (y, i) { return [i, y]; })); s += ln(X(0), Y(c.a), X(all.length - 1), Y(c.a + c.b * (all.length - 1)), COL.ok, { dash: '5 4', w: 1.4 }); }
+    if (fc.length) { let df = 'M' + X(n - 1).toFixed(1) + ' ' + Y(v[n - 1]).toFixed(1); fc.forEach(function (y, i) { df += 'L' + X(n + i).toFixed(1) + ' ' + Y(y).toFixed(1); }); s += '<path d="' + df + '" fill="none" stroke="' + COL.line + '" stroke-width="2" stroke-dasharray="3 4"/>'; fc.forEach(function (y, i) { s += '<circle cx="' + X(n + i) + '" cy="' + Y(y) + '" r="3.2" fill="none" stroke="' + COL.line + '" stroke-width="1.6"/>'; }); }
+    const labs = f.labels || [], every = Math.ceil(all.length / 12);
+    labs.forEach(function (l, i) { if ((i % every === 0 && labs.length - 1 - i >= every / 2 + 0.5) || i === labs.length - 1) s += t(X(i), y0 + 15, l, { a: 'middle', s: 9.5, c: COL.ink3 }); });
+    const leg = [[COL.a, f.name || 'Valores']].concat(f.ma ? [[COL.warn, 'Média móvel de ' + f.ma]] : [], f.trend ? [[COL.ok, 'Tendência']] : [], fc.length ? [[COL.line, 'Previsão']] : []);
+    return { html: svg(W, H, s, f.title || 'Série temporal') + (leg.length > 1 ? legend(leg) : ''), speech: f.speech || ('A série vai de ' + fmt(v[0], 0) + ' a ' + fmt(v[n - 1], 0) + (f.unit ? ' ' + f.unit : '') + '.'), stats: {} };
+  };
+  /** Curva normal com a área entre lo e hi destacada: f.mean, f.sd, f.lo, f.hi, f.unit, f.d. */
+  R.bell = function (f) {
+    const mu = f.mean, s0 = f.sd, W = 580, H = 240, x0 = 24, x1 = 556, y0 = 190, y1 = 28, lo = mu - 4 * s0, hi = mu + 4 * s0;
+    const X = function (v) { return x0 + (x1 - x0) * (v - lo) / (hi - lo); }, pdf = function (v) { return Math.exp(-0.5 * Math.pow((v - mu) / s0, 2)); }, Y = function (v) { return y0 - (y0 - y1) * pdf(v); };
+    const a = f.lo == null ? lo : Math.max(lo, f.lo), b = f.hi == null ? hi : Math.min(hi, f.hi);
+    let curve = '', area = 'M' + X(a).toFixed(1) + ' ' + y0;
+    for (let i = 0; i <= 140; i++) { const v = lo + (hi - lo) * i / 140; curve += (i ? 'L' : 'M') + X(v).toFixed(1) + ' ' + Y(v).toFixed(1); }
+    for (let i = 0; i <= 80; i++) { const v = a + (b - a) * i / 80; area += 'L' + X(v).toFixed(1) + ' ' + Y(v).toFixed(1); }
+    area += 'L' + X(b).toFixed(1) + ' ' + y0 + 'Z';
+    const P = calc.normBetween(mu, s0, f.lo, f.hi), dd = f.d == null ? 0 : f.d;
+    let s = '<path d="' + area + '" fill="rgba(' + COL.rgb + ',0.45)"/><path d="' + curve + '" fill="none" stroke="' + COL.a + '" stroke-width="2"/>' + ln(x0, y0, x1, y0, COL.ink3);
+    [-3, -2, -1, 0, 1, 2, 3].forEach(function (k) { const v = mu + k * s0; s += ln(X(v), y0, X(v), y0 + 4, COL.ink3) + t(X(v), y0 + 16, fmt(v, dd), { a: 'middle', s: 9.5, c: k ? COL.ink3 : COL.ink }) + (f.z ? t(X(v), y0 + 30, (k > 0 ? '+' : '') + k + 'σ', { a: 'middle', s: 9, c: COL.ink3 }) : ''); });
+    [['lo', f.lo], ['hi', f.hi]].forEach(function (l) { if (l[1] != null) s += ln(X(l[1]), y1 - 6, X(l[1]), y0, COL.warn, { dash: '5 4', w: 1.4 }) + t(X(l[1]), y1 - 10, fmt(l[1], dd) + (f.unit ? ' ' + f.unit : ''), { a: 'middle', s: 10, c: COL.warn }); });
+    return { html: svg(W, H + (f.z ? 12 : 0), s, 'Curva normal') + (f.show === false ? '' : '<p class="gq-cap">Área destacada: <b>' + pct(P, 1) + '</b> dos casos</p>'), speech: f.show === false ? 'A área destacada é a probabilidade procurada.' : 'Calculado agora: a área destacada corresponde a ' + pct(P, 1) + ' dos casos.', stats: { p: P } };
+  };
+
   function legend(items) { return '<ul class="gq-leg">' + items.map(function (i) { return '<li><i style="background:' + i[0] + '"></i>' + esc(i[1]) + '</li>'; }).join('') + '</ul>'; }
 
   /** Paleta da trilha atual (Gestão: coral · Lean Six Sigma: verde-água). */

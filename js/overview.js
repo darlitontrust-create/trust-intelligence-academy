@@ -197,7 +197,16 @@
     const sum = summary(st), T = totals(sum);
     const me = { nome: st.profile.apelido || st.profile.nome || 'Você', xp: T.xp, me: true };
     const C = global.Cloud, real = C && C.uid && C.board('__all');
-    if (C && C.uid) C.refreshBoard('__all').then(function (b) { if (b && !real && location.hash === '#ranking' && isOverview(S().state)) rerender(); });
+    if (C && C.uid) {
+      // liga geral primeiro (já traz o XP de cada trilha); depois as ligas de cada trilha
+      const again = function () { if (location.hash === '#ranking' && isOverview(S().state)) rerender(); };
+      const sig = function () { return JSON.stringify([C.board('__all'), sum.map(function (s) { return C.board(s.t.id); })]); }, before = sig();
+      C.refreshBoard('__all').then(function () {
+        if (sig() !== before) again();
+        const mid = sig();
+        Promise.all(sum.map(function (s) { return C.refreshBoard(s.t.id); })).then(function () { if (sig() !== mid) again(); });
+      });
+    }
     const others = real ? real.filter(function (r) { return r.uid !== C.uid; }).map(function (r) { return { nome: r.nome, xp: r.xp }; }) : REF.map(function (r) { return { nome: r[0], xp: r[1] }; });
     const board = others.concat([me]).sort(function (a, b) { return b.xp - a.xp || (a.me ? -1 : b.me ? 1 : 0); }).map(function (p, i) { return Object.assign(p, { pos: i + 1, tier: G.tierOf(Math.round(p.xp / Math.max(1, sum.length))) }); });
     const pos = board.find(function (b) { return b.me; }).pos;
@@ -210,7 +219,10 @@
           '<ul class="ov-pos">' + sum.map(function (s) {
             const b = withTrack(s.t.id, function () { return G.leaderboard(st); });
             const mine = b.find(function (x) { return x.me; });
-            return '<li' + tv(s.t) + '><span>' + dot(s.t) + esc(s.t.short) + '</span><small>' + fmt(s.xp) + ' XP · ' + esc(mine.tier.nome) + '</small><b>' + mine.pos + 'º<em>/' + b.length + '</em></b>' +
+            // conectado e a liga real ainda não chegou: não mostra a posição de referência
+            const wait = C && C.uid && !C.board(s.t.id);
+            return '<li' + tv(s.t) + '><span>' + dot(s.t) + esc(s.t.short) + '</span><small>' + fmt(s.xp) + ' XP · ' + esc(mine.tier.nome) + '</small>' +
+              (wait ? '<b class="ov-wait" title="Carregando a liga">…</b>' : '<b>' + mine.pos + 'º<em>/' + b.length + '</em></b>') +
               '<a class="icon-btn sm" href="#ranking" data-go="' + s.t.id + '|ranking" aria-label="Ranking de ' + esc(s.t.nome) + '">' + icon('chevR') + '</a></li>';
           }).join('') + '</ul>' +
           '<p class="muted sm">XP por exercício: fácil 10 · média 20 · difícil 30. Total possível na academia: ' + fmt(T.maxXp) + ' XP.</p>' +
