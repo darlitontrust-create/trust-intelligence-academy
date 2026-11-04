@@ -1473,3 +1473,93 @@ span.en { color: #ffc2e2; font-weight: 550; }
 .related-b span { display: grid; line-height: 1.2; } .related-b small { font-size: 10.5px; color: var(--ink-3); } .related-b b { font-size: 13px; color: var(--ink); font-weight: 600; }
 .related.big { margin: 0; } .related.big .related-k { display: none; }
 .ov-pos b.ov-wait { color: var(--ink-4); font-weight: 600; letter-spacing: 2px; animation: ovWait 1.2s ease-in-out infinite; } @keyframes ovWait { 50% { opacity: .35; } }
+
+/* =====================================================================
+   Cor do tema: ao entrar num tema (html.tk-on), barras, conquistas,
+   carreira, gráfico e detalhes de navegação assumem a cor da trilha.
+   --tc-a / --tc-b / --tc-ink vêm de trackColors() em app.js.
+   ===================================================================== */
+html.tk-on body::before {
+  background:
+    radial-gradient(900px 520px at 12% -8%, color-mix(in srgb, var(--tc-a) 16%, transparent), transparent 60%),
+    radial-gradient(760px 520px at 100% 8%, color-mix(in srgb, var(--tc-b) 14%, transparent), transparent 60%),
+    radial-gradient(700px 500px at 60% 110%, rgba(47,216,240,.06), transparent 60%),
+    linear-gradient(var(--bg), var(--bg));
+}
+html.tk-on .top-progress i,
+html.tk-on .mini-bar i { background: linear-gradient(90deg, var(--tc-a), var(--tc-b)); box-shadow: 0 0 10px color-mix(in srgb, var(--tc-b) 60%, transparent); }
+html.tk-on .giant-bar i { background: linear-gradient(90deg, var(--tc-a), var(--tc-b)); box-shadow: 0 0 24px color-mix(in srgb, var(--tc-b) 70%, transparent), inset 0 1px 0 rgba(255,255,255,.35); }
+html.tk-on .dash-hero::after { background: radial-gradient(circle, color-mix(in srgb, var(--tc-a) 24%, transparent), transparent 65%); }
+html.tk-on .dash-hero { border-color: color-mix(in srgb, var(--tc-a) 28%, transparent); }
+html.tk-on .role-chip:not(.dim):not(.legend) { background: color-mix(in srgb, var(--tc-a) 12%, transparent); border-color: color-mix(in srgb, var(--tc-a) 40%, transparent); color: color-mix(in srgb, var(--tc-a) 55%, #fff); }
+html.tk-on .role-chip:not(.dim):not(.legend) .ic { color: var(--tc-a); }
+html.tk-on .chart { --blue: var(--tc-b); --cyan: var(--tc-a); --violet: var(--tc-b); }
+html.tk-on .career li.got i { background: var(--tc-b); border-color: var(--tc-b); }
+html.tk-on .career li.cur i { background: var(--tc-a); border-color: var(--tc-a); box-shadow: 0 0 10px var(--tc-a); }
+html.tk-on .pm.got { border-color: var(--tc-a); background: var(--tc-a); box-shadow: 0 0 8px var(--tc-a); }
+html.tk-on .tile.open { border-color: color-mix(in srgb, var(--tc-a) 55%, transparent); background: color-mix(in srgb, var(--tc-a) 10%, transparent); box-shadow: 0 0 20px -8px var(--tc-a); }
+html.tk-on .tile.open::after { background: var(--tc-a); box-shadow: 0 0 8px var(--tc-a); }
+html.tk-on .hl-n, html.tk-on .hub-levels li .hl-n { color: var(--tc-ink); background: linear-gradient(135deg, var(--tc-a), var(--tc-b)); }
+html.tk-on .ach.on .ach-ic { color: var(--tc-ink); background: linear-gradient(135deg, var(--tc-a), var(--tc-b)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--tc-a) 60%, transparent), 0 10px 30px -10px var(--tc-b); }
+html.tk-on .ach.on { border-color: color-mix(in srgb, var(--tc-a) 26%, transparent); }
+html.tk-on .ach-list .ic { color: var(--tc-a); background: color-mix(in srgb, var(--tc-a) 12%, transparent); }
+html.tk-on .stat .ic { color: color-mix(in srgb, var(--tc-a) 70%, var(--ink-4)); }
+html.tk-on .board li.me { background: linear-gradient(90deg, color-mix(in srgb, var(--tc-a) 18%, transparent), color-mix(in srgb, var(--tc-b) 6%, transparent)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tc-a) 35%, transparent); }
+html.tk-on .board li .nm em { color: var(--tc-a); }
+html.tk-on .nav a.on { background: linear-gradient(90deg, color-mix(in srgb, var(--tc-a) 18%, transparent), color-mix(in srgb, var(--tc-b) 6%, transparent)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tc-a) 30%, transparent); }
+html.tk-on .nav a.on .ic, html.tk-on .bottom-nav a.on .ic { color: var(--tc-a); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--tc-a) 70%, transparent)); }
+html.tk-on .track-switch > .ic:first-child { color: var(--tc-a); }
+html.tk-on .ls-steps li.on i { background: linear-gradient(90deg, var(--tc-a), var(--tc-b)); box-shadow: 0 0 12px color-mix(in srgb, var(--tc-b) 70%, transparent); }
+html.tk-on .ls-steps li.done i { background: color-mix(in srgb, var(--tc-b) 55%, transparent); }
+html.tk-on .ls-kicker .ic, html.tk-on .ls-notes .ic { color: var(--tc-a); filter: none; }
+html.tk-on .ls-num { color: var(--tc-ink); background: linear-gradient(135deg, var(--tc-a), var(--tc-b)); box-shadow: 0 0 14px -2px color-mix(in srgb, var(--tc-b) 80%, transparent); }
+html.tk-on .eq i { background: linear-gradient(var(--tc-a), var(--tc-b)); }
+html.tk-on .goal { background: linear-gradient(135deg, color-mix(in srgb, var(--tc-a) 9%, transparent), color-mix(in srgb, var(--tc-b) 7%, transparent)); border-color: color-mix(in srgb, var(--tc-a) 32%, transparent); }
+html.tk-on .goal > .ic { color: var(--tc-a); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--tc-a) 60%, transparent)); }
+html.tk-on .tag-topic { color: color-mix(in srgb, var(--tc-a) 60%, #fff); border-color: color-mix(in srgb, var(--tc-a) 38%, transparent); background: color-mix(in srgb, var(--tc-a) 10%, transparent); }
+html.tk-on .promo-ring { background: conic-gradient(from 0deg, var(--tc-a), var(--tc-b), var(--tc-a)); box-shadow: 0 0 50px -6px var(--tc-b); }
+html.tk-on .promo-core .ic { filter: drop-shadow(0 0 12px var(--tc-a)); }
+html.tk-on .promo.legend .promo-ring { background: conic-gradient(from 0deg, #ffd27a, #ff9d6b, var(--tc-a), var(--tc-b), #ffd27a); box-shadow: 0 0 80px -4px rgba(255,210,122,.8); }
+
+/* ---------------------------- Nível geral ---------------------------- */
+.ov-level { padding: 22px 24px; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 22px; align-items: center; margin-top: 16px; position: relative; overflow: hidden; }
+.ov-level::after { content: ""; position: absolute; left: -80px; top: -120px; width: 320px; height: 320px; border-radius: 50%; background: radial-gradient(circle, rgba(255,210,122,.12), transparent 65%); pointer-events: none; }
+.ov-level-main { display: flex; gap: 20px; align-items: center; min-width: 0; position: relative; z-index: 1; }
+.ov-level-txt { min-width: 0; flex: 1; }
+.ov-level-txt h2 { font-family: var(--f-display); font-weight: 400; font-size: clamp(28px, 3.4vw, 38px); letter-spacing: 0; line-height: 1.05; margin: 2px 0 6px; }
+.lv-ring { --size: 112px; width: var(--size); height: var(--size); flex: none; border-radius: 50%; padding: 6px; position: relative;
+  background: conic-gradient(from 0deg, transparent calc(var(--p) * 1%), rgba(22,26,42,.94) 0), var(--rg); box-shadow: 0 0 34px -10px rgba(255,210,122,.55); }
+.lv-ring .lv-core { width: 100%; height: 100%; border-radius: 50%; display: grid; place-content: center; text-align: center; background: radial-gradient(circle at 50% 30%, #1a1f33, #0b0e17 70%); box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); }
+.lv-core small { font: 600 10px var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); }
+.lv-core b { font: 400 44px/1 var(--f-display); color: #ffe7b0; text-shadow: 0 0 18px rgba(255,210,122,.45); }
+.lv-ring.xl { --size: 150px; padding: 7px; margin-bottom: 8px; }
+.lv-ring.xl .lv-core b { font-size: 62px; }
+.lv-bar { height: 10px; border-radius: 99px; background: rgba(255,255,255,.07); overflow: hidden; margin-top: 12px; }
+.lv-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #ffd27a, #ff9d6b 45%, #a46bff 75%, #2fd8f0); box-shadow: 0 0 14px rgba(255,210,122,.5); transition: width 1s cubic-bezier(.2,.8,.2,1); }
+.lv-meta { display: flex; justify-content: space-between; gap: 6px 16px; flex-wrap: wrap; margin-top: 8px; font-size: 12.5px; color: var(--ink-3); }
+.lv-meta b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.lv-ranks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; position: relative; z-index: 1; }
+.lv-ranks li { display: flex; align-items: center; gap: 10px; padding: 4px 10px; border-radius: 10px; color: var(--ink-4); font-size: 12.5px; border: 1px solid transparent; }
+.lv-ranks li > span:last-child { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; min-width: 0; }
+.lv-ranks small { font: 600 10.5px var(--f-mono); min-width: 52px; }
+.lv-ranks em { font-style: normal; font-size: 11px; color: var(--ink-4); margin-left: auto; }
+.lv-ic { width: 24px; height: 24px; flex: none; border-radius: 7px; display: grid; place-items: center; background: rgba(255,255,255,.04); }
+.lv-ic .ic { width: 13px; height: 13px; }
+.lv-ranks li.got { color: var(--ink-2); }
+.lv-ranks li.got .lv-ic { color: #ffd27a; background: rgba(255,210,122,.12); }
+.lv-ranks li.cur { color: #fff; border-color: rgba(255,210,122,.4); background: linear-gradient(90deg, rgba(255,210,122,.14), rgba(164,107,255,.06)); }
+.lv-ranks li.cur .lv-ic { color: #1a1206; background: linear-gradient(135deg, #ffd27a, #ff9d6b); box-shadow: 0 0 14px -2px rgba(255,210,122,.8); }
+.side-level { display: grid; gap: 1px; margin: 4px 0 8px; }
+.side-level b { font: 400 26px/1.05 var(--f-display); color: #ffe7b0; }
+.side-level span { font-size: 12.5px; color: var(--ink-2); font-weight: 600; }
+.side-sep { display: block; margin-top: 14px; }
+.lv-promo h2 { font-size: 40px; }
+.lv-promo.rank h2 { background: linear-gradient(92deg, #ffd27a, #ff9d6b, #a46bff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+@media (max-width: 900px) {
+  .ov-level { grid-template-columns: 1fr; padding: 18px; }
+  .ov-level-main { flex-direction: column; align-items: flex-start; }
+  .lv-ranks em { display: none; }
+}
+html.tk-on #view .grad-num { background: linear-gradient(92deg, var(--tc-a), var(--tc-b)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+html.tk-on #view .link { color: var(--tc-a); }
+html.tk-on .xp-chip { background: color-mix(in srgb, var(--tc-a) 12%, transparent); border-color: color-mix(in srgb, var(--tc-a) 38%, transparent); }

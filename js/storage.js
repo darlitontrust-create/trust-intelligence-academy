@@ -150,6 +150,8 @@
     Object.keys(Object.assign({}, newer.tracks || {}, older.tracks || {})).forEach(function (k) {
       out.tracks[k] = mergeProgress((newer.tracks || {})[k], (older.tracks || {})[k]);
     });
+    const ov = global.Overall ? global.Overall.merge(newer.overall, older.overall) : (newer.overall || older.overall);
+    if (ov) out.overall = ov; else delete out.overall;
     return out;
   }
   /** Representação para comparar estados ignorando a hora do salvamento. */
@@ -170,6 +172,7 @@
       else state.tracks[k] = merged.tracks[k];
     });
     state.settings = merged.settings || state.settings;
+    if (merged.overall) state.overall = merged.overall;
     saveNow(true);
     emit('remote');
     return true;

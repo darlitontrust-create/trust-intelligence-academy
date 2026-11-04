@@ -240,7 +240,10 @@
     document.getElementById('xp-chip').innerHTML = icon('sparkle') + '<b>' + fmt(T.xp) + '</b> XP';
     document.getElementById('avatar').innerHTML = global.Profile.avatarHtml(st.profile);
     document.getElementById('track-switch').innerHTML = icon('grid') + '<span><small>Visão geral</small><b>Todas as trilhas</b></span>' + icon('chevR');
-    document.getElementById('side-card').innerHTML = '<span class="eyebrow">Cargos atuais</span><ul class="side-roles">' + o.sum.map(function (s) {
+    const lv = global.Overall.of(st);
+    document.getElementById('side-card').innerHTML = '<span class="eyebrow">Nível geral</span><a class="side-level" href="#dashboard"><b>Nível ' + lv.level + '</b><span>' + esc(lv.rank.nome) + '</span></a>' +
+      '<div class="mini-bar"><i style="width:' + (lv.pct * 100) + '%"></i></div><span class="muted sm">' + (lv.next ? 'Faltam ' + fmt(lv.remaining) + ' XP para o nível ' + lv.next.level : 'Nível máximo') + '</span>' +
+      '<span class="eyebrow side-sep">Cargos atuais</span><ul class="side-roles">' + o.sum.map(function (s) {
       return '<li style="--ta:' + s.t.color.a + '"><i></i><span><small>' + esc(s.t.short) + '</small><b>' + esc(s.role.nome) + '</b></span></li>';
     }).join('') + '</ul>';
   }
@@ -265,6 +268,7 @@
     const navId = h.indexOf('ex-') === 0 ? 'trilha' : h;
     document.querySelectorAll('[data-nav]').forEach(function (a) { a.classList.toggle('on', a.dataset.nav === navId); });
     if (!quiet) { view.classList.remove('enter'); void view.offsetWidth; view.classList.add('enter'); } else view.classList.remove('enter');
+    if (!S.state.overall || typeof S.state.overall.seen !== 'number') { global.Overall.check(S.state); S.save(); }   // 1ª vez: registra o nível sem comemorar
     const O = global.Overview;
     const page = O.PAGES.indexOf(h) >= 0 ? h : (h === 'temas' || h === 'perfil' || h.indexOf('ex-') === 0) ? null : 'dashboard';
     if (h.indexOf('ex-') === 0) {
@@ -291,6 +295,15 @@
   function trackColors() {
     const id = S.state && !global.Overview.isOverview(S.state) ? S.state.currentTrack : null;
     const de = document.documentElement.style;
+    // cor do tema nos detalhes (barras, conquistas, carreira, navegação) — fora da Visão geral e da página Temas
+    const h = (location.hash || '#temas').slice(1), tr = id && global.Tracks.get(id);
+    const on = !!(tr && h !== 'temas' && h !== 'perfil');
+    document.documentElement.classList.toggle('tk-on', on);
+    if (on) {
+      const lum = function (hex) { const n = parseInt(hex.slice(1), 16), c = [n >> 16 & 255, n >> 8 & 255, n & 255].map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+      de.setProperty('--tc-a', tr.color.a); de.setProperty('--tc-b', tr.color.b);
+      de.setProperty('--tc-ink', lum(tr.color.b) > 0.28 ? '#0b0e17' : '#ffffff');
+    } else ['--tc-a', '--tc-b', '--tc-ink'].forEach(function (k) { de.removeProperty(k); });
     if (id === 'sixsigma') { de.setProperty('--tk-a', '#5eead4'); de.setProperty('--tk-b', '#14b8a6'); de.setProperty('--tk-c', '#99f6e4'); de.setProperty('--tk-ink', '#042f2e'); }
     else if (id === 'estatistica') { de.setProperty('--tk-a', '#a5b4fc'); de.setProperty('--tk-b', '#6366f1'); de.setProperty('--tk-c', '#c7d2fe'); de.setProperty('--tk-ink', '#0f1240'); }
     else ['--tk-a', '--tk-b', '--tk-c', '--tk-ink'].forEach(function (k) { de.removeProperty(k); });
@@ -660,6 +673,7 @@
       st.progress.history.push({ at: new Date().toISOString(), id: ex.id, xp: gained });
       st.progress.firstTryStreak = attempts === 1 && !used ? st.progress.firstTryStreak + 1 : 0;
       unlocked = G.evaluate(st, { justSolved: true });
+      unlocked.overallLevels = global.Overall.check(st);
       S.saveNow();
     }
     const lvCount = G.levelCount(st, ex.level);
@@ -678,7 +692,10 @@
       toast('+' + gained + ' XP · ' + esc(ex.n), 'xp');
       unlocked.newAchievements.forEach(function (a, i) { setTimeout(function () { toast('Conquista desbloqueada: <b>' + esc(a.nome) + '</b>', 'success', 4200); }, 500 + i * 700); });
       unlocked.newPromotions.forEach(function (p, i) { setTimeout(function () { promotionModal(p); }, 700 + i * 400); });
-      if (!unlocked.newPromotions.length) { confetti(); global.Sfx.play('goal'); }
+      const lvUp = unlocked.overallLevels || [];
+      // promoção geral: depois das promoções da trilha (o modal novo abre quando o anterior fecha)
+      if (lvUp.length) setTimeout(function () { whenNoModal(function () { overallModal(lvUp); }); }, 900 + unlocked.newPromotions.length * 400);
+      if (!unlocked.newPromotions.length && !lvUp.length) { confetti(); global.Sfx.play('goal'); }
     }
   }
 
@@ -686,6 +703,29 @@
   function defaultHint(ex) {
     const k = (ex.k || []).map(function (x) { return x === 'SUBQUERY' ? 'uma subconsulta' : x; }).join(', ');
     return 'Comece pelo FROM com as tabelas citadas, depois escreva o SELECT com as colunas do objetivo. Este exercício pede: ' + k + '. Compare com o "Resultado esperado" para ajustar colunas e filtros.';
+  }
+
+  /* ------------------------ Promoção geral (nível) ------------------------ */
+  function whenNoModal(fn) {
+    if (!document.querySelector('.modal-wrap')) return fn();
+    setTimeout(function () { whenNoModal(fn); }, 400);
+  }
+  function overallModal(levels) {
+    const O = global.Overall, o = O.of(S.state), L = levels[levels.length - 1];
+    const newRank = O.RANKS.filter(function (r) { return levels.indexOf(r.from) >= 0; }).pop();
+    const legend = L === O.MAX;
+    confetti(legend || newRank ? 'legend' : null);
+    global.Sfx.play(legend ? 'legend' : 'promotion');
+    const m = modal('<div class="promo lv-promo' + (newRank ? ' rank' : '') + '">' +
+      global.Overview.levelRing(Object.assign({}, o, { level: L, pct: 1 }), 'xl') +
+      '<p class="eyebrow">' + (newRank ? 'Nova patente na academia' : 'Promoção geral') + '</p>' +
+      '<h2>' + (newRank ? esc(newRank.nome) : 'Nível ' + L) + '</h2>' +
+      '<p class="muted">' + (newRank ? 'Você chegou ao nível ' + L + '. ' + esc(newRank.desc) : 'Você subiu para o nível ' + L + ' somando ' + fmt(o.xp) + ' XP em todas as trilhas. Patente: ' + esc(o.rank.nome) + '.') + '</p>' +
+      (o.next ? '<p class="muted sm">Próximo nível: ' + o.next.level + ' (faltam ' + fmt(o.remaining) + ' XP).</p>' : '') +
+      '<div class="help-row promo-actions"><button class="btn btn-ghost" id="lv-see">Ver nível geral</button><button class="btn btn-primary" id="lv-ok">Continuar jornada</button></div>' +
+      '</div>', {});
+    m.el.querySelector('#lv-ok').onclick = function () { m.close(); };
+    m.el.querySelector('#lv-see').onclick = function () { m.close(); global.Overview.focus('all'); location.hash = 'dashboard'; global.dispatchEvent(new HashChangeEvent('hashchange')); };
   }
 
   /* --------------------------- Modal de promoção --------------------------- */

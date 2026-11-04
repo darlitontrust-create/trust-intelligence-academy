@@ -49,6 +49,7 @@ O conteúdo pode ser reaberto pelo botão "Conteúdo" e desligado em Perfil > Pr
 - `js/py-lessons.js` e `js/py-outputs.js` — as 44 aulas de Python e a saída real dos exemplos (gerada por `build/py_build.js`)
 - `js/py-ui.js` — tela de prática do Python: dados disponíveis, editor, saída e correção pela saída do print()
 - `js/ss-data.js`, `js/ss-exercises.js`, `js/ss-lessons.js` — trilha de Lean Six Sigma: 150 casos e 42 aulas, do White ao Black Belt (usa a tela e os gráficos da Gestão; estatística em `gq-charts.js`)
+- `js/overall.js` — nível geral da academia: 30 níveis pela soma do XP de todas as trilhas, 7 patentes e promoção geral a cada nível
 - `js/es-data.js`, `js/es-exercises.js`, `js/es-lessons.js` — trilha de Estatística Aplicada: 150 exercícios e 37 aulas (descritiva, probabilidade, inferência, testes A/B, regressão e previsão; usa a tela e os gráficos da Gestão)
 - `js/en-exercises.js` — os 150 exercícios de Inglês (escolher a resposta, completar, montar a frase, ouvir, ditado, ordenar o diálogo, classificar)
 - `js/en-lessons.js` — as 39 aulas de Inglês (Situação, Frases-chave, Diálogo com áudio, Cuidados, Sua vez), com 3 questões de prova por aula
