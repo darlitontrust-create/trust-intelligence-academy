@@ -193,7 +193,7 @@
         meta.textContent = 'Saída do seu código';
         if (r.status === 'error') showOut(r.out, r.title + (r.line ? ' (linha ' + r.line + ')' : '') + ': ' + r.explain);
         else showOut(r.out, null, r.badLine);
-        if (r.status !== 'correct') { st.progress.firstTryStreak = 0; S.save(); errorPanel(r, true); return; }
+        if (r.status !== 'correct') { st.progress.firstTryStreak = 0; S.save(); if (global.Sfx) global.Sfx.answer('no'); errorPanel(r, true); return; }
         ctx.onSolved(fb, '✅ Código correto', 'A saída é igual à esperada' + ((ex.k || []).length ? ' e usa ' + ex.k.join(', ') + '.' : '.'));
       });
     }

@@ -212,8 +212,8 @@
         const got = s.achGot.slice().sort(function (a, b) { return p[a.key] < p[b.key] ? 1 : -1; });
         return '<section class="card glass ov-ach"' + tv(s.t) + '><header class="card-h"><h2><span class="hub-ic sm">' + icon(s.t.icon) + '</span>' + esc(s.t.nome) + '</h2>' +
           '<a class="btn btn-quiet sm" href="#conquistas" data-go="' + s.t.id + '|conquistas">Ver as ' + s.achAll.length + icon('chevR') + '</a></header>' +
-          (got.length ? '<div class="ach-grid compact">' + got.map(function (x, i) { return '<div class="ach glass on' + (i >= 5 ? ' ach-more' : '') + '"' + (i >= 5 ? ' hidden' : '') + '><div class="ach-ic">' + icon(x.icon) + '</div><div><b>' + esc(x.nome) + '</b><p>' + esc(x.desc) + '</p><span class="muted sm">Desbloqueada em ' + fmtDate(p[x.key]) + '</span></div></div>'; }).join('') + '</div>' +
-            (got.length > 5 ? '<button type="button" class="btn btn-ghost sm ov-ach-all" data-all="' + got.length + '" aria-expanded="false">Ver todas as ' + got.length + ' desbloqueadas' + icon('chevR') + '</button>' : '')
+          (got.length ? '<div class="ach-grid compact">' + got.map(function (x, i) { return '<div class="ach glass on' + (i >= 6 ? ' ach-more' : i === 5 ? ' ach-6th' : '') + '"' + (i >= 6 ? ' hidden' : '') + '><div class="ach-ic">' + icon(x.icon) + '</div><div><b>' + esc(x.nome) + '</b><p>' + esc(x.desc) + '</p><span class="muted sm">Desbloqueada em ' + fmtDate(p[x.key]) + '</span></div></div>'; }).join('') + '</div>' +
+            (got.length > 5 ? '<button type="button" class="btn btn-ghost sm ov-ach-all' + (got.length === 6 ? ' m-only' : '') + '" data-all="' + got.length + '" aria-expanded="false">Ver todas as ' + got.length + ' desbloqueadas' + icon('chevR') + '</button>' : '')
             : '<p class="muted sm">Nenhuma conquista ainda. A primeira vem com o primeiro exercício resolvido.</p>') +
           '</section>';
       }).join('');
@@ -288,9 +288,12 @@
     view.querySelectorAll('.ov-ach-all').forEach(function (b) {
       b.onclick = function () {
         const open = b.getAttribute('aria-expanded') !== 'true';
-        b.closest('.ov-ach').querySelectorAll('.ach-more').forEach(function (el) { el.hidden = !open; });
+        const box = b.closest('.ov-ach');
+        box.querySelectorAll('.ach-more').forEach(function (el) { el.hidden = !open; });
+        box.classList.toggle('open', open);
         b.setAttribute('aria-expanded', open);
-        b.innerHTML = (open ? 'Mostrar só as 5 últimas' : 'Ver todas as ' + b.dataset.all + ' desbloqueadas') + icon(open ? 'x' : 'chevR');
+        const few = global.matchMedia && global.matchMedia('(max-width: 900px)').matches ? 5 : 6;   // celular mostra 5; computador, 6
+        b.innerHTML = (open ? 'Mostrar só as ' + few + ' últimas' : 'Ver todas as ' + b.dataset.all + ' desbloqueadas') + icon(open ? 'x' : 'chevR');
       };
     });
   }

@@ -623,7 +623,7 @@
       st.progress.attempts[ex.id] = (st.progress.attempts[ex.id] || 0) + 1;
       const r = global.SQLEngine.evaluate(ex, code);
       if (r.result !== undefined) showResult(r.result, r.ms);
-      if (r.status !== 'correct') { st.progress.firstTryStreak = 0; S.save(); errorPanel(r, true); return; }
+      if (r.status !== 'correct') { st.progress.firstTryStreak = 0; S.save(); if (global.Sfx) global.Sfx.answer('no'); errorPanel(r, true); return; }
       onSolved(view, ex, fb, '✅ Consulta correta', 'Resultado idêntico ao esperado e comandos corretos.');
     }
 

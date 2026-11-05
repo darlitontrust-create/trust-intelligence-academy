@@ -238,7 +238,7 @@
       st.progress.attempts[ex.id] = (st.progress.attempts[ex.id] || 0) + 1;
       st.progress.drafts[ex.id] = JSON.stringify(state);
       marks = r; paint();
-      if (r.status !== 'correct') { st.progress.firstTryStreak = 0; S.save(); why.innerHTML = ''; errorPanel(r); return; }
+      if (r.status !== 'correct') { st.progress.firstTryStreak = 0; S.save(); if (global.Sfx) global.Sfx.answer('no'); why.innerHTML = ''; errorPanel(r); return; }
       ctx.onSolved(fb, '✅ Resposta correta', { choice: 'Você escolheu a melhor alternativa para o caso.', multi: 'Todas as alternativas corretas, nenhuma a mais.', order: 'Todos os itens na ordem certa.', classify: 'Todos os itens na categoria certa.', calc: 'O resultado bate com o cálculo feito nos dados.' }[ex.kind]);
       why.innerHTML = explainHtml('Por que esta é a resposta');
     }

@@ -224,7 +224,7 @@
       st.progress.drafts[ex.id] = input.get();
       const r = grade(ex, input.get());
       if (r.result) { lastResult = r.result; lastStatus = r.status === 'correct' ? 'ok' : 'no'; showSheet(ex.sh); paint(); }
-      if (r.status !== 'correct') { st.progress.firstTryStreak = 0; S.save(); errorPanel(r, true); return; }
+      if (r.status !== 'correct') { st.progress.firstTryStreak = 0; S.save(); if (global.Sfx) global.Sfx.answer('no'); errorPanel(r, true); return; }
       ctx.onSolved(fb, '✅ Fórmula correta', 'Resultado igual ao esperado em todas as células.');
     }
     function clear() { input.set('='); fb.innerHTML = ''; posBox.innerHTML = ''; input.el.classList.remove('bad'); lastResult = null; lastStatus = ''; paint(); input.focus(); }

@@ -345,7 +345,7 @@
       st.progress.attempts[ex.id] = (st.progress.attempts[ex.id] || 0) + 1;
       st.progress.drafts[ex.id] = JSON.stringify(state);
       marks = r; paint();
-      if (r.status !== 'correct') { st.progress.firstTryStreak = 0; S.save(); why.innerHTML = ''; errorPanel(r); return; }
+      if (r.status !== 'correct') { st.progress.firstTryStreak = 0; S.save(); if (global.Sfx) global.Sfx.answer('no'); why.innerHTML = ''; errorPanel(r); return; }
       ctx.onSolved(fb, '✅ Resposta correta', r.typo ? 'Certo! Só confira a grafia na resposta abaixo.' : { choice: 'Resposta correta e natural para a situação.', listen: 'Você entendeu o áudio.', fill: 'A frase ficou completa e correta.', build: 'Frase montada na ordem certa.', dictation: 'Você escreveu exatamente o que ouviu.', order: 'O diálogo está na ordem certa.', classify: 'Todos os itens na categoria certa.' }[ex.kind]);
       why.innerHTML = explainHtml('Por que esta é a resposta');
       showPractice();

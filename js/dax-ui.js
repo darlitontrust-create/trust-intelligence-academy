@@ -212,7 +212,7 @@
       st.progress.drafts[ex.id] = editor.get();
       const r = grade(ex, editor.get());
       if (r.result) show(r.result, r.bad);
-      if (r.status !== 'correct') { st.progress.firstTryStreak = 0; S.save(); errorPanel(r, true); return; }
+      if (r.status !== 'correct') { st.progress.firstTryStreak = 0; S.save(); if (global.Sfx) global.Sfx.answer('no'); errorPanel(r, true); return; }
       ctx.onSolved(fb, '✅ ' + (ex.kind === 'measure' ? 'Medida correta' : ex.kind === 'column' ? 'Coluna correta' : 'Tabela correta'), ex.kind === 'measure' ? 'Mesmo resultado do gabarito em todas as linhas e no total.' : 'Mesmo resultado do gabarito em todas as linhas.');
     }
     function clear() { editor.set(''); fb.innerHTML = ''; show(null); editor.focus(); }
