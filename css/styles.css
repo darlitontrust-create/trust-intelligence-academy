@@ -1578,3 +1578,4 @@ html.tk-on .promo.legend .promo-ring { background: conic-gradient(from 0deg, #ff
 html.tk-on #view .grad-num { background: linear-gradient(92deg, var(--tc-a), var(--tc-b)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 html.tk-on #view .link { color: var(--tc-a); }
 html.tk-on .xp-chip { background: color-mix(in srgb, var(--tc-a) 12%, transparent); border-color: color-mix(in srgb, var(--tc-a) 38%, transparent); }
+.ov-ach-all { justify-self: start; } .ach[hidden] { display: none; }
