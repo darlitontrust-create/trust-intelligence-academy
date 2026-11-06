@@ -1810,3 +1810,87 @@ html.tk-on .lib-prog i { background: linear-gradient(90deg, var(--tc-a), var(--t
   .sp-next { font-size: 11.5px; }
 }
 @media (prefers-reduced-motion: reduce) { .sp-slot.fresh .sk-seal { animation: none; } }
+
+/* ------------------------- KPIs com 5 cards ------------------------- */
+.stats.five { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+@media (max-width: 1180px) { .stats.five { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .stats.five { grid-template-columns: repeat(2, minmax(0, 1fr)); } .stats.five > :last-child:nth-child(odd) { grid-column: 1 / -1; } }
+
+/* ------------------------- Skills do tema (painel do tema) ------------------------- */
+.sk-strip { padding: 18px 22px; display: grid; gap: 14px; margin-top: 16px; }
+.sks-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.sk-strip .sp-slot.got { border-color: color-mix(in srgb, var(--ta) 42%, transparent); }
+
+/* ------------------------- Mapa de dias de estudo ------------------------- */
+.hm { --hm-a: var(--violet); --hm-b: var(--blue); display: grid; gap: 12px; }
+.dash-grid .hm { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+.hm-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px 18px; flex-wrap: wrap; }
+.hm-top h3 { margin: 0; font-size: 16px; display: flex; align-items: center; gap: 10px; }
+.hm-top h3 .ic { width: 30px; height: 30px; padding: 6px; border-radius: 9px; color: var(--hm-a); background: color-mix(in srgb, var(--hm-a) 14%, transparent); }
+.hm-top p { margin: 4px 0 0 40px; }
+.hm-kpis { list-style: none; margin: 0; padding: 0; display: flex; gap: 18px; }
+.hm-kpis li { display: grid; justify-items: start; }
+.hm-kpis b { font: 600 20px var(--f-mono); font-variant-numeric: tabular-nums; }
+.hm-kpis small { font: 600 10px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.hm-scroll { overflow-x: auto; scrollbar-width: thin; padding-bottom: 2px; }
+.hm-body { display: grid; grid-template-columns: 30px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 6px; row-gap: 6px; min-width: 0; }
+.hm-months { grid-column: 2; display: grid; grid-template-columns: repeat(var(--w), minmax(0, 1fr)); gap: 3px; font: 600 10px var(--f-mono); color: var(--ink-4); text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+.hm-days { grid-column: 1; grid-row: 2; display: grid; grid-template-rows: repeat(7, minmax(0, 1fr)); gap: 3px; font: 500 10px var(--f-mono); color: var(--ink-4); }
+.hm-days span { display: flex; align-items: center; }
+.hm-grid { grid-column: 2; grid-row: 2; display: grid; grid-template-columns: repeat(var(--w), minmax(0, 1fr)); grid-template-rows: repeat(7, auto); gap: 3px; }
+.hm-c { display: block; aspect-ratio: 1; border-radius: 3px; background: rgba(255,255,255,.05); }
+.hm-c.l1 { background: color-mix(in srgb, var(--hm-a) 28%, rgba(255,255,255,.05)); }
+.hm-c.l2 { background: color-mix(in srgb, var(--hm-a) 50%, rgba(255,255,255,.04)); }
+.hm-c.l3 { background: color-mix(in srgb, var(--hm-a) 75%, transparent); }
+.hm-c.l4 { background: var(--hm-a); box-shadow: 0 0 10px -2px var(--hm-a); }
+.hm-c.fut { background: transparent; box-shadow: inset 0 0 0 1px rgba(255,255,255,.03); }
+.hm-c.today { outline: 1.5px solid color-mix(in srgb, var(--hm-a) 80%, #fff); outline-offset: 1px; }
+.hm-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px 16px; flex-wrap: wrap; }
+.hm-legend { display: inline-flex; align-items: center; gap: 4px; font: 600 10px var(--f-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.hm-legend .hm-c { width: 12px; }
+.hm-legend .hm-c:first-of-type { margin-left: 4px; } .hm-legend .hm-c:last-of-type { margin-right: 4px; }
+
+/* ------------------------- Visão geral: colunas na mesma altura ------------------------- */
+.ov-grid { align-items: stretch; }
+.ov-left { display: grid; gap: 16px; align-content: start; min-width: 0; }
+.ov-right { position: relative; min-height: 0; padding: 0; }
+.ov-right-in { position: absolute; inset: 0; padding: 20px 22px; display: flex; flex-direction: column; overflow: hidden; }
+.ov-right-in .ov-feed { flex: 1; min-height: 0; overflow: hidden; align-content: start; }
+@media (max-width: 1100px) {
+  .ov-right { padding: 0; }
+  .ov-right-in { position: static; }
+}
+@media (max-width: 560px) {
+  .sk-strip { padding: 16px 14px; }
+  .sks-row { gap: 6px; }
+  .sks-row .sp-slot { padding: 10px 4px; }
+  .sks-row .sk-seal { width: 62px; height: 70px; }
+  .sks-row .sp-name b { font-size: 12.5px; }
+  .sks-row .sp-name small { font-size: 10.5px; }
+  .hm-kpis { gap: 14px; }
+  .hm-top p { margin-left: 0; }
+}
+/* Skills no celular: textos quebram dentro do card, sem passar da borda */
+.sp-slot > * { max-width: 100%; min-width: 0; }
+.sp-name b, .sp-name small, .sp-next { overflow-wrap: anywhere; }
+@media (max-width: 560px) {
+  .sp-tr { flex-direction: column; gap: 4px; text-align: center; }
+  .sp-tr span:last-child { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.25; font-size: 11.5px; }
+  .sp-name b { font-size: 13px; line-height: 1.25; }
+  .sp-name small { font-size: 11px; }
+  .sp-next { font-size: 11px; text-align: center; justify-content: center; line-height: 1.3; }
+  .sp-next .ic { display: none; }
+  .sp-foot .btn { width: 100%; justify-content: center; padding: 7px 6px; font-size: 12px; }
+  .sk-panel .sp-head h2, .sk-strip .sp-head h2 { font-size: 17px; }
+}
+@media (max-width: 380px) {
+  .sp-grid { gap: 6px; }
+  .sp-slot { padding: 10px 6px; }
+  .sp-slot .sk-seal { width: 66px; height: 74px; }
+  .stats .stat-v { font-size: 22px; }
+  .stats .stat-s { overflow-wrap: anywhere; }
+}
+@media (max-width: 560px) { .stats .stat-v { font-size: clamp(19px, 5.6vw, 26px); overflow-wrap: anywhere; } .stat { min-width: 0; } }
+.hm-months span { overflow: visible; }
+.ov-feed li[hidden] { display: none; }
+@media (max-width: 560px) { .hm-months { font-size: 8.5px; letter-spacing: 0; } .hm-grid, .hm-days { gap: 2px; } .hm-body { grid-template-columns: 24px minmax(0, 1fr); } .hm-c { border-radius: 2px; } }

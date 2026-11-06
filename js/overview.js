@@ -100,6 +100,22 @@
     });
   }
 
+  /** Atividade recente: mostra só os itens que cabem na altura do card (que acompanha a coluna da esquerda). */
+  function fitFeed(view) {
+    const box = view.querySelector('.ov-right-in'), feed = box && box.querySelector('.ov-feed');
+    if (!feed) return;
+    const run = function () {
+      const items = feed.querySelectorAll('li');
+      items.forEach(function (li) { li.hidden = false; });
+      if (getComputedStyle(box).position !== 'absolute') { items.forEach(function (li, i) { li.hidden = i >= 7; }); return; }
+      const limit = box.getBoundingClientRect().bottom - parseFloat(getComputedStyle(box).paddingBottom || 0);
+      items.forEach(function (li) { if (li.getBoundingClientRect().bottom > limit + 0.5) li.hidden = true; });
+    };
+    run(); requestAnimationFrame(run); setTimeout(run, 250);
+    if (global.ResizeObserver) { const ro = new ResizeObserver(function () { if (!document.body.contains(box)) { ro.disconnect(); return; } run(); }); ro.observe(box); }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(run);
+  }
+
   /* ------------------------------ Nível geral ------------------------------ */
   /** Anel com o número do nível; o arco mostra o avanço até o próximo nível. */
   function levelRing(o, size) {
@@ -135,6 +151,7 @@
     const started = sum.filter(function (s) { return s.solved; });
     const lastTrack = started.slice().sort(function (a, b) { return (a.last || '') < (b.last || '') ? 1 : -1; })[0];
     const pendings = [].concat.apply([], sum.map(function (s) { return s.pending.map(function (c) { return { s: s, c: c }; }); }));
+    const skillsGot = global.Skills ? sum.reduce(function (n, s) { return n + global.Skills.count(s.t); }, 0) : 0;
 
     view.innerHTML = global.Profile.summaryHtml(st.profile) +
       '<section class="dash-hero glass ov-hero">' +
@@ -152,15 +169,16 @@
         '</div>' +
       '</section>' +
       levelCard(st) +
-      (global.Skills ? global.Skills.panel(st) : '') +
-      (pendings.length ? '<section class="exam-banner glass">' + icon('target') + '<span><b>' + (pendings.length > 1 ? pendings.length + ' provas liberadas' : 'Prova liberada') + ':</b> ' + esc(pendings.slice(0, 3).map(function (x) { return x.s.t.short + ' · ' + (x.c.type === 'final' ? x.s.finalName : x.c.title); }).join(', ')) + (pendings.length > 3 ? '…' : '') + '</span>' +
-        '<button class="btn btn-primary sm" data-go="' + pendings[0].s.t.id + '|exam|' + pendings[0].c.id + '">' + icon('play') + 'Fazer prova</button></section>' : '') +
-      '<section class="stats">' +
+      '<section class="stats five">' +
         kpi('XP total', fmt(T.xp), 'de ' + fmt(T.maxXp) + ' XP possíveis', 'sparkle') +
         kpi('Exercícios', T.solved + '<small>/' + T.total + '</small>', (T.total - T.solved) + ' restantes', 'check') +
         kpi('Certificados', T.cert + '<small>/' + T.certAll + '</small>', T.pending ? T.pending + ' prova(s) liberada(s)' : 'Liberados com prova', 'award') +
         kpi('Conquistas', T.ach + '<small>/' + T.achAll + '</small>', T.lessons + ' aulas concluídas', 'trophy') +
+        kpi('Skills', skillsGot + '<small>/' + sum.length * 3 + '</small>', 'Desafios de Skills', 'flag') +
       '</section>' +
+      (global.Skills ? global.Skills.panel(st) : '') +
+      (pendings.length ? '<section class="exam-banner glass">' + icon('target') + '<span><b>' + (pendings.length > 1 ? pendings.length + ' provas liberadas' : 'Prova liberada') + ':</b> ' + esc(pendings.slice(0, 3).map(function (x) { return x.s.t.short + ' · ' + (x.c.type === 'final' ? x.s.finalName : x.c.title); }).join(', ')) + (pendings.length > 3 ? '…' : '') + '</span>' +
+        '<button class="btn btn-primary sm" data-go="' + pendings[0].s.t.id + '|exam|' + pendings[0].c.id + '">' + icon('play') + 'Fazer prova</button></section>' : '') +
       '<section class="ov-tracks">' + sum.map(function (s) {
         return '<article class="ov-track glass"' + tv(s.t) + '>' +
           '<header><span class="hub-ic">' + icon(s.t.icon) + '</span><div><b>' + esc(s.t.nome) + '</b><small>' + esc(s.role.nome) + '</small></div><span class="ov-pct">' + Math.round(s.solved / s.total * 100) + '%</span></header>' +
@@ -172,13 +190,15 @@
         '</article>';
       }).join('') + '</section>' +
       '<div class="ov-grid">' +
-        '<section class="card glass"><header class="card-h"><h2>Evolução de XP (todas as trilhas)</h2><span class="muted sm">XP acumulado</span></header>' + global.Dashboard.evolutionChart({ progress: { history: hist } }) + '</section>' +
-        '<section class="card glass"><header class="card-h"><h2>XP por trilha</h2></header><ul class="ov-xp">' + sum.map(function (s) {
+        '<div class="ov-left"><section class="card glass"><header class="card-h"><h2>Evolução de XP (todas as trilhas)</h2><span class="muted sm">XP acumulado</span></header>' + global.Dashboard.evolutionChart({ progress: { history: hist } }) + '</section>' +
+        '<section class="card glass hm-card">' + global.Dashboard.heatmap(hist, { style: '--hm-a:#a46bff;--hm-b:#7a5cff' }) + '</section></div>' +
+        // à direita: mesma altura da coluna da esquerda; a lista de atividades usa o espaço que sobrar
+        '<section class="card glass ov-right"><div class="ov-right-in"><header class="card-h"><h2>XP por trilha</h2></header><ul class="ov-xp">' + sum.map(function (s) {
           return '<li' + tv(s.t) + '><span>' + dot(s.t) + esc(s.t.short) + '</span>' + bar(s.xp, Math.max.apply(null, sum.map(function (x) { return x.xp; })) || 1, 'ov-col') + '<b>' + fmt(s.xp) + '</b></li>';
         }).join('') + '</ul>' +
         '<h3 class="card-k ov-sub">Atividade recente</h3>' +
-        (hist.length ? '<ul class="ov-feed">' + hist.slice(0, 7).map(function (x) { return '<li' + tv(x.t) + '>' + dot(x.t) + '<span><b>' + esc(x.n) + '</b><small>' + esc(x.t.short) + ' · ' + fmtDate(x.at) + '</small></span><em>+' + x.xp + ' XP</em></li>'; }).join('') + '</ul>' : '<p class="muted sm">Os exercícios resolvidos em qualquer trilha aparecem aqui.</p>') +
-        '</section>' +
+        (hist.length ? '<ul class="ov-feed">' + hist.slice(0, 40).map(function (x) { return '<li' + tv(x.t) + '>' + dot(x.t) + '<span><b>' + esc(x.n) + '</b><small>' + esc(x.t.short) + ' · ' + fmtDate(x.at) + '</small></span><em>+' + x.xp + ' XP</em></li>'; }).join('') + '</ul>' : '<p class="muted sm">Os exercícios resolvidos em qualquer trilha aparecem aqui.</p>') +
+        '</div></section>' +
       '</div>';
   }
 
@@ -284,6 +304,7 @@
     const st = S().state;
     RENDER[page](view, st, rerender);
     if (global.Skills) global.Skills.bind(view);
+    fitFeed(view);
     const cur = view.querySelector('.lv-ranks li.cur'); if (cur && cur.parentNode.scrollWidth > cur.parentNode.clientWidth) cur.parentNode.scrollLeft = Math.max(0, cur.offsetLeft - 8);
     bindGo(view, rerender);
     // Conquistas: mostra as 5 mais recentes de cada tema; o botão abre as demais

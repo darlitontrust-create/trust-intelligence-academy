@@ -67,6 +67,53 @@
       xl + '</svg>';
   }
 
+  /* ------------------------- Mapa de dias de estudo ------------------------- */
+  /**
+   * Mapa de calor do XP por dia (semanas em colunas, dias em linhas), no estilo
+   * do histórico de contribuições. 5 tons: quanto mais XP no dia, mais forte a cor.
+   * Cores: --hm-a/--hm-b do contêiner (cor do tema ou o roxo da visão geral).
+   */
+  const MES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+  function dayKey(t) { return t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0'); }
+  function heatmap(hist, opts) {
+    opts = opts || {};
+    const weeks = opts.weeks || 26, byDay = {};
+    (hist || []).forEach(function (h) { const k = dayKey(new Date(h.at)); byDay[k] = (byDay[k] || 0) + (h.xp || 0); });
+    const today = new Date(); today.setHours(12, 0, 0, 0);
+    const end = new Date(today); end.setDate(end.getDate() + (6 - end.getDay()));            // sábado desta semana
+    const start = new Date(end); start.setDate(start.getDate() - weeks * 7 + 1);              // domingo da 1ª semana
+    const vals = Object.keys(byDay).filter(function (k) { return k >= dayKey(start); }).map(function (k) { return byDay[k]; });
+    const max = Math.max.apply(null, [0].concat(vals));
+    const lvl = function (v) { return !v ? 0 : max <= 0 ? 1 : Math.min(4, Math.max(1, Math.ceil(v / max * 4))); };
+    let cells = '', months = '', lastM = -1;
+    for (let w = 0; w < weeks; w++) {
+      const d0 = new Date(start); d0.setDate(d0.getDate() + w * 7);
+      if (d0.getMonth() !== lastM && (w < weeks - 1)) { months += '<span style="grid-column:' + (w + 1) + ' / span 3">' + MES[d0.getMonth()] + (d0.getMonth() === 0 || w === 0 ? '/' + String(d0.getFullYear()).slice(2) : '') + '</span>'; lastM = d0.getMonth(); }
+      for (let d = 0; d < 7; d++) {
+        const t = new Date(start); t.setDate(t.getDate() + w * 7 + d);
+        const k = dayKey(t), v = byDay[k] || 0, fut = t > today;
+        cells += '<i class="hm-c l' + lvl(v) + (fut ? ' fut' : '') + (k === dayKey(today) ? ' today' : '') + '" style="grid-column:' + (w + 1) + ';grid-row:' + (d + 1) + '"' +
+          (fut ? '' : ' title="' + String(t.getDate()).padStart(2, '0') + ' ' + MES[t.getMonth()] + ': ' + (v ? fmt(v) + ' XP' : 'sem estudo') + '"') + '></i>';
+      }
+    }
+    // resumo: XP na semana, dias seguidos e melhor dia
+    const wk = new Date(today); wk.setDate(wk.getDate() - today.getDay());
+    let week = 0; for (let i = 0; i <= today.getDay(); i++) { const t = new Date(wk); t.setDate(t.getDate() + i); week += byDay[dayKey(t)] || 0; }
+    let streak = 0; const c = new Date(today); if (!byDay[dayKey(c)]) c.setDate(c.getDate() - 1);
+    while (byDay[dayKey(c)]) { streak++; c.setDate(c.getDate() - 1); }
+    const best = Object.keys(byDay).reduce(function (b, k) { return byDay[k] > b ? byDay[k] : b; }, 0);
+    return '<div class="hm"' + (opts.style ? ' style="' + opts.style + '"' : '') + '>' +
+      '<div class="hm-top"><div><h3>' + icon('calendar') + 'Seus dias de estudo</h3><p class="muted sm">XP ganho por dia nas últimas ' + weeks + ' semanas; no computador, passe o mouse num dia para ver o total.</p></div>' +
+        '<ul class="hm-kpis"><li><b>' + fmt(week) + '</b><small>XP nesta semana</small></li><li><b>' + streak + '</b><small>dia' + (streak === 1 ? '' : 's') + ' seguidos</small></li><li><b>' + fmt(best) + '</b><small>XP no melhor dia</small></li></ul></div>' +
+      '<div class="hm-scroll"><div class="hm-body" style="--w:' + weeks + '">' +
+        '<div class="hm-months">' + months + '</div>' +
+        '<div class="hm-days"><span></span><span>seg</span><span></span><span>qua</span><span></span><span>sex</span><span></span></div>' +
+        '<div class="hm-grid">' + cells + '</div>' +
+      '</div></div>' +
+      '<div class="hm-foot"><span class="muted sm">Cada quadrado é um dia; quanto mais XP, mais forte a cor.</span><span class="hm-legend">Menos<i class="hm-c l0"></i><i class="hm-c l1"></i><i class="hm-c l2"></i><i class="hm-c l3"></i><i class="hm-c l4"></i>Mais</span></div>' +
+    '</div>';
+  }
+
   /* ------------------------------- Render ------------------------------- */
   function render(el, st) {
     const p = st.progress;
@@ -112,17 +159,20 @@
       (pendingExams.length ? '<section class="exam-banner glass">' + icon('target') + '<span><b>' + (pendingExams.length > 1 ? pendingExams.length + ' provas liberadas' : 'Prova liberada') + ':</b> ' + esc(pendingExams.map(function (c) { return c.type === 'final' ? G.FINAL.nome : c.title; }).join(', ')) + '. Acerte 70% para liberar o certificado.</span>' +
         '<button class="btn btn-primary sm" id="dash-exam" data-cert="' + pendingExams[0].id + '">' + icon('play') + 'Fazer prova</button></section>' : '') +
 
-      '<section class="stats">' +
+      '<section class="stats five">' +
         stat('XP total', fmt(p.xp), 'de ' + fmt(G.MAX_XP) + ' XP', 'sparkle') +
         stat('Nível atual', esc(lvl.nome.split(' ')[0]), 'Faixa ' + tier.nome, 'map') +
         stat('Exercícios', solved + '<small>/150</small>', (150 - solved) + ' restantes', 'check') +
         stat('Concluído', Math.round(pct * 1000) / 10 + '%', 'Carga estimada ' + Math.round(solved * 20 / 60) + 'h de 50h', 'clock') +
+        (global.Skills ? stat('Skills', global.Skills.count(tr) + '<small>/3</small>', 'Desafios de Skills', 'flag') : '') +
       '</section>' +
+      (global.Skills ? global.Skills.trackStrip(st) : '') +
 
       '<div class="dash-grid">' +
         '<section class="card glass span2">' +
           '<header class="card-h"><h2>Evolução de XP</h2><span class="muted sm">acumulado por dia</span></header>' +
           evolutionChart(st) +
+          heatmap(p.history, { style: '--hm-a:var(--tc-a, var(--violet));--hm-b:var(--tc-b, var(--blue))' }) +
           '<div class="lvl-rows">' + levelBars + '</div>' +
         '</section>' +
 
@@ -171,6 +221,7 @@
     if (global.Related) global.Related.bind(el);
     const eb = el.querySelector('#dash-exam');
     if (eb) eb.onclick = function () { global.Exams.start(eb.dataset.cert); };
+    if (global.Skills) global.Skills.bind(el);
   }
 
   function stat(label, value, sub, ic) {
@@ -180,5 +231,5 @@
     return '<li class="' + (b.me ? 'me' : '') + (b.pos <= 3 ? ' top' + b.pos : '') + '"><span class="pos">' + b.pos + '</span><span class="nm">' + esc(b.nome) + (b.me ? ' <em>você</em>' : '') + '</span><span class="tier-dot tone-' + b.tier.tone + '" title="' + b.tier.nome + '"></span><b>' + fmt(b.xp) + '</b></li>';
   }
 
-  global.Dashboard = { render: render, nextExercise: nextExercise, boardRow: boardRow, evolutionChart: evolutionChart };
+  global.Dashboard = { heatmap: heatmap, render: render, nextExercise: nextExercise, boardRow: boardRow, evolutionChart: evolutionChart };
 })(window);

@@ -372,5 +372,23 @@
     '</section>';
   }
 
-  global.Skills = { panel: panel, bind: bind, LEVELS: LEVELS, open: open, close: close, render: render, renderOverview: renderOverview, status: status, seal: seal, build: build, pool: pool, settle: settle, count: count };
+  /** Painel do tema: as 3 skills possíveis; as não conquistadas ficam sem cor. */
+  function trackStrip(st) {
+    const t = global.Tracks.active(); settle(t.id);
+    const n = count(t);
+    return '<section class="sk-strip glass" style="--ta:' + t.color.a + ';--tb:' + t.color.b + '" aria-labelledby="sks-t">' +
+      '<div class="sp-head"><div><p class="eyebrow">Desafios de Skills</p><h2 id="sks-t">' + icon('flag') + 'Skills do tema</h2></div>' +
+        '<div class="sp-sum"><span class="sp-count"><b>' + n + '</b>de 3 skills conquistadas</span><a class="link" href="#desafios">Ver desafios' + icon('chevR') + '</a></div></div>' +
+      '<div class="sks-row">' + LEVELS.map(function (c) {
+        const s = status(t.id, c.lv), got = s.state === 'done';
+        const foot = got ? '<span class="sp-next top">' + icon('check') + new Date(s.rec.passedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '') + ' · ' + s.best + '/' + c.n + '</span>'
+          : s.state === 'wait' ? '<span class="sp-next wait">' + icon('clock') + 'Nova tentativa em ' + waitText(s.waitMs) + '</span>'
+          : s.state === 'locked' ? '<span class="sp-next">' + icon('lock') + 'Libera após o ' + LEVELS[c.lv - 2].nome + '</span>'
+          : '<button class="btn btn-primary sm" data-skill="' + t.id + ':' + c.lv + '">' + icon('play') + 'Fazer desafio</button>';
+        return '<article class="sp-slot ' + (got ? 'got' : 'empty') + '">' + seal(t, c.lv, { size: 84, state: got ? null : s.state }) +
+          '<div class="sp-name"><b>Skill ' + c.nome + '</b><small>' + c.n + ' questões · ' + c.min + ' min</small></div><div class="sp-foot">' + foot + '</div></article>';
+      }).join('') + '</div></section>';
+  }
+
+  global.Skills = { trackStrip: trackStrip, panel: panel, bind: bind, LEVELS: LEVELS, open: open, close: close, render: render, renderOverview: renderOverview, status: status, seal: seal, build: build, pool: pool, settle: settle, count: count };
 })(window);
