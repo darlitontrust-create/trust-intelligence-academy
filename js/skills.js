@@ -96,21 +96,32 @@
 
   /* ------------------------------ Selo visual ------------------------------ */
   let uid = 0;
+  /**
+   * Selo da skill: hexágono na cor do curso, com o símbolo do curso no centro e
+   * três estrelas em arco sobre a forma (acendem da esquerda para a direita).
+   * opts.lit  → estrelas acesas (padrão: lv) · opts.state → open|wait|locked deixa o selo apagado,
+   * com as estrelas do nível só contornadas · opts.empty → espaço vazio (tracejado).
+   */
   function seal(track, lv, opts) {
     opts = opts || {};
-    const id = 'sk' + (++uid), off = opts.state === 'locked' || opts.state === 'wait' || opts.state === 'open';
-    const a = off ? '#4a5070' : track.color.a, b = off ? '#262a3d' : track.color.b;
-    const ink = off ? '#8e94b0' : '#0b0e17', size = opts.size || 64;
-    let stars = '';
-    const xs = lv === 1 ? [60] : lv === 2 ? [51, 69] : [44, 60, 76];
-    xs.forEach(function (x) { let p = ''; for (let k = 0; k < 10; k++) { const an = -Math.PI / 2 + k * Math.PI / 5, rr = k % 2 ? 2.6 : 6; p += (k ? 'L' : 'M') + (x + rr * Math.cos(an)).toFixed(1) + ' ' + (86 + rr * Math.sin(an)).toFixed(1); } stars += '<path d="' + p + 'Z"/>'; });
-    return '<svg class="sk-seal' + (off ? ' off' : '') + '" viewBox="0 0 120 120" width="' + size + '" height="' + size + '" aria-hidden="true">' +
-      '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + a + '"/><stop offset="1" stop-color="' + b + '"/></linearGradient></defs>' +
-      '<path d="M60 6 L106 32 V88 L60 114 L14 88 V32 Z" fill="url(#' + id + ')" stroke="' + (off ? '#5d6382' : 'rgba(255,255,255,.55)') + '" stroke-width="2.5"/>' +
-      '<path d="M60 16 L97 37 V83 L60 104 L23 83 V37 Z" fill="none" stroke="' + ink + '" stroke-opacity=".35" stroke-width="1.5"/>' +
-      '<g fill="' + ink + '" opacity=".9">' + stars + '</g>' +
-      '<text x="60" y="66" text-anchor="middle" font-family="Instrument Serif, Georgia, serif" font-size="30" fill="' + ink + '">' + ['I', 'II', 'III'][lv - 1] + '</text>' +
-      (opts.state === 'locked' ? '<g transform="translate(86 10)"><circle r="13" cx="0" cy="0" fill="#11141f" stroke="#5d6382"/><path d="M-5 -1 h10 v8 h-10z M-3 -1 v-3 a3 3 0 0 1 6 0 v3" fill="none" stroke="#8e94b0" stroke-width="2"/></g>' : '') +
+    const id = 'sk' + (++uid), off = !!opts.empty || opts.state === 'locked' || opts.state === 'wait' || opts.state === 'open';
+    const a = off ? '#3a3f58' : track.color.a, b = off ? '#1c2030' : track.color.b;
+    const ink = off ? '#6b7192' : '#0b0e17', size = opts.size || 64, lit = off ? 0 : (opts.lit == null ? lv : opts.lit);
+    const ghost = off && !opts.empty ? lv : 0;
+    const star = function (x, y, r) { let p = ''; for (let k = 0; k < 10; k++) { const an = -Math.PI / 2 + k * Math.PI / 5, rr = k % 2 ? r * 0.45 : r; p += (k ? 'L' : 'M') + (x + rr * Math.cos(an)).toFixed(1) + ' ' + (y + rr * Math.sin(an)).toFixed(1); } return p + 'Z'; };
+    const stars = [[32, 15, 11], [60, 6, 12.5], [88, 15, 11]].map(function (c, n) {
+      const on = n < lit, gh = !on && n < ghost;
+      return '<path d="' + star(c[0], c[1], c[2]) + '" fill="' + (on ? 'url(#' + id + 's)' : '#141826') + '" stroke="' + (on ? '#0b0e17' : gh ? 'rgba(255,215,130,.7)' : off ? '#3a3f58' : 'rgba(255,255,255,.28)') + '" stroke-width="2" stroke-linejoin="round"/>';
+    }).join('');
+    const sym = global.UI.icon(track.icon).replace('<svg class="ic ', '<svg x="36" y="40" width="48" height="48" style="color:' + ink + '" class="sk-sym ').replace('stroke-width="1.7"', 'stroke-width="1.6"');
+    const h = Math.round(size * 134 / 120);
+    return '<svg class="sk-seal' + (off ? ' off' : '') + '" viewBox="0 -12 120 134" width="' + size + '" height="' + h + '" aria-hidden="true"><defs>' +
+      '<linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + a + '"/><stop offset="1" stop-color="' + b + '"/></linearGradient>' +
+      '<linearGradient id="' + id + 's" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3c4"/><stop offset="1" stop-color="#f5b83d"/></linearGradient></defs>' +
+      '<path d="M60 14 L104 38 V90 L60 114 L16 90 V38 Z" fill="url(#' + id + ')" stroke="' + (off ? '#4a5070' : 'rgba(255,255,255,.55)') + '" stroke-width="2.5"' + (opts.empty ? ' stroke-dasharray="6 5"' : '') + '/>' +
+      '<path d="M60 24 L95 43 V85 L60 104 L25 85 V43 Z" fill="none" stroke="' + ink + '" stroke-opacity=".3" stroke-width="1.5"/>' +
+      sym + stars +
+      (opts.state === 'locked' ? '<g transform="translate(98 100)"><circle r="12" fill="#11141f" stroke="#5d6382"/><path d="M-5 -1 h10 v8 h-10z M-3 -1 v-3 a3 3 0 0 1 6 0 v3" fill="none" stroke="#8e94b0" stroke-width="2"/></g>' : '') +
       '</svg>';
   }
 
@@ -319,5 +330,47 @@
     bind(view);
   }
 
-  global.Skills = { LEVELS: LEVELS, open: open, close: close, render: render, renderOverview: renderOverview, status: status, seal: seal, build: build, pool: pool, settle: settle, count: count };
+  /* ---------------------- Painel da visão geral ---------------------- */
+  /** Faixa "Skills conquistadas": um espaço por curso iniciado, com a última skill. */
+  function panel(st) {
+    const tracks = global.Tracks.TRACKS.filter(function (t) { return t.status === 'ativo'; });
+    const started = [], notStarted = [];
+    tracks.forEach(function (t) {
+      const p = prog(t.id), sk = p.skills || {};
+      const any = Object.keys(p.solved || {}).length || LEVELS.some(function (c) { return (sk[c.lv] || {}).passedAt || ((sk[c.lv] || {}).history || []).length; });
+      if (!any) { notStarted.push(t); return; }
+      settle(t.id);
+      const n = LEVELS.filter(function (c) { return (sk[c.lv] || {}).passedAt; }).length;
+      started.push({ t: t, n: n, at: n ? sk[n].passedAt : '' });
+    });
+    if (!started.length && !notStarted.length) return '';
+    started.sort(function (a, b) { return (b.n > 0) - (a.n > 0) || String(b.at).localeCompare(String(a.at)); });
+    st.settings = st.settings || {};
+    const seen = st.settings.skillsSeen || (st.settings.skillsSeen = {});
+    let changed = false;
+    const total = started.reduce(function (s, x) { return s + x.n; }, 0);
+    const slots = started.map(function (x) {
+      const t = x.t, n = x.n, fresh = n && seen[t.id] !== x.at;
+      if (fresh) { seen[t.id] = x.at; changed = true; }
+      const next = n < 3 ? status(t.id, n + 1) : null;
+      const foot = !next ? '<span class="sp-next top">' + icon('check') + 'As 3 skills conquistadas</span>'
+        : next.state === 'wait' ? '<span class="sp-next wait">' + icon('clock') + 'Nova tentativa em ' + waitText(next.waitMs) + '</span>'
+        : n ? '<button class="sp-next link-btn" data-skill="' + t.id + ':' + (n + 1) + '">Próxima: ' + LEVELS[n].nome + ' · ' + LEVELS[n].n + ' questões' + icon('chevR') + '</button>'
+        : '<button class="btn btn-primary sm" data-skill="' + t.id + ':1">' + icon('play') + 'Fazer o Iniciante</button>';
+      return '<article class="sp-slot ' + (n ? 'got' : 'empty') + (fresh ? ' fresh' : '') + '" style="--ta:' + t.color.a + ';--tb:' + t.color.b + '">' +
+        '<div class="sp-tr"><span class="sp-ti">' + icon(t.icon) + '</span><span>' + esc(t.nome) + '</span></div>' +
+        seal(t, Math.max(1, n), { size: 92, empty: !n, lit: n }) +
+        '<div class="sp-name">' + (n ? '<b>Skill ' + LEVELS[n - 1].nome + '</b><small>Conquistada em ' + new Date(x.at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '') + '</small>' : '<b>Nenhuma skill ainda</b><small>' + LEVELS[0].n + ' questões · ' + LEVELS[0].min + ' min</small>') + '</div>' +
+        '<div class="sp-foot">' + foot + '</div></article>';
+    }).join('');
+    if (changed) S().save();
+    return '<section class="sk-panel glass" aria-labelledby="sp-t">' +
+      '<div class="sp-head"><div><p class="eyebrow">Desafios de Skills</p><h2 id="sp-t">' + icon('flag') + 'Skills conquistadas</h2></div>' +
+        '<div class="sp-sum"><span class="sp-count"><b>' + total + '</b>de ' + started.length * 3 + ' skills nos ' + started.length + ' curso' + (started.length === 1 ? '' : 's') + ' iniciado' + (started.length === 1 ? '' : 's') + '</span><a class="link" href="#desafios">Ver desafios' + icon('chevR') + '</a></div></div>' +
+      (started.length ? '<div class="sp-grid">' + slots + '</div>' : '') +
+      '<p class="sp-foot-note">' + (notStarted.length ? icon('info') + '<span>' + notStarted.map(function (t) { return esc(t.short); }).join(', ') + (notStarted.length === 1 ? ' ainda não foi iniciado. O espaço dele aparece' : ' ainda não foram iniciados. O espaço de cada um aparece') + ' aqui quando você resolver o primeiro exercício.</span>' : icon('check') + '<span>Todos os cursos disponíveis já foram iniciados.</span>') + '</p>' +
+    '</section>';
+  }
+
+  global.Skills = { panel: panel, bind: bind, LEVELS: LEVELS, open: open, close: close, render: render, renderOverview: renderOverview, status: status, seal: seal, build: build, pool: pool, settle: settle, count: count };
 })(window);

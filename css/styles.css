@@ -1767,3 +1767,46 @@ html.tk-on .lib-prog i { background: linear-gradient(90deg, var(--tc-a), var(--t
 .login-tracks li .lt-ic { color: var(--ta); background: color-mix(in srgb, var(--ta) 12%, transparent); border-color: color-mix(in srgb, var(--ta) 30%, transparent); }
 .login-tracks li.on { border-color: color-mix(in srgb, var(--ta) 40%, transparent); background: color-mix(in srgb, var(--ta) 7%, transparent); }
 .login-tracks li.on .lt-ic { color: #0a0d18; background: linear-gradient(135deg, var(--ta), var(--tb)); box-shadow: 0 0 14px -3px var(--tb); }
+
+/* ------------------- Skills conquistadas (Painel da visão geral) ------------------- */
+.sk-panel { padding: 20px 22px 18px; display: grid; gap: 16px; margin-top: 16px; position: relative; }
+.sk-panel::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(600px 160px at 0% 0%, rgba(164,107,255,.10), transparent 70%); }
+.sp-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px 18px; flex-wrap: wrap; position: relative; }
+.sp-head h2 { font-size: 19px; margin: 2px 0 0; display: flex; align-items: center; gap: 10px; }
+.sp-head h2 .ic { width: 18px; height: 18px; color: var(--violet); }
+.sp-sum { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.sp-count { font-size: 13px; color: var(--ink-3); }
+.sp-count b { font: 400 24px var(--f-display); color: var(--ink); margin-right: 4px; font-variant-numeric: tabular-nums; }
+.sk-panel .link { color: #b9a4ff; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; font-size: 13.5px; }
+.sk-panel .link .ic { width: 15px; height: 15px; }
+.sp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 12px; position: relative; }
+.sp-slot { display: grid; grid-template-rows: auto auto 1fr auto; justify-items: center; text-align: center; gap: 8px; padding: 14px 12px; border-radius: 16px; border: 1px solid var(--line); background: rgba(255,255,255,.025); min-width: 0; transition: transform .25s, border-color .25s; }
+.sp-slot:hover { transform: translateY(-2px); }
+.sp-slot.got { border-color: color-mix(in srgb, var(--ta) 42%, transparent); background: radial-gradient(130% 70% at 50% 0%, color-mix(in srgb, var(--ta) 15%, transparent), transparent 70%), rgba(255,255,255,.025); }
+.sp-slot.empty { border-style: dashed; border-color: var(--line-2); }
+.sp-tr { display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: var(--ink-2); max-width: 100%; }
+.sp-tr span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sp-ti { width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; flex: none; color: #0a0d18; background: linear-gradient(135deg, var(--ta), var(--tb)); }
+.sp-ti .ic { width: 13px; height: 13px; }
+.sp-slot.fresh .sk-seal { animation: crestIn .8s cubic-bezier(.2,1.4,.4,1) both; }
+.sp-name { display: grid; gap: 1px; }
+.sp-name b { font-size: 15px; }
+.sp-name small { font-size: 12px; color: var(--ink-3); }
+.sp-slot.empty .sp-name b { color: var(--ink-2); font-size: 14px; font-weight: 600; }
+.sp-foot { display: grid; justify-items: center; }
+.sp-next { font-size: 12px; color: var(--ink-3); display: inline-flex; align-items: center; gap: 5px; }
+.sp-next .ic { width: 13px; height: 13px; flex: none; }
+.sp-next.wait { color: var(--warn); }
+.sp-next.top { color: var(--ok); font-weight: 600; }
+.sp-next.link-btn { color: var(--ink-3); text-decoration: none; font-weight: 500; }
+.sp-next.link-btn:hover { color: var(--ta); }
+.sp-foot-note { margin: 0; font-size: 12.5px; color: var(--ink-3); display: flex; gap: 8px; align-items: flex-start; position: relative; }
+.sp-foot-note .ic { width: 15px; height: 15px; flex: none; margin-top: 2px; color: var(--ink-4); }
+@media (max-width: 560px) {
+  .sk-panel { padding: 16px 14px; }
+  .sp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .sp-slot { padding: 12px 8px; }
+  .sp-slot .sk-seal { width: 76px; height: 85px; }
+  .sp-next { font-size: 11.5px; }
+}
+@media (prefers-reduced-motion: reduce) { .sp-slot.fresh .sk-seal { animation: none; } }

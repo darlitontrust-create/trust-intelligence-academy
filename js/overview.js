@@ -152,6 +152,7 @@
         '</div>' +
       '</section>' +
       levelCard(st) +
+      (global.Skills ? global.Skills.panel(st) : '') +
       (pendings.length ? '<section class="exam-banner glass">' + icon('target') + '<span><b>' + (pendings.length > 1 ? pendings.length + ' provas liberadas' : 'Prova liberada') + ':</b> ' + esc(pendings.slice(0, 3).map(function (x) { return x.s.t.short + ' · ' + (x.c.type === 'final' ? x.s.finalName : x.c.title); }).join(', ')) + (pendings.length > 3 ? '…' : '') + '</span>' +
         '<button class="btn btn-primary sm" data-go="' + pendings[0].s.t.id + '|exam|' + pendings[0].c.id + '">' + icon('play') + 'Fazer prova</button></section>' : '') +
       '<section class="stats">' +
@@ -282,6 +283,7 @@
   function render(view, page, rerender) {
     const st = S().state;
     RENDER[page](view, st, rerender);
+    if (global.Skills) global.Skills.bind(view);
     const cur = view.querySelector('.lv-ranks li.cur'); if (cur && cur.parentNode.scrollWidth > cur.parentNode.clientWidth) cur.parentNode.scrollLeft = Math.max(0, cur.offsetLeft - 8);
     bindGo(view, rerender);
     // Conquistas: mostra as 5 mais recentes de cada tema; o botão abre as demais
