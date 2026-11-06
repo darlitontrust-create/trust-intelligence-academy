@@ -275,7 +275,7 @@
     const foot = s.state === 'done' ? '<span class="sk-ok">' + icon('check') + 'Conquistada em ' + fmtDate(s.rec.passedAt) + ' · ' + s.best + '/' + c.n + '</span>'
       : s.state === 'wait' ? '<span class="sk-wait">' + icon('clock') + 'Nova tentativa em ' + waitText(s.waitMs) + '</span>'
       : s.state === 'locked' ? '<span class="sk-lock">' + icon('lock') + 'Conquiste o ' + LEVELS[lv - 2].nome + ' para liberar</span>'
-      : '<button class="btn btn-primary sm" data-skill="' + t.id + ':' + lv + '">' + icon('play') + (s.attempts ? 'Tentar de novo' : 'Iniciar desafio') + '</button>';
+      : '<button class="btn btn-primary sm" data-skill="' + t.id + ':' + lv + '">' + icon('play') + (compact ? '<span class="lbl-long">' + (s.attempts ? 'Tentar de novo' : 'Iniciar desafio') + '</span><span class="lbl-short">' + (s.attempts ? 'Refazer' : 'Iniciar') + '</span>' : (s.attempts ? 'Tentar de novo' : 'Iniciar desafio')) + '</button>';
     return '<article class="sk-card glass st-' + s.state + (compact ? ' compact' : '') + '" style="--ta:' + t.color.a + ';--tb:' + t.color.b + '">' +
       seal(t, lv, { size: compact ? 54 : 78, state: s.state === 'done' ? null : s.state }) +
       '<div class="sk-txt"><span class="sk-st">' + label + '</span><b>' + esc(c.nome) + '</b>' +

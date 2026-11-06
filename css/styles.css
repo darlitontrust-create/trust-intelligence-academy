@@ -1750,3 +1750,16 @@ html.tk-on .lib-prog i { background: linear-gradient(90deg, var(--tc-a), var(--t
   .bn-sheet-in a.on { background: rgba(255,255,255,.07); }
   .bn-sheet-in a .ic { color: var(--tc-a, var(--cyan)); }
 }
+/* Desafios (visão geral) no celular: cards estreitos sem cortar texto */
+.sk-card { min-width: 0; }
+.sk-card.compact .sk-txt { width: 100%; min-width: 0; }
+@media (max-width: 560px) {
+  .sk-card.compact { padding: 10px 6px; }
+  .sk-card.compact .sk-st { font-size: 9.5px; letter-spacing: .06em; }
+  .sk-card.compact .sk-txt > b { font-size: clamp(10.5px, 3vw, 13px); letter-spacing: -.01em; white-space: nowrap; }
+  .sk-row { gap: 5px; }
+  .sk-card.compact .btn { width: 100%; justify-content: center; gap: 4px; padding: 7px 4px; font-size: 12px; white-space: nowrap; }
+  .sk-card.compact .btn .ic { width: 13px; height: 13px; }
+  .sk-card.compact .btn .lbl-long { display: none; }
+}
+@media (min-width: 561px) { .sk-card.compact .btn .lbl-short { display: none; } }
