@@ -1763,3 +1763,7 @@ html.tk-on .lib-prog i { background: linear-gradient(90deg, var(--tc-a), var(--t
   .sk-card.compact .btn .lbl-long { display: none; }
 }
 @media (min-width: 561px) { .sk-card.compact .btn .lbl-short { display: none; } }
+/* tela inicial: ícone e destaque de cada trilha na cor do próprio curso */
+.login-tracks li .lt-ic { color: var(--ta); background: color-mix(in srgb, var(--ta) 12%, transparent); border-color: color-mix(in srgb, var(--ta) 30%, transparent); }
+.login-tracks li.on { border-color: color-mix(in srgb, var(--ta) 40%, transparent); background: color-mix(in srgb, var(--ta) 7%, transparent); }
+.login-tracks li.on .lt-ic { color: #0a0d18; background: linear-gradient(135deg, var(--ta), var(--tb)); box-shadow: 0 0 14px -3px var(--tb); }

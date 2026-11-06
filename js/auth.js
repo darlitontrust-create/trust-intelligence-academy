@@ -54,7 +54,7 @@
           '<div class="login-tracks glass"><p class="eyebrow">Trilhas da academia</p><ul>' +
             global.Tracks.TRACKS.map(function (t) {
               const on = t.status === 'ativo';
-              return '<li class="' + (on ? 'on' : '') + '"><span class="lt-ic">' + icon(t.icon) + '</span><span class="lt-name"><b>' + esc(t.nome) + '</b><small>' + esc(t.tag) + '</small></span>' +
+              return '<li class="' + (on ? 'on' : '') + '" style="--ta:' + t.color.a + ';--tb:' + t.color.b + '"><span class="lt-ic">' + icon(t.icon) + '</span><span class="lt-name"><b>' + esc(t.nome) + '</b><small>' + esc(t.tag) + '</small></span>' +
                 '<span class="lt-pill">' + (on ? 'Disponível' : 'Em breve') + '</span></li>';
             }).join('') +
           '</ul></div>' +
