@@ -53,6 +53,8 @@
       drafts: {},        // rascunhos do editor por exercício
       lessonsSeen: {},   // conteúdos (carrosséis) concluídos por exercício
       exams: {},         // provas dos certificados: { certId: { attempts, best, score, passedAt, last } }
+      skills: {},        // desafios de skills: { 1|2|3: { passedAt, best, lockUntil, running, history: [{ at, score, n, pass }] } }
+      library: { seen: {}, fav: {} },   // biblioteca de conteúdo: aulas lidas e favoritas (por chave da aula)
       xp: 0,
       history: [],       // [{ at, id, xp }] usado no gráfico de evolução
       promotions: [],    // [{ key, at }]
@@ -129,6 +131,17 @@
       .sort(function (x, y) { return String(x.at).localeCompare(String(y.at)); });
     const bonus = Math.max(0, (n.xp || 0) - sumSolved(n), (o.xp || 0) - sumSolved(o));
     out.xp = sumSolved(out) + bonus;
+    keys(n.skills, o.skills).forEach(function (k) {
+      const a = n.skills[k] || {}, b = o.skills[k] || {};
+      const hist = (a.history || []).concat(b.history || []).filter(function (h, i, arr) { return arr.findIndex(function (x) { return x.at === h.at; }) === i; })
+        .sort(function (x, y) { return String(x.at).localeCompare(String(y.at)); }).slice(-30);
+      const sk = { best: Math.max(a.best || 0, b.best || 0), passedAt: earliest(a.passedAt, b.passedAt), lockUntil: latest(a.lockUntil, b.lockUntil), history: hist };
+      const run = a.running || b.running; if (run && !sk.passedAt && !hist.some(function (h) { return String(h.at) >= String(run.startedAt); })) sk.running = run;
+      out.skills[k] = sk;
+    });
+    const la = n.library || {}, lb = o.library || {};
+    out.library = { seen: {}, fav: Object.assign({}, la.fav || lb.fav || {}) };
+    keys(la.seen, lb.seen).forEach(function (k) { out.library.seen[k] = earliest((la.seen || {})[k], (lb.seen || {})[k]); });
     out.firstTryStreak = n.firstTryStreak || 0;
     out.lastExercise = n.lastExercise || o.lastExercise;
     out.completedAt = earliest(n.completedAt, o.completedAt);

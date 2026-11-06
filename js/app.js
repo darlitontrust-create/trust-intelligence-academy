@@ -167,11 +167,14 @@
     { id: 'temas', label: 'Temas', ic: 'grid' },
     { id: 'dashboard', label: 'Painel', ic: 'home' },
     { id: 'trilha', label: 'Trilha', ic: 'map' },
+    { id: 'conteudo', label: 'Conteúdo', ic: 'book' },
+    { id: 'desafios', label: 'Desafios', ic: 'flag' },
     { id: 'conquistas', label: 'Conquistas', ic: 'trophy' },
     { id: 'ranking', label: 'Ranking', ic: 'bars' },
     { id: 'certificado', label: 'Certificados', ic: 'award' },
     { id: 'perfil', label: 'Perfil', ic: 'user' },
   ];
+  const MORE = ['conteudo', 'conquistas', 'certificado', 'perfil'];
   function mountShell() {
     app.innerHTML =
       '<div class="shell">' +
@@ -192,11 +195,19 @@
           '</header>' +
           '<main id="view" class="view" tabindex="-1"></main>' +
         '</div>' +
-        '<nav class="bottom-nav" aria-label="Navegação">' + NAV.filter(function (n) { return ['temas', 'dashboard', 'trilha', 'conquistas', 'ranking', 'certificado'].indexOf(n.id) >= 0; }).map(function (n) { return '<a href="#' + n.id + '" data-nav="' + n.id + '">' + icon(n.ic) + '<span>' + n.label + '</span></a>'; }).join('') + '</nav>' +
+        // celular: 5 atalhos + "Mais" (Conteúdo, Conquistas, Certificados e Perfil)
+        '<nav class="bottom-nav" aria-label="Navegação">' + NAV.filter(function (n) { return ['temas', 'dashboard', 'trilha', 'desafios', 'ranking'].indexOf(n.id) >= 0; }).map(function (n) { return '<a href="#' + n.id + '" data-nav="' + n.id + '">' + icon(n.ic) + '<span>' + n.label + '</span></a>'; }).join('') +
+          '<button type="button" class="bn-more" id="bn-more" aria-expanded="false" aria-controls="bn-sheet">' + icon('dots') + '<span>Mais</span></button></nav>' +
+        '<div class="bn-sheet" id="bn-sheet" hidden><div class="bn-sheet-in glass" role="menu">' + NAV.filter(function (n) { return MORE.indexOf(n.id) >= 0; }).map(function (n) { return '<a role="menuitem" href="#' + n.id + '" data-nav="' + n.id + '">' + icon(n.ic) + '<span>' + n.label + '</span></a>'; }).join('') + '</div></div>' +
       '</div>' +
       '<div id="print-area"></div>';
     refreshChrome();
     onStorageEvent('saved');
+    const more = document.getElementById('bn-more'), sheet = document.getElementById('bn-sheet');
+    const setMore = function (on) { sheet.hidden = !on; more.setAttribute('aria-expanded', on); more.classList.toggle('open', on); };
+    more.onclick = function () { setMore(sheet.hidden); };
+    sheet.onclick = function (e) { if (e.target === sheet || e.target.closest('a')) setMore(false); };
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) setMore(false); });
     const sb = document.getElementById('sound-btn');
     const paintSound = function () {
       const on = global.Sfx.enabled();
@@ -265,12 +276,15 @@
     const h = (location.hash || '#temas').slice(1);
     const view = document.getElementById('view');
     if (currentCleanup) { currentCleanup(); currentCleanup = null; }
-    const navId = h.indexOf('ex-') === 0 ? 'trilha' : h;
+    const navId = h.indexOf('ex-') === 0 ? 'trilha' : /^(aula|resumo)-/.test(h) ? 'conteudo' : h;
     document.querySelectorAll('[data-nav]').forEach(function (a) { a.classList.toggle('on', a.dataset.nav === navId); });
+    const mb = document.getElementById('bn-more'); if (mb) mb.classList.toggle('on', MORE.indexOf(navId) >= 0);
     if (!quiet) { view.classList.remove('enter'); void view.offsetWidth; view.classList.add('enter'); } else view.classList.remove('enter');
     if (!S.state.overall || typeof S.state.overall.seen !== 'number') { global.Overall.check(S.state); S.save(); }   // 1ª vez: registra o nível sem comemorar
     const O = global.Overview;
-    const page = O.PAGES.indexOf(h) >= 0 ? h : (h === 'temas' || h === 'perfil' || h.indexOf('ex-') === 0) ? null : 'dashboard';
+    const sub = /^(aula|resumo)-/.test(h);   // leitura de aula e resumo de etapa (dentro de Conteúdo)
+    if (sub && O.isOverview(S.state)) { location.replace('#conteudo'); return; }
+    const page = O.PAGES.indexOf(h) >= 0 ? h : (h === 'temas' || h === 'perfil' || h.indexOf('ex-') === 0 || sub) ? null : 'dashboard';
     if (h.indexOf('ex-') === 0) {
       // abrir um exercício seleciona o tema dele
       const tid = O.trackOfExercise(h.slice(3));
@@ -283,6 +297,10 @@
     else if (page === 'trilha') renderTrail(view);
     else if (page === 'conquistas') renderAchievements(view);
     else if (page === 'ranking') renderRanking(view);
+    else if (page === 'conteudo') global.Library.render(view, S.state);
+    else if (page === 'desafios') global.Skills.render(view, S.state);
+    else if (h.indexOf('aula-') === 0) global.Library.reader(view, decodeURIComponent(h.slice(5)), function (c) { currentCleanup = c; });
+    else if (h.indexOf('resumo-') === 0) global.Library.summary(view, +h.split('-')[1], +h.split('-')[2]);
     else if (page === 'certificado') global.Certificate.render(view, S.state);
     else global.Dashboard.render(view, S.state);
     if (page) { view.insertAdjacentHTML('afterbegin', O.scopeBar(S.state, page)); O.bindScope(view, page, rerender); }

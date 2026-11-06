@@ -99,6 +99,9 @@
     { key: 'ex-100', nome: '100 Exercícios Concluídos', desc: 'Dois terços da trilha.', icon: 'medal', test: function (st) { return solvedList(st).length >= 100; } },
     { key: 'xp-1000', nome: 'Mil Pontos', desc: 'Alcance 1.000 XP.', icon: 'sparkle', test: function (st) { return st.progress.xp >= 1000; } },
     { key: 'self-taught', nome: 'Autodidata', desc: 'Resolva 25 exercícios sem revelar o gabarito.', icon: 'bulb', test: function (st) { return solvedList(st).filter(function (e) { return !st.progress.solved[e.id].usedSolution; }).length >= 25; } },
+    { key: 'skill-1', nome: 'Skill Iniciante', desc: 'Conquiste o Desafio de Skills Iniciante deste tema.', icon: 'flag', test: function (st) { return !!((st.progress.skills || {})[1] || {}).passedAt; } },
+    { key: 'skill-2', nome: 'Skill Intermediário', desc: 'Conquiste o Desafio de Skills Intermediário deste tema.', icon: 'flag', test: function (st) { return !!((st.progress.skills || {})[2] || {}).passedAt; } },
+    { key: 'skill-3', nome: 'Skill Avançado', desc: 'Conquiste o Desafio de Skills Avançado deste tema.', icon: 'flag', test: function (st) { return !!((st.progress.skills || {})[3] || {}).passedAt; } },
     { key: 'night-owl', nome: 'Coruja', desc: 'Resolva um exercício depois das 22h.', icon: 'moon', test: function (st, ctx) { return !!(ctx && ctx.justSolved && new Date().getHours() >= 22); } },
   ];
   const SPECIFIC = {

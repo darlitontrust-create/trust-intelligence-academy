@@ -10,7 +10,7 @@
   'use strict';
   const { esc, fmt, fmtDate, icon } = global.UI;
   const G = global.Gamification;
-  const PAGES = ['dashboard', 'trilha', 'conquistas', 'ranking', 'certificado'];
+  const PAGES = ['dashboard', 'trilha', 'conteudo', 'desafios', 'conquistas', 'ranking', 'certificado'];
 
   function S() { return global.AppStorage; }
   function active() { return global.Tracks.TRACKS.filter(function (t) { return t.status === 'ativo'; }); }
@@ -278,7 +278,7 @@
       }).join('') + '</section>';
   }
 
-  const RENDER = { dashboard: dashboard, trilha: trail, conquistas: achievements, ranking: ranking, certificado: certificates };
+  const RENDER = { dashboard: dashboard, trilha: trail, conteudo: function (v, st, rr) { global.Library.renderOverview(v, st, rr); }, desafios: function (v, st) { global.Skills.renderOverview(v, st); }, conquistas: achievements, ranking: ranking, certificado: certificates };
   function render(view, page, rerender) {
     const st = S().state;
     RENDER[page](view, st, rerender);

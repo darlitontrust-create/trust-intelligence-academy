@@ -491,6 +491,7 @@
    * opts.onStart() é chamado no botão final; devolve uma função de limpeza.
    */
   function mount(host, ex, opts) {
+    if (opts && opts.library) return mountOnce(host, ex, opts, true, null);
     let cleanup = mountOnce(host, ex, opts, false, function () { cleanup(); cleanup = mountOnce(host, ex, opts, true, null); });
     return function () { cleanup(); };
   }
@@ -501,6 +502,21 @@
       '<div class="goal">' + icon('target') + '<div><h3 class="card-k">' + esc(pack.goalLabel) + '</h3><p>' + global.UI.rich(ex.g) + '</p></div></div>' +
       '<div class="ls-meta"><span class="tag d-' + ex.diff + '">' + G.DIFF_LABEL[ex.diff] + ' · ' + G.XP[ex.diff] + ' XP</span>' +
       tags.map(function (t) { return '<span class="tag tag-topic">' + icon(t.icon) + esc(t.label) + '</span>'; }).join('') + '</div></div>';
+  }
+  /** Último slide na biblioteca: teste rápido com as 3 questões da aula e os exercícios que usam o conteúdo. */
+  function librarySlide(les, exs) {
+    const { esc, icon } = global.UI, R = global.UI.rich;
+    const quiz = (les.quiz || []).map(function (q, n) {
+      let h = 11 + n; String(les.key).split('').forEach(function (c) { h = (h * 31 + c.charCodeAt(0)) >>> 0; });
+      const opts = [1, 2, 3, 4].map(function (i) { return { t: q[i], ok: i === 1 }; });
+      for (let i = opts.length - 1; i > 0; i--) { h = (h * 1103515245 + 12345) >>> 0; const j = h % (i + 1); const t = opts[i]; opts[i] = opts[j]; opts[j] = t; }
+      return '<div class="ls-body ls-qbox"><p class="ls-q"><b>' + (n + 1) + '.</b> ' + R(q[0]) + '</p><div class="ls-quiz" role="group" aria-label="Alternativas">' +
+        opts.map(function (o, i) { return '<button type="button" class="ls-qo" data-ok="' + (o.ok ? 1 : 0) + '"><span>' + 'ABCD'[i] + '</span><span class="ls-qt">' + R(o.t) + '</span></button>'; }).join('') +
+        '</div><p class="ls-qexp" hidden></p><p class="ls-qexp-src" hidden>' + R(q[5]) + '</p></div>';
+    }).join('');
+    return '<div class="ls-body ls-lib-final"><h3 class="ls-h">Fixação · ' + esc(les.titulo) + '</h3>' + quiz +
+      (exs.length ? '<div class="ls-lib-ex"><h4 class="card-k">' + icon('code') + 'Pratique este conteúdo</h4><ul>' + exs.slice(0, 8).map(function (e) {
+        return '<li><a href="#ex-' + e.id + '"><span class="tag d-' + e.diff + '">' + e.levelName + ' ' + e.pos + '</span>' + esc(e.n) + '</a></li>'; }).join('') + '</ul></div>' : '') + '</div>';
   }
   /** Slides de revisão (2º, 3º… exercício do mesmo tema): exemplo resolvido, teste rápido e dicas. */
   function reviewSlides(ex, les, pack, oc, tags) {
@@ -532,8 +548,8 @@
     const exm = pack.example(les);
     const tags = pack.tags(ex);
     const oc = occurrence(ex);
-    const review = !forceFull && oc.k > 0;
-    const STEPS_NOW = review ? ['Exemplo resolvido', 'Teste rápido', 'Dicas', 'Seu desafio'] : (pack.steps || STEPS);
+    const review = !forceFull && oc.k > 0, lib = !!opts.library;
+    const STEPS_NOW = review ? ['Exemplo resolvido', 'Teste rápido', 'Dicas', 'Seu desafio'] : lib ? (pack.steps || STEPS).slice(0, -1).concat(['Fixação']) : (pack.steps || STEPS);
     const LAST = STEPS_NOW.length - 1;
     const slides = review ? reviewSlides(ex, les, pack, oc, tags) : [
       // 1 · Conceito
@@ -549,11 +565,12 @@
       // 4 · Cuidados
       '<div class="ls-body"><h3 class="ls-h">Cuidados e boas práticas</h3><ol class="ls-cards">' +
         les.cuidados.map(function (c, i) { return '<li><span class="ls-num">' + (i + 1) + '</span><p>' + global.UI.rich(c) + '</p></li>'; }).join('') + '</ol></div>',
-      // 5 · Seu desafio
-      finalSlide(ex, pack, tags),
+      // 5 · Seu desafio (na biblioteca: fixação com o teste rápido e os exercícios do conteúdo)
+      lib ? librarySlide(les, opts.exercises || []) : finalSlide(ex, pack, tags),
     ];
 
     const scripts = narration(ex, !review);
+    if (lib) scripts[scripts.length - 1] = { id: 'lib-final', chunks: global.Narrator.chunk(['Para fixar, responda ao teste rápido e, se quiser, pratique os exercícios deste conteúdo.']) };
     const N = global.Narrator;
     const rates = [0.75, 1, 1.25, 1.5];
 
@@ -561,7 +578,7 @@
       '<section class="lesson glass" tabindex="-1" aria-roledescription="carrossel" aria-label="Conteúdo: ' + esc(les.titulo) + '">' +
         '<header class="ls-top"><div class="ls-kicker">' + icon('book') + '<span>' + (review ? 'Revisão · ' : 'Conteúdo · ') + '<b>' + esc(les.titulo) + '</b></span></div>' +
         '<div class="ls-top-r">' + (review ? '<button class="btn btn-quiet sm" data-a="full">' + icon('book') + '<span>Ver aula completa</span></button>' : '') + '<button class="btn btn-ghost sm ls-voice" data-a="voice" aria-pressed="false">' + icon('volume') + '<span>Ouvir narração</span></button>' +
-        '<button class="btn btn-quiet sm" data-a="skip">Pular para o exercício' + icon('chevR') + '</button></div></header>' +
+        '<button class="btn btn-quiet sm" data-a="skip">' + (lib ? icon('chevL') + 'Voltar à biblioteca' : 'Pular para o exercício' + icon('chevR')) + '</button></div></header>' +
         '<ol class="ls-steps' + (review ? ' four' : '') + '">' + STEPS_NOW.map(function (s, i) { return '<li><button data-go="' + i + '" aria-label="Slide ' + (i + 1) + ': ' + s + '"><i></i><span>' + s + '</span></button></li>'; }).join('') + '</ol>' +
         '<div class="ls-viewport"><div class="ls-track">' + slides.map(function (s, i) { return '<article class="ls-slide" aria-label="' + (i + 1) + ' de ' + slides.length + '" ' + (i ? 'aria-hidden="true"' : '') + '>' + s + '</article>'; }).join('') + '</div></div>' +
         '<div class="ls-narr" hidden>' +
@@ -651,7 +668,8 @@
       root.querySelectorAll('.ls-steps li').forEach(function (li, k) { li.classList.toggle('on', k === idx); li.classList.toggle('done', k < idx); });
       root.querySelector('.ls-count b').textContent = idx + 1;
       prev.disabled = idx === 0;
-      next.innerHTML = idx === LAST ? icon('play') + 'Começar exercício' : 'Próximo' + icon('chevR');
+      next.innerHTML = idx === LAST ? (lib ? icon('check') + 'Concluir aula' : icon('play') + 'Começar exercício') : 'Próximo' + icon('chevR');
+      if (lib && idx === LAST && opts.onLast) opts.onLast();
       if (narrOn) narrate();
     }
     next.onclick = function () { if (idx === LAST) { N.stop(); opts.onStart(); } else go(idx + 1); };
@@ -669,7 +687,7 @@
       };
     });
     prev.onclick = function () { go(idx - 1); };
-    root.querySelector('[data-a=skip]').onclick = function () { N.stop(); opts.onStart(); };
+    root.querySelector('[data-a=skip]').onclick = function () { N.stop(); (lib ? opts.onClose : opts.onStart)(); };
     root.querySelectorAll('[data-go]').forEach(function (b) { b.onclick = function () { go(+b.dataset.go); }; });
 
     // teclado (setas) e gesto de arrastar no celular
