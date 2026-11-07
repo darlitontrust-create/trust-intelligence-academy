@@ -819,8 +819,8 @@ body.exam-open { overflow: hidden; }
 .m-prata { --m1: #ffffff; --m2: #a7aec2; } .m-ouro { --m1: #fff3c4; --m2: #f2b632; }
 .exam-prog { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; }
 .exam-prog b { color: var(--ta); font-size: 18px; }
-.exam-dots { list-style: none; padding: 0; margin: 10px 0 16px; display: grid; grid-template-columns: repeat(15, minmax(0, 1fr)); gap: 5px; }
-.exam-dots li { height: 6px; border-radius: 4px; background: rgba(255,255,255,.08); transition: background .3s; }
+.exam-dots { list-style: none; padding: 0; margin: 10px 0 16px; display: flex; gap: 5px; }   /* sempre numa linha só: as barrinhas encolhem conforme o nº de questões */
+.exam-dots li { flex: 1 1 0; min-width: 2px; height: 6px; border-radius: 4px; background: rgba(255,255,255,.08); transition: background .3s; }
 .exam-dots li.cur { background: color-mix(in srgb, var(--ta) 55%, transparent); box-shadow: 0 0 10px -2px var(--ta); }
 .exam-dots li.ok { background: var(--ok); } .exam-dots li.no { background: var(--err); }
 .exam-q { font-size: clamp(18px, 2.6vw, 22px); line-height: 1.35; letter-spacing: -.015em; margin: 12px 0 16px; font-weight: 600; }
@@ -1894,3 +1894,4 @@ html.tk-on .lib-prog i { background: linear-gradient(90deg, var(--tc-a), var(--t
 .hm-months span { overflow: visible; }
 .ov-feed li[hidden] { display: none; }
 @media (max-width: 560px) { .hm-months { font-size: 8.5px; letter-spacing: 0; } .hm-grid, .hm-days { gap: 2px; } .hm-body { grid-template-columns: 24px minmax(0, 1fr); } .hm-c { border-radius: 2px; } }
+@media (max-width: 560px) { .exam-dots { gap: 2px; } .exam-dots li { border-radius: 2px; } }
