@@ -146,7 +146,7 @@
     // campos dentro de ['…'] (chaves dos dicionários e colunas)
     if ((m = before.match(/\[\s*(['"])([\wÀ-ÿ]*)$/))) {
       const pre = m[2].toLowerCase(), q = m[1];
-      return { from: before.length - m[2].length, items: fieldNames().filter(function (f) { return f.toLowerCase().indexOf(pre) === 0 && f.toLowerCase() !== pre; }).map(function (f, i) { return item(f, 'col', 'Campo dos dados da NexusMarket', i, f + q + ']'); }), limit: 12 };
+      return { from: before.length - m[2].length, items: fieldNames().filter(function (f) { return f.toLowerCase().indexOf(pre) === 0; }).map(function (f, i) { return item(f, 'col', 'Campo dos dados da NexusMarket', i, f + q + ']'); }), limit: 12 };
     }
     // métodos depois do ponto
     if ((m = before.match(/([A-Za-z_][\w]*|\)|\])\s*\.\s*([A-Za-z_]\w*)?$/))) {
@@ -158,7 +158,7 @@
       else if (obj === 'str') names = STR_M.concat(['contains', 'len', 'slice']).map(function (n) { return [n, '.str do pandas']; });
       else names = STR_M.map(function (n) { return [n, 'texto']; }).concat(LIST_M.map(function (n) { return [n, 'lista']; }), DICT_M.map(function (n) { return [n, 'dicionário']; }));
       const seen = {};
-      return { from: before.length - (m[2] || '').length, limit: 10, items: names.filter(function (n) { if (seen[n[0]]) return false; seen[n[0]] = 1; return n[0].toLowerCase().indexOf(pre) === 0 && n[0].toLowerCase() !== pre; })
+      return { from: before.length - (m[2] || '').length, limit: 10, items: names.filter(function (n) { if (seen[n[0]]) return false; seen[n[0]] = 1; return n[0].toLowerCase().indexOf(pre) === 0; })
         .map(function (n, i) { const sig = SIG[n[0]]; const noCall = ['loc', 'iloc', 'shape', 'columns', 'dtypes', 'str', 'dt', 'size'].indexOf(n[0]) >= 0; return item(n[0], 'fn', (sig ? sig[1] + ' · ' : '') + n[1], i, n[0] + (noCall ? '' : '(')); }) };
     }
     // palavras
@@ -173,7 +173,7 @@
         .concat(Object.keys(MODULES).map(function (mo) { return item(mo, 'sheet', 'Módulo: ' + MODULES[mo].join(', '), 30); }))
         .concat([item('pandas', 'sheet', 'import pandas as pd', 25)]);
       const seen = {};
-      return { from: before.length - w.length, items: its.filter(function (x) { if (seen[x.label]) return false; seen[x.label] = 1; return x.label.toLowerCase().indexOf(pre) === 0 && x.label.toLowerCase() !== pre; }) };
+      return { from: before.length - w.length, items: its.filter(function (x) { if (seen[x.label]) return false; seen[x.label] = 1; return x.label.toLowerCase().indexOf(pre) === 0; }) };
     }
     return null;
   }

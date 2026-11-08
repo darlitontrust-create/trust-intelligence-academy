@@ -289,5 +289,28 @@
     return src;
   }
 
-  global.CodeFormat = { sql: sql, formula: formula, python: python, forTrack: forTrack, MAX: MAX };
+  /**
+   * Código das aulas (passo a passo e exemplo): só mexe quando alguma linha passa
+   * do limite da caixa e nunca toca em linhas com comentário. Se o resultado mudar
+   * qualquer caractere que não seja espaço ou quebra de linha, mantém o original.
+   */
+  function lesson(src, track) {
+    src = String(src == null ? '' : src);
+    const max = MAX + 4;
+    if (!src.split('\n').some(function (l) { return l.length > max; })) return src;
+    let out = src;
+    try {
+      if (!track || track === 'sql') { if (!/--|\/\*/.test(src) && !/[<>]\w+[<>]|\[.*?\]|…|\.\.\./.test(src)) out = sql(src, max); }
+      else {
+        const sep = track === 'excel' ? ';' : ',';
+        out = src.split('\n').map(function (line) {
+          if (line.length <= max || /\/\/|--|^\s*#/.test(line)) return line;
+          return track === 'python' ? python(line, max) : formula(line, sep, max);
+        }).join('\n');
+      }
+    } catch (e) { return src; }
+    return out.replace(/\s+/g, '') === src.replace(/\s+/g, '') ? out : src;
+  }
+
+  global.CodeFormat = { sql: sql, formula: formula, python: python, forTrack: forTrack, lesson: lesson, MAX: MAX };
 })(typeof window !== 'undefined' ? window : globalThis);

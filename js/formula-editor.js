@@ -185,7 +185,7 @@
         const items = excelFunctions().concat((ctx.sheets || []).map(function (s) {
           const quoted = /[^\wÀ-ÿ]/.test(s) ? "'" + s + "'" : s;
           return { label: s + '!', insert: quoted + '!', kind: 'sheet', detail: 'Planilha' };
-        })).filter(function (it) { return strip(it.label).indexOf(pre) === 0 && strip(it.label) !== pre + '('; });
+        })).filter(function (it) { return strip(it.label).indexOf(pre) === 0; });
         return { from: before.length - w.length, items: items };
       },
       signature: excelSignature,
@@ -292,7 +292,10 @@
       if (ta.selectionStart !== ta.selectionEnd || (lang.inString || inString)(before) || (lang.inComment || inComment)(before)) return closeList();
       const res = lang.suggest(before, opts.ctx || {});
       if (!res || !res.items.length) return closeList();
-      from = res.from; items = res.items.sort(function (a, b) { return (a.rank || 0) - (b.rank || 0) || a.label.localeCompare(b.label); }).slice(0, res.limit || 9); sel = 0;
+      // o nome digitado por completo continua sugerido e vem em 1º (SUM antes de SUMX)
+      const typed = before.slice(res.from).toLowerCase();
+      const exact = function (it) { return String(it.label).toLowerCase().replace(/[(\]!]$/, '') === typed ? 0 : 1; };
+      from = res.from; items = res.items.sort(function (a, b) { return exact(a) - exact(b) || (a.rank || 0) - (b.rank || 0) || a.label.localeCompare(b.label); }).slice(0, res.limit || 9); sel = 0;
       showList();
     }
     function accept(i) {
@@ -329,7 +332,10 @@
       if (open) {
         if (e.key === 'ArrowDown') { e.preventDefault(); sel = (sel + 1) % items.length; showList(); return; }
         if (e.key === 'ArrowUp') { e.preventDefault(); sel = (sel - 1 + items.length) % items.length; showList(); return; }
-        if ((e.key === 'Enter' && !e.ctrlKey && !e.metaKey && lang.enterAccepts !== false) || e.key === 'Tab') { e.preventDefault(); accept(sel); return; }
+        // Enter com a palavra já completa e nada a acrescentar: fecha a lista e quebra a linha normalmente
+        const cur = items[sel], typedNow = ta.value.slice(from, ta.selectionStart);
+        if (e.key === 'Enter' && cur && cur.insert === typedNow) closeList();
+        else if ((e.key === 'Enter' && !e.ctrlKey && !e.metaKey && lang.enterAccepts !== false) || e.key === 'Tab') { e.preventDefault(); accept(sel); return; }
         if (e.key === 'Enter') closeList();
         if (e.key === 'Escape') { e.preventDefault(); closeList(); return; }
       }

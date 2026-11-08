@@ -166,7 +166,7 @@
         .concat(tables().map(function (t) { return { label: t, insert: quoteTable(t) + '[', kind: 'table', detail: 'Tabela · ' + model().TABLES[t].kind, chain: true, rank: -150 }; }))
         .concat(['VAR', 'RETURN', 'ASC', 'DESC', 'DAY', 'MONTH', 'YEAR', 'DENSE'].map(function (k) { return { label: k, insert: k + ' ', kind: 'kw', detail: 'Palavra-chave' }; }))
         .concat(vars.map(function (v) { return { label: v, insert: v, kind: 'kw', detail: 'Variável', rank: -200 }; }));
-      return { from: before.length - w.length, items: items.filter(function (it) { return strip(it.label).indexOf(pre) === 0 && strip(it.label) !== pre; }) };
+      return { from: before.length - w.length, items: items.filter(function (it) { return strip(it.label).indexOf(pre) === 0; }) };
     }
     return null;
   }

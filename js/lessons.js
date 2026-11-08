@@ -503,6 +503,11 @@
       '<div class="ls-meta"><span class="tag d-' + ex.diff + '">' + G.DIFF_LABEL[ex.diff] + ' · ' + G.XP[ex.diff] + ' XP</span>' +
       tags.map(function (t) { return '<span class="tag tag-topic">' + icon(t.icon) + esc(t.label) + '</span>'; }).join('') + '</div></div>';
   }
+  /** Quebra fórmulas e consultas longas das aulas para caber na caixa (sem barra de rolagem). */
+  function fmtCode(code, ex) {
+    const CF = global.CodeFormat, tr = (ex && ex.track) || 'sql';
+    return CF && /^(sql|excel|powerbi|python)$/.test(tr) ? CF.lesson(code, tr) : code;
+  }
   /** Último slide na biblioteca: teste rápido com as 3 questões da aula e os exercícios que usam o conteúdo. */
   function librarySlide(les, exs) {
     const { esc, icon } = global.UI, R = global.UI.rich;
@@ -557,10 +562,10 @@
         '<h2 class="ls-title">' + esc(les.titulo) + '</h2><p class="ls-lead">' + global.UI.rich(les.ideia) + '</p>' +
         '<div class="ls-analogy">' + icon('bulb') + '<p>' + global.UI.rich(les.analogia) + '</p></div></div>',
       // 2 · Sintaxe
-      '<div class="ls-body"><h3 class="ls-h">' + esc(pack.syntaxTitle || 'Como se escreve') + '</h3><div class="ls-split"><pre class="code-block">' + pack.codeHtml(les.sintaxe) + '</pre>' +
+      '<div class="ls-body"><h3 class="ls-h">' + esc(pack.syntaxTitle || 'Como se escreve') + '</h3><div class="ls-split"><pre class="code-block">' + pack.codeHtml(fmtCode(les.sintaxe, ex)) + '</pre>' +
         '<ul class="ls-notes">' + les.notas.map(function (n) { return '<li>' + icon('chevR') + '<span>' + global.UI.rich(n) + '</span></li>'; }).join('') + '</ul></div></div>',
       // 3 · Exemplo ao vivo
-      '<div class="ls-body"><h3 class="ls-h">' + global.UI.rich(les.exemplo.p) + '</h3><div class="ls-split ex"><pre class="code-block">' + pack.codeHtml(exm.code) + '</pre>' +
+      '<div class="ls-body"><h3 class="ls-h">' + global.UI.rich(les.exemplo.p) + '</h3><div class="ls-split ex"><pre class="code-block">' + pack.codeHtml(fmtCode(exm.code, ex)) + '</pre>' +
         '<div class="ls-live"><span class="ls-badge">' + icon('play') + esc(exm.badge) + '</span>' + exm.liveHtml + '</div></div></div>',
       // 4 · Cuidados
       '<div class="ls-body"><h3 class="ls-h">Cuidados e boas práticas</h3><ol class="ls-cards">' +

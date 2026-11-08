@@ -155,7 +155,7 @@
       const les = ix.byKey[k].les;
       return '<article class="sum-les"><h2><span>' + (n + 1) + '</span>' + esc(les.titulo) + '</h2>' +
         '<p class="sum-idea">' + R(les.ideia) + '</p>' +
-        '<div class="sum-cols"><div><h3>' + esc(pack.syntaxTitle || 'Como se escreve') + '</h3><pre class="code-block">' + pack.codeHtml(les.sintaxe) + '</pre></div>' +
+        '<div class="sum-cols"><div><h3>' + esc(pack.syntaxTitle || 'Como se escreve') + '</h3><pre class="code-block">' + pack.codeHtml(global.CodeFormat && /^(sql|excel|powerbi|python)$/.test(t.id) ? global.CodeFormat.lesson(les.sintaxe, t.id) : les.sintaxe) + '</pre></div>' +
         '<div><h3>Pontos-chave</h3><ul>' + les.notas.map(function (x) { return '<li>' + R(x) + '</li>'; }).join('') + '</ul>' +
         '<h3>Cuidados</h3><ul class="warn">' + les.cuidados.map(function (x) { return '<li>' + R(x) + '</li>'; }).join('') + '</ul></div></div></article>';
     }).join('');

@@ -1920,3 +1920,5 @@ html.tk-on .lib-prog i { background: linear-gradient(90deg, var(--tc-a), var(--t
   .sks-row .sks-btn .lbl-long { display: inline; } .sks-row .sks-btn .lbl-short { display: none; }
 }
 .sp-next.top { background: none; padding: 0; box-shadow: none; }
+/* Aulas: o código das aulas nunca rola para o lado; o que não couber quebra e a caixa cresce */
+.lesson .code-block, .sum-doc .code-block { white-space: pre-wrap; overflow-x: visible; overflow-wrap: anywhere; max-height: none; }
