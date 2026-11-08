@@ -384,9 +384,9 @@
         const foot = got ? '<span class="sp-next top">' + icon('check') + new Date(s.rec.passedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '') + ' · ' + s.best + '/' + c.n + '</span>'
           : s.state === 'wait' ? '<span class="sp-next wait">' + icon('clock') + 'Nova tentativa em ' + waitText(s.waitMs) + '</span>'
           : s.state === 'locked' ? '<span class="sp-next">' + icon('lock') + 'Libera após o ' + LEVELS[c.lv - 2].nome + '</span>'
-          : '<button class="btn btn-primary sm" data-skill="' + t.id + ':' + c.lv + '">' + icon('play') + 'Fazer desafio</button>';
+          : '<button class="btn btn-primary sm sks-btn" data-skill="' + t.id + ':' + c.lv + '">' + icon('play') + '<span class="lbl-long">Fazer desafio</span><span class="lbl-short">Fazer</span></button>';
         return '<article class="sp-slot ' + (got ? 'got' : 'empty') + '">' + seal(t, c.lv, { size: 84, state: got ? null : s.state }) +
-          '<div class="sp-name"><b>Skill ' + c.nome + '</b><small>' + c.n + ' questões · ' + c.min + ' min</small></div><div class="sp-foot">' + foot + '</div></article>';
+          '<div class="sp-name"><b><span class="sk-pre">Skill </span>' + c.nome + '</b><small>' + c.n + ' questões · ' + c.min + ' min</small></div><div class="sp-foot">' + foot + '</div></article>';
       }).join('') + '</div></section>';
   }
 
