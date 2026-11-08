@@ -616,8 +616,11 @@
     function fillVoices() {
       const list = N.voices, cur = N.currentVoice();
       const label = function (v) { return (v.natural ? '★ ' : '') + v.name.replace(/^(Microsoft|Google)\s*/, '').replace(/\s*-\s*Portuguese.*$/i, '').replace(/\s*\((?!Natural).*\)$/, ''); };
-      voiceSel.innerHTML = list.length ? list.map(function (v) { return '<option value="' + esc(v.voiceURI) + '"' + (cur && v.voiceURI === cur.voiceURI ? ' selected' : '') + '>' + esc(label(v)) + '</option>'; }).join('') : '<option value="">Padrão do sistema</option>';
-      voiceSel.closest('label').hidden = list.length < 2;
+      const opt = function (v) { return '<option value="' + esc(v.voiceURI) + '"' + (cur && v.voiceURI === cur.voiceURI ? ' selected' : '') + '>' + esc(label(v) + (v.other && v.lang ? ' · ' + v.lang : '')) + '</option>'; };
+      const pt = list.filter(function (v) { return !v.other; }), other = list.filter(function (v) { return v.other; });
+      voiceSel.innerHTML = !list.length ? '<option value="">Padrão do sistema</option>' :
+        (other.length ? '<optgroup label="Português">' + pt.map(opt).join('') + '</optgroup><optgroup label="Outros idiomas">' + other.map(opt).join('') + '</optgroup>' : pt.map(opt).join(''));
+      voiceSel.closest('label').hidden = !list.length;
       // dica quando só há vozes sintéticas antigas no aparelho
       hint.hidden = !list.length ? false : !!(cur && N.isNatural(cur));
     }
@@ -660,6 +663,8 @@
     rateSel.value = String(N.prefs().rate);
     autoChk.checked = N.prefs().auto;
     rateSel.onchange = function () { N.setPref('rate', +rateSel.value); if (speaking) narrate(); };
+    voiceSel.addEventListener('pointerdown', function () { N.refresh && N.refresh(); });
+    voiceSel.addEventListener('focus', function () { N.refresh && N.refresh(); });
     voiceSel.onchange = function () { N.setPref('voice', voiceSel.value); fillVoices(); if (speaking) narrate(); };
     autoChk.onchange = function () { N.setPref('auto', autoChk.checked); };
     if (!N.supported) voiceBtn.classList.add('unavailable');

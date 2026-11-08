@@ -27,6 +27,7 @@
   const EN_OPEN = '⟦', EN_CLOSE = '⟧';
   let voices = [];          // vozes em português, da mais humana para a mais sintética
   let enVoices = [];        // vozes em inglês
+  let otherVoices = [];     // demais vozes do aparelho (outros idiomas), listadas à parte
   let manifest = null;      // { voice, clips: { id: [trechos] } }
   let audio = null;         // elemento <audio> em uso
   let token = 0;            // invalida falas antigas ao trocar de slide
@@ -54,12 +55,27 @@
   function loadVoices() {
     if (!supportedSynth) return;
     const all = synth.getVoices();
-    voices = all.filter(function (v) { return /^pt/i.test(v.lang); }).sort(function (a, b) { return score(b, 'pt') - score(a, 'pt'); });
+    const key = all.map(function (v) { return v.voiceURI + '|' + v.lang; }).join(',');
+    // português pelo idioma ou pelo nome (algumas vozes instaladas vêm com o idioma vazio ou fora do padrão)
+    const isPt = function (v) { return /^pt/i.test(String(v.lang || '')) || (!/^[a-z]{2}/i.test(String(v.lang || '')) && /portugu|brasil|brazil/i.test(v.name)); };
+    voices = all.filter(isPt).sort(function (a, b) { return score(b, 'pt') - score(a, 'pt'); });
     enVoices = all.filter(function (v) { return /^en/i.test(v.lang); }).sort(function (a, b) { return score(b, 'en') - score(a, 'en'); });
+    otherVoices = all.filter(function (v) { return !isPt(v); }).sort(function (a, b) { return String(a.lang).localeCompare(String(b.lang)) || a.name.localeCompare(b.name); });
+    if (key === lastKey && !force) return;
+    lastKey = key;
     emit({ type: 'voices' });
   }
-  if (supportedSynth) {
+  let lastKey = null, force = true;
+  /** Lê de novo a lista de vozes do aparelho (ex.: depois de instalar uma voz nova). */
+  function refresh() {
+    if (!supportedSynth) return;
+    force = false;
     loadVoices();
+    // o Chrome às vezes só atualiza a lista depois de um instante
+    setTimeout(loadVoices, 400); setTimeout(loadVoices, 1500);
+  }
+  if (supportedSynth) {
+    loadVoices(); force = false;
     if (typeof synth.addEventListener === 'function') synth.addEventListener('voiceschanged', loadVoices);
     else synth.onvoiceschanged = loadVoices;
   }
@@ -78,7 +94,8 @@
   function voiceOptions() {
     const list = [];
     if (manifest) list.push({ voiceURI: AUDIO_ID, name: 'Gravada · ' + (manifest.label || 'neural'), natural: true });
-    voices.forEach(function (v) { list.push({ voiceURI: v.voiceURI, name: v.name, natural: isNatural(v) }); });
+    voices.forEach(function (v) { list.push({ voiceURI: v.voiceURI, name: v.name, lang: v.lang, natural: isNatural(v) }); });
+    otherVoices.forEach(function (v) { list.push({ voiceURI: v.voiceURI, name: v.name, lang: v.lang, natural: isNatural(v), other: true }); });
     return list;
   }
 
@@ -95,7 +112,7 @@
   function currentVoice() {
     const p = prefs();
     if (p.voice === AUDIO_ID && manifest) return { voiceURI: AUDIO_ID, name: 'Gravada' };
-    const chosen = voices.find(function (v) { return v.voiceURI === p.voice; });
+    const chosen = voices.find(function (v) { return v.voiceURI === p.voice; }) || otherVoices.find(function (v) { return v.voiceURI === p.voice; });
     if (chosen) return chosen;
     if (manifest) return { voiceURI: AUDIO_ID, name: 'Gravada' };
     return voices[0] || null;
@@ -326,7 +343,8 @@
   function on(fn) { listeners.push(fn); return function () { const i = listeners.indexOf(fn); if (i >= 0) listeners.splice(i, 1); }; }
   function emit(e) { listeners.slice().forEach(function (fn) { try { fn(e); } catch (x) { /* ignora */ } }); }
 
-  if (typeof document !== 'undefined') document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); });
+  if (typeof document !== 'undefined') document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else refresh(); });
+  if (typeof global.addEventListener === 'function') global.addEventListener('focus', refresh);
 
   global.Narrator = {
     AUDIO_ID: AUDIO_ID,
@@ -335,7 +353,7 @@
     get voices() { return voiceOptions(); },
     get hasEnglish() { return !!(manifest || enVoices.length); },
     prefs: prefs, setPref: setPref, currentVoice: currentVoice, englishVoice: englishVoice, isNatural: isNatural,
-    speak: speak, sayEn: sayEn, stop: stop, on: on, speakable: speakable, speakableEn: speakableEn, plain: plain,
+    refresh: refresh, speak: speak, sayEn: sayEn, stop: stop, on: on, speakable: speakable, speakableEn: speakableEn, plain: plain,
     chunk: chunk, segments: segments, phraseKey: phraseKey,
   };
 })(typeof window !== 'undefined' ? window : globalThis);
