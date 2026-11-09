@@ -38,6 +38,15 @@
       summary: 'das primeiras medidas a CALCULATE, contexto de filtro, iteradores, inteligência de tempo, RANKX, curva ABC e tabelas virtuais',
     },
     {
+      id: 'powerquery', status: 'ativo', icon: 'funnel', start: 'dashboard', kind: 'powerquery',
+      nome: 'Power Query', short: 'Power Query', tag: 'Preparação de dados',
+      color: { a: '#7dd3fc', b: '#0284c7' },            // azul-céu
+      desc: 'Limpe, combine e remodele dados no Excel e no Power BI: etapas aplicadas, mesclagens, unpivot, linguagem M e atualização automática.',
+      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'PQBank',
+      summary: 'dos primeiros passos no editor (fontes, tipos, filtros e limpeza de texto) a mesclar, acrescentar, agrupar e transformar colunas em linhas, à linguagem M, parâmetros, funções, query folding, atualização e preparação do modelo estrela',
+      related: [{ id: 'powerbi', label: 'Próximo passo: medidas DAX' }, { id: 'excel', label: 'Também funciona no Excel' }, { id: 'sql', label: 'Base para fontes de banco' }],
+    },
+    {
       id: 'gestao', status: 'ativo', icon: 'cycle', start: 'dashboard', kind: 'gestao',
       nome: 'Gestão da Qualidade', short: 'Gestão', tag: 'Melhoria contínua',
       color: { a: '#ff9a76', b: '#ff5e3a' },            // coral
@@ -81,6 +90,15 @@
       related: [{ id: 'python', label: 'Ferramenta para as análises' }, { id: 'sixsigma', label: 'Aplicação em melhoria de processos' }, { id: 'powerbi', label: 'Ferramenta para os painéis' }],
     },
     {
+      id: 'storytelling', status: 'ativo', icon: 'slides', start: 'dashboard', kind: 'storytelling',
+      nome: 'Storytelling com Dados', short: 'Storytelling', tag: 'Comunicação',
+      color: { a: '#fdba74', b: '#f97316' },            // laranja
+      desc: 'Transforme análises em decisões: contexto, escolha do gráfico, clareza visual, narrativa, painéis executivos e apresentações que convencem.',
+      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'DVBank',
+      summary: 'do contexto e da grande ideia à escolha do gráfico, clareza visual (Gestalt, atributos pré-atentivos e cor), títulos que concluem, arco narrativo, KPIs e comparações honestas, até dashboards executivos, apresentações, recomendações e ética',
+      related: [{ id: 'powerbi', label: 'Ferramenta para os painéis' }, { id: 'estatistica', label: 'Base para comparações honestas' }],
+    },
+    {
       id: 'ia', status: 'em-breve', icon: 'sparkle', nome: 'IA para Dados', short: 'IA', tag: 'Inteligência Artificial',
       color: { a: '#d8b4fe', b: '#a46bff' },            // violeta
       desc: 'Prompts para análise, automação de relatórios e integração de IA com bancos e painéis.', facts: ['Prompts', 'Automação', 'Integrações'],
@@ -91,9 +109,9 @@
       desc: 'Previsão de demanda, churn e segmentação de clientes: do modelo simples à avaliação, com Python e casos de negócio.', facts: ['Classificação', 'Previsão', 'Segmentação'],
     },
     {
-      id: 'storytelling', status: 'em-breve', icon: 'slides', nome: 'Storytelling com Dados', short: 'Storytelling', tag: 'Comunicação',
-      color: { a: '#fdba74', b: '#f97316' },            // laranja
-      desc: 'Transforme análises em decisões: escolha do gráfico, narrativa, painéis executivos e apresentações que convencem.', facts: ['Visualização', 'Narrativa', 'Apresentação'],
+      id: 'automacao', status: 'em-breve', icon: 'bolt', nome: 'Automação com Power Automate', short: 'Automação', tag: 'Produtividade',
+      color: { a: '#fda4af', b: '#f43f5e' },            // rosa-coral
+      desc: 'Relatórios que se enviam sozinhos, alertas de indicadores e fluxos entre Excel, Power BI, Teams e e-mail, sem programar.', facts: ['Fluxos', 'Alertas', 'Integrações'],
     },
   ];
 

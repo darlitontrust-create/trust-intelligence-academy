@@ -1922,3 +1922,17 @@ html.tk-on .lib-prog i { background: linear-gradient(90deg, var(--tc-a), var(--t
 .sp-next.top { background: none; padding: 0; box-shadow: none; }
 /* Aulas: o código das aulas nunca rola para o lado; o que não couber quebra e a caixa cresce */
 .lesson .code-block, .sum-doc .code-block { white-space: pre-wrap; overflow-x: visible; overflow-wrap: anywhere; max-height: none; }
+
+/* ---------- Storytelling e Power Query: figuras novas ---------- */
+.fe-ref { color: #fdba74; }
+.gq-code { white-space: pre-wrap; overflow-x: visible; overflow-wrap: anywhere; font-family: var(--f-mono); }
+.gq-pie { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.gq-pie .gq-svg { width: min(300px, 100%); height: auto; }
+.gq-pie .gq-leg { flex-direction: column; gap: 6px; }
+.pq-steps { border: 1px solid var(--line); border-radius: 12px; background: rgba(5,7,13,.55); max-width: 360px; overflow: hidden; }
+.pq-steps-h { padding: 8px 12px; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--line); font-weight: 650; }
+.pq-steps ol { list-style: none; margin: 0; padding: 6px 0; }
+.pq-steps li { display: flex; align-items: center; gap: 10px; padding: 6px 12px; font-size: 13px; color: var(--ink-2); }
+.pq-steps li i { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--tk-a, #7dd3fc); flex: none; opacity: .7; }
+.pq-steps li.on { background: rgba(125,211,252,.12); color: var(--ink); font-weight: 600; }
+.pq-steps li.on i { background: var(--tk-a, #7dd3fc); opacity: 1; }

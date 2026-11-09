@@ -99,7 +99,7 @@
 
   /** Nome do material de apoio do caso, para o aviso da missão. */
   function lookLabel(d) {
-    const nome = { table: 'a tabela', matrix: 'a tabela', pareto: 'o gráfico de Pareto', control: 'a carta de controle', hist: 'o histograma', scatter: 'o diagrama de dispersão', vsm: 'o mapa do fluxo de valor', oee: 'o gráfico de OEE', normal: 'a curva de capabilidade', bars: 'o gráfico', flow: 'o fluxograma' }[d.type] || 'os dados';
+    const nome = { table: 'a tabela', matrix: 'a tabela', pareto: 'o gráfico de Pareto', control: 'a carta de controle', hist: 'o histograma', scatter: 'o diagrama de dispersão', vsm: 'o mapa do fluxo de valor', oee: 'o gráfico de OEE', normal: 'a curva de capabilidade', bars: 'o gráfico', flow: 'o fluxograma', hbars: 'o gráfico', pie: 'o gráfico', line: 'o gráfico', code: 'o código M', steps: 'as etapas aplicadas', cards: 'os dados' }[d.type] || 'os dados';
     return nome + (d.title ? ' “' + esc(d.title) + '”' : '');
   }
 
@@ -123,7 +123,7 @@
         '<div class="ex-brief">' +
           '<section class="card glass"><h3 class="card-k">Cenário</h3><p class="story">' + esc(ex.s) + '</p>' +
             '<div class="goal">' + icon('target') + '<div><h3 class="card-k">Sua missão</h3><p>' + esc(ex.g) + '</p></div></div>' +
-            (fig ? '<p class="gq-look">' + icon(ex.d.type === 'table' || ex.d.type === 'matrix' ? 'table' : 'bars') + '<span>Para responder, consulte ' + lookLabel(ex.d) + ' em <b>Dados do caso</b>, logo abaixo.</span></p>' : '') +
+            (fig ? '<p class="gq-look">' + icon(ex.d.type === 'table' || ex.d.type === 'matrix' ? 'table' : ex.d.type === 'code' ? 'code' : ex.d.type === 'steps' ? 'list' : 'bars') + '<span>Para responder, consulte ' + lookLabel(ex.d) + ' em <b>Dados do caso</b>, logo abaixo.</span></p>' : '') +
             '<ul class="xl-facts">' + tags.map(function (t) { return '<li>' + icon(t.icon) + esc(t.label) + '</li>'; }).join('') + '</ul>' +
           '</section>' +
           (fig ? '<section class="card glass gq-data"><header class="card-h"><h3 class="card-k">Dados do caso</h3><span class="muted sm">NexusMarket</span></header>' + fig.html + '</section>' : '') +

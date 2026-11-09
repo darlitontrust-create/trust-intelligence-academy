@@ -357,6 +357,20 @@
       c.beginPath(); c.moveTo(x + w * 0.22, y + h); c.lineTo(x + w * 0.16, y + h + s * 0.2); c.lineTo(x + w * 0.42, y + h); c.stroke();
       c.font = '700 ' + Math.round(s * 0.3) + 'px ' + F.sans; c.textAlign = 'center'; c.textBaseline = 'middle';
       c.fillText('EN', cx, y + h / 2 + s * 0.01);
+    } else if (kind === 'storytelling') {
+      // quadro de apresentação com linha ascendente e ponto de destaque
+      const w = s * 0.86, h = s * 0.58, x = cx - w / 2, y = cy - h / 2 - s * 0.08;
+      rr(c, x, y, w, h, s * 0.07); c.stroke();
+      c.beginPath(); c.moveTo(cx, y + h); c.lineTo(cx, y + h + s * 0.2); c.moveTo(cx - s * 0.18, y + h + s * 0.2); c.lineTo(cx + s * 0.18, y + h + s * 0.2); c.stroke();
+      c.lineWidth = s * 0.06; c.beginPath(); c.moveTo(x + w * 0.14, y + h * 0.76); c.lineTo(x + w * 0.4, y + h * 0.52); c.lineTo(x + w * 0.58, y + h * 0.64); c.lineTo(x + w * 0.84, y + h * 0.26); c.stroke();
+      c.beginPath(); c.arc(x + w * 0.84, y + h * 0.26, s * 0.065, 0, Math.PI * 2); c.fill();
+    } else if (kind === 'powerquery') {
+      // funil com linhas de dados entrando e uma saída limpa
+      const top = cy - s * 0.34, w = s * 0.86;
+      c.beginPath(); c.moveTo(cx - w / 2, top); c.lineTo(cx + w / 2, top); c.lineTo(cx + s * 0.09, cy + s * 0.08); c.lineTo(cx + s * 0.09, cy + s * 0.32); c.lineTo(cx - s * 0.09, cy + s * 0.42); c.lineTo(cx - s * 0.09, cy + s * 0.08); c.closePath(); c.stroke();
+      c.globalAlpha = 0.45; c.lineWidth = s * 0.05;
+      [-0.26, 0, 0.26].forEach(function (k) { c.beginPath(); c.moveTo(cx + k * s, top - s * 0.18); c.lineTo(cx + k * s, top - s * 0.06); c.stroke(); });
+      c.globalAlpha = 1;
     } else if (kind === 'estatistica') {
       const w = s * 0.86, base = cy + s * 0.3, top = s * 0.62;
       c.beginPath();

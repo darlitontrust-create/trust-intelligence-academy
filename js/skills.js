@@ -43,7 +43,7 @@
       return (les && les.quiz || []).map(function (q) { return { q: q[0], ok: q[1], bad: [q[2], q[3], q[4]], exp: q[5], topic: les.titulo }; });
     });
     // estudos de caso de múltipla escolha (Gestão, Lean Six Sigma, Estatística), sem gráfico
-    if (/^(gestao|sixsigma|estatistica)$/.test(trackId)) {
+    if (/^(gestao|sixsigma|estatistica|storytelling|powerquery)$/.test(trackId)) {
       buckets.push(exs.filter(function (e) { return e.kind === 'choice' && !e.d && e.opts && e.opts.length === 4; })
         .map(function (e) { return { q: e.s + ' ' + e.g, ok: e.opts[0], bad: e.opts.slice(1), exp: e.x, topic: e.t }; }));
     }

@@ -11,7 +11,7 @@
   'use strict';
   const esc = function (x) { return String(x == null ? '' : x).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   const FS = 1.18; // escala das fontes dos gráficos (legibilidade em colunas estreitas)
-  const THEMES = { gestao: { a: '#ff9a76', b: '#ff5e3a', rgb: '255,154,118', rgb2: '255,94,58' }, sixsigma: { a: '#5eead4', b: '#14b8a6', rgb: '94,234,212', rgb2: '20,184,166' }, estatistica: { a: '#a5b4fc', b: '#6366f1', rgb: '165,180,252', rgb2: '99,102,241' } };
+  const THEMES = { gestao: { a: '#ff9a76', b: '#ff5e3a', rgb: '255,154,118', rgb2: '255,94,58' }, sixsigma: { a: '#5eead4', b: '#14b8a6', rgb: '94,234,212', rgb2: '20,184,166' }, estatistica: { a: '#a5b4fc', b: '#6366f1', rgb: '165,180,252', rgb2: '99,102,241' }, storytelling: { a: '#fdba74', b: '#f97316', rgb: '253,186,116', rgb2: '249,115,22' }, powerquery: { a: '#7dd3fc', b: '#0284c7', rgb: '125,211,252', rgb2: '2,132,199' } };
   const COL = { a: '#ff9a76', b: '#ff5e3a', rgb: '255,154,118', rgb2: '255,94,58', line: '#7dd3fc', ok: '#4ade80', bad: '#f87171', warn: '#fbbf24', ink: '#e8ebf6', ink2: '#b6bdd6', ink3: '#7e86a6', grid: 'rgba(255,255,255,0.08)' };
 
   /* ------------------------------ Números ------------------------------ */
@@ -407,10 +407,52 @@
     const cols = [COL.b, COL.line, COL.ok, COL.warn, '#a78bfa'], gw = (x1 - x0) / L.length, bw = gw * 0.78 / S.length;
     let s = grid(x0, x1, y0, y1, nTicks(max)) + axisY(x0, y0, y1, max, nTicks(max));
     L.forEach(function (l, i) {
-      S.forEach(function (se, j) { const v = se.values[i], dd = decs(se.values), h = (y0 - y1) * v / max, x = x0 + i * gw + gw * 0.11 + j * bw; s += '<rect x="' + x + '" y="' + (y0 - h) + '" width="' + (bw - 2) + '" height="' + h + '" rx="2" fill="' + cols[j % cols.length] + '" fill-opacity="0.85"/>' + (v ? t(x + bw / 2 - 1, y0 - h - 4, fmt(v, dd), { a: 'middle', s: 9.5, c: COL.ink }) : ''); });
+      S.forEach(function (se, j) { const v = se.values[i], dd = decs(se.values), h = (y0 - y1) * v / max, x = x0 + i * gw + gw * 0.11 + j * bw, fc = f.hl != null && S.length === 1 ? ([].concat(f.hl).indexOf(i) >= 0 ? COL.b : GRAY) : cols[j % cols.length]; s += '<rect x="' + x + '" y="' + (y0 - h) + '" width="' + (bw - 2) + '" height="' + h + '" rx="2" fill="' + fc + '" fill-opacity="0.85"/>' + (v ? t(x + bw / 2 - 1, y0 - h - 4, fmt(v, dd), { a: 'middle', s: 9.5, c: COL.ink }) : ''); });
       s += tml(x0 + i * gw + gw / 2, y0 + 14, l, Math.max(8, Math.round(gw / 6.2)), { a: 'middle', s: 10 });
     });
     return { html: svg(W, H, s, f.title || 'Gráfico de barras') + (S.length > 1 ? legend(S.map(function (se, j) { return [cols[j % cols.length], se.name]; })) : ''), speech: f.speech || '', stats: {} };
+  };
+
+  const GRAY = '#596079';
+  /** Barras horizontais (ordenáveis), com destaque opcional: f.labels, f.values, f.hl, f.sort, f.unit, f.d. */
+  R.hbars = function (f) {
+    let rows = f.labels.map(function (l, i) { return { l: l, v: f.values[i], i: i }; });
+    if (f.sort) rows.sort(function (a, b) { return b.v - a.v; });
+    const n = rows.length, rowH = 30, W = 580, Lm = 150, Rr = 70, T = 8, H = T + n * rowH + 6, max = Math.max.apply(null, rows.map(function (r) { return r.v; })) || 1;
+    const hl = f.hl == null ? null : [].concat(f.hl), u = f.unit || '', d = f.d == null ? decs(f.values) : f.d;
+    let s = '';
+    rows.forEach(function (r, k) {
+      const y = T + k * rowH, w = (W - Lm - Rr) * r.v / max, on = !hl || hl.indexOf(r.i) >= 0;
+      s += t(Lm - 8, y + rowH / 2 + 4, r.l, { a: 'end', s: 10.5, c: on ? COL.ink : COL.ink3, w: hl && on ? 700 : null });
+      s += '<rect x="' + Lm + '" y="' + (y + 5) + '" width="' + Math.max(1, w).toFixed(1) + '" height="' + (rowH - 10) + '" rx="3" fill="' + (on ? COL.b : GRAY) + '" fill-opacity="' + (on ? 0.9 : 0.7) + '"/>';
+      s += t(Lm + w + 6, y + rowH / 2 + 4, (u === 'R$' ? 'R$ ' : '') + fmt(r.v, d) + (u && u !== 'R$' ? u : ''), { s: 10, c: on ? COL.ink : COL.ink3, w: hl && on ? 700 : null });
+    });
+    return { html: svg(W, H, s, f.title || 'Barras horizontais'), speech: f.speech || '', stats: {} };
+  };
+  /** Pizza ou rosca: f.labels, f.values, f.donut, f.hl. */
+  R.pie = function (f) {
+    const tot = sum(f.values), W = 300, H = 220, cx = 110, cy = 110, R0 = 92, Ri = f.donut ? 52 : 0;
+    const cols = [COL.b, COL.line, COL.ok, COL.warn, '#a78bfa', '#f472b6', '#94a3b8', '#fb7185'];
+    const hl = f.hl == null ? null : [].concat(f.hl);
+    let a0 = -Math.PI / 2, s = '';
+    f.values.forEach(function (v, i) {
+      const a1 = a0 + v / tot * Math.PI * 2, big = a1 - a0 > Math.PI ? 1 : 0, c = hl ? (hl.indexOf(i) >= 0 ? COL.b : GRAY) : cols[i % cols.length];
+      const P = function (r, a) { return (cx + r * Math.cos(a)).toFixed(1) + ' ' + (cy + r * Math.sin(a)).toFixed(1); };
+      s += '<path d="M' + P(R0, a0) + 'A' + R0 + ' ' + R0 + ' 0 ' + big + ' 1 ' + P(R0, a1) + (Ri ? 'L' + P(Ri, a1) + 'A' + Ri + ' ' + Ri + ' 0 ' + big + ' 0 ' + P(Ri, a0) : 'L' + cx + ' ' + cy) + 'Z" fill="' + c + '" fill-opacity="0.9" stroke="#0b0e17" stroke-width="1.5"/>';
+      a0 = a1;
+    });
+    if (f.center) s += t(cx, cy + 6, f.center, { a: 'middle', s: 15, c: COL.ink, w: 700 });
+    const leg = '<ul class="gq-leg">' + f.labels.map(function (l, i) { return '<li><i style="background:' + (hl ? (hl.indexOf(i) >= 0 ? COL.b : GRAY) : cols[i % cols.length]) + '"></i>' + esc(l) + ' · ' + fmt(f.values[i] / tot * 100, 0) + '%</li>'; }).join('') + '</ul>';
+    return { html: '<div class="gq-pie">' + svg(W, H, s, f.title || 'Gráfico de pizza') + leg + '</div>', speech: f.speech || '', stats: {} };
+  };
+  /** Bloco de código (linguagem M do Power Query). */
+  R.code = function (f) {
+    return { html: '<pre class="code-block gq-code">' + highlightM(f.code) + '</pre>', speech: f.speech || '', stats: {} };
+  };
+  /** Painel "Etapas aplicadas" do Power Query: f.items, f.sel (etapa selecionada). */
+  R.steps = function (f) {
+    const html = '<div class="pq-steps"><div class="pq-steps-h">' + esc(f.head || 'Etapas aplicadas') + '</div><ol>' + f.items.map(function (it, i) { return '<li' + (f.sel === i ? ' class="on"' : '') + '><i></i><span>' + esc(it) + '</span></li>'; }).join('') + '</ol></div>';
+    return { html: html, speech: f.speech || ('A consulta tem ' + f.items.length + ' etapas aplicadas.'), stats: {} };
   };
 
   R.table = function (f) {
@@ -531,6 +573,23 @@
     return out;
   }
 
+  /** Realce da linguagem M (Power Query). */
+  function highlightM(code) {
+    const KW = /^(let|in|each|if|then|else|and|or|not|true|false|null|type|as|try|otherwise|meta)$/;
+    return String(code).split('\n').map(function (line) {
+      const ci = line.indexOf('//');
+      const body = ci >= 0 && (line.slice(0, ci).split('"').length % 2 === 1) ? line.slice(0, ci) : line, com = body === line ? '' : line.slice(ci);
+      const out = body.replace(/("(?:[^"]|"")*")|(#"(?:[^"]|"")*")|([A-Z][A-Za-z0-9]*\.[A-Za-z0-9.]+)|(\b\d+(?:[.,]\d+)?\b)|([A-Za-z_][A-Za-z0-9_]*)|([^"A-Za-z0-9_]+)/g, function (all, str, ident, fn, num, word, other) {
+        if (str) return '<span class="fe-str">' + esc(str) + '</span>';
+        if (ident) return '<span class="fe-ref">' + esc(ident) + '</span>';
+        if (fn) return '<span class="fe-fn">' + esc(fn) + '</span>';
+        if (num) return '<span class="fe-num">' + esc(num) + '</span>';
+        if (word) return KW.test(word) ? '<span class="fe-kw">' + esc(word) + '</span>' : esc(word);
+        return esc(other);
+      });
+      return out + (com ? '<span class="fe-comment">' + esc(com) + '</span>' : '');
+    }).join('\n');
+  }
   /** Realce para os blocos de "como se aplica" e cálculos. */
   function highlight(code) {
     return String(code).split('\n').map(function (line) {
@@ -549,5 +608,5 @@
     }).join('\n');
   }
 
-  global.GQCharts = { render: render, calc: calc, normCdf: normCdf, tP: tP, fP: fP, chiP: chiP, tInv: tInv, fmt: fmt, pct: pct, round: round, mean: mean, sd: sd, corr: corr, highlight: highlight, invNorm: invNorm };
+  global.GQCharts = { render: render, calc: calc, normCdf: normCdf, tP: tP, fP: fP, chiP: chiP, tInv: tInv, fmt: fmt, pct: pct, round: round, mean: mean, sd: sd, corr: corr, highlight: highlight, highlightM: highlightM, invNorm: invNorm };
 })(typeof window !== 'undefined' ? window : globalThis);
