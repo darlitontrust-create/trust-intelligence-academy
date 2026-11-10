@@ -181,12 +181,13 @@
   }
 
   /* ------------------------------- Resumo ------------------------------- */
-  function summaryHtml(t, g) {
+  function summaryHtml(t, g, start) {
     const ix = index(t.id), pack = global.Lessons.PACKS[t.id], R = global.UI.rich;
+    start = start || 0;
     return g.keys.map(function (k, n) {
       const les = ix.byKey[k].les;
       const px = global.Lessons.plusOf({ track: t.id }, les);
-      return '<article class="sum-les"><h2><span>' + (n + 1) + '</span>' + esc(les.titulo) + '</h2>' +
+      return '<article class="sum-les"><h2><span>' + (start + n + 1) + '</span>' + esc(les.titulo) + '</h2>' +
         '<p class="sum-idea">' + R(les.ideia) + '</p>' + (px.r ? '<p class="sum-res"><b>Em resumo:</b> ' + R(px.r) + '</p>' : '') +
         '<div class="sum-cols"><div><h3>' + esc(pack.syntaxTitle || 'Como se escreve') + '</h3><pre class="code-block">' + pack.codeHtml(global.CodeFormat && /^(sql|excel|powerbi|python)$/.test(t.id) ? global.CodeFormat.lesson(les.sintaxe, t.id) : les.sintaxe) + '</pre></div>' +
         '<div><h3>Pontos-chave</h3><ul>' + les.notas.map(function (x) { return '<li>' + R(x) + '</li>'; }).join('') + '</ul>' +
@@ -258,18 +259,38 @@
     const items = gs.map(function (g) { const e = bank.EXERCISES.find(function (x) { return x.level === lv && x.pos === g.range[1]; }); return e ? '<li><a href="#ex-' + e.id + '"><span class="tag d-' + e.diff + '">Etapa ' + g.stage + '</span>' + esc(e.n) + '</a></li>' : ''; }).join('');
     return items ? '<section class="sum-block"><h2>' + icon('flag') + 'Desafios das etapas</h2><ul class="sum-ch">' + items + '</ul></section>' : '';
   }
-  function levelSummaryHtml(t, lv) {
-    const ix = index(t.id), gs = ix.groups.filter(function (g) { return g.lv === lv; });
-    return '<section class="sum-block"><h2>' + icon('map') + 'Mapa do nível</h2>' + gs.map(function (g) { return stageMap(t, g); }).join('') + '</section>' +
-      extrasHtml(t, extrasOf(t, gs)) + challengesHtml(t, lv, gs);
+  /** Divisória de etapa dentro do resumo do nível/curso, no estilo do resumo da etapa. */
+  function stageSep(t, g) {
+    return '<header class="sum-sep"><span class="sum-sep-k">Etapa ' + g.stage + '</span><b>Exercícios ' + g.range[0] + ' a ' + g.range[1] + ' · ' + g.keys.length + ' aulas</b>' +
+      '<a class="btn btn-quiet sm no-print" href="#resumo-' + g.lv + '-' + g.stage + '">Abrir etapa' + icon('chevR') + '</a></header>';
+  }
+  /** Aulas de várias etapas, numeradas em sequência, com divisórias por etapa (e por nível, no curso). */
+  function lessonsHtml(t, gs, opts) {
+    let n = 0, lastLv = 0, h = '';
+    gs.forEach(function (g) {
+      if (opts.levels && g.lv !== lastLv) {
+        const nl = gs.filter(function (x) { return x.lv === g.lv; }).reduce(function (a, x) { return a + x.keys.length; }, 0);
+        h += '<header class="sum-lvsep"><span>' + icon('bars') + 'Nível ' + LV[g.lv] + '</span><small>' + nl + ' aulas</small>' +
+          '<a class="btn btn-ghost sm no-print" href="#resumo-' + g.lv + '">Resumo do nível' + icon('chevR') + '</a></header>';
+        lastLv = g.lv;
+      }
+      h += stageSep(t, g) + summaryHtml(t, g, n);
+      if (opts.challenges) h += stageChallenge(t, g.lv, g);
+      n += g.keys.length;
+    });
+    return h;
+  }
+  function reviewHtml(t, gs, label, maxErr) {
+    const x = extrasHtml(t, extrasOf(t, gs), { maxErr: maxErr });
+    return x ? '<header class="sum-lvsep"><span>' + icon('grid') + 'Revisão ' + label + '</span><small>comparações, fluxos e erros comuns</small></header>' + x : '';
+  }
+  function levelSummaryHtml(t, lv, print) {
+    const gs = index(t.id).groups.filter(function (g) { return g.lv === lv; });
+    return lessonsHtml(t, gs, { challenges: !print }) + reviewHtml(t, gs, 'do nível');
   }
   function courseSummaryHtml(t) {
-    const ix = index(t.id), R = global.UI.rich;
-    const lvls = [1, 2, 3].map(function (lv) {
-      const gs = ix.groups.filter(function (g) { return g.lv === lv; });
-      return gs.length ? '<section class="sum-block sum-lv"><h2>' + icon('bars') + 'Nível ' + LV[lv] + '<a class="btn btn-quiet sm" href="#resumo-' + lv + '">Ver o nível' + icon('chevR') + '</a></h2>' + gs.map(function (g) { return stageMap(t, g, true); }).join('') + '</section>' : '';
-    }).join('');
-    return (t.summary ? '<p class="sum-intro">Este curso vai ' + R(t.summary) + '.</p>' : '') + lvls + extrasHtml(t, extrasOf(t, ix.groups), { maxErr: 30 });
+    const gs = index(t.id).groups, R = global.UI.rich;
+    return (t.summary ? '<p class="sum-intro">Este curso vai ' + R(t.summary) + '.</p>' : '') + lessonsHtml(t, gs, { levels: true }) + reviewHtml(t, gs, 'do curso', 30);
   }
   function printDoc(t, title, html) {
     const area = document.getElementById('print-area');
@@ -285,16 +306,17 @@
     const nLes = gs.reduce(function (a, g) { return a + g.keys.length; }, 0);
     const title = kind === 'curso' ? 'Resumo do curso' : 'Resumo · Nível ' + LV[lv];
     const html = kind === 'curso' ? courseSummaryHtml(t) : levelSummaryHtml(t, lv);
+    const printHtml = kind === 'curso' ? html : levelSummaryHtml(t, lv, true);
     const other = kind === 'curso' ? [1, 2, 3].map(function (n) { return '<a class="btn btn-ghost sm" href="#resumo-' + n + '">Nível ' + LV[n] + '</a>'; }).join('')
       : '<a class="btn btn-ghost sm" href="#resumo-curso">' + icon('book') + 'Curso inteiro</a>' + gs.map(function (g) { return '<a class="btn btn-ghost sm" href="#resumo-' + lv + '-' + g.stage + '">Etapa ' + g.stage + '</a>'; }).join('');
     view.innerHTML =
       '<nav class="lib-crumbs"><a href="#conteudo">' + icon('chevL') + 'Biblioteca</a><span class="muted sm">' + nLes + ' aulas · ' + gs.length + ' etapas</span>' +
         '<button class="btn btn-primary sm" id="sum-print">' + icon('printer') + 'Imprimir ou salvar PDF</button></nav>' +
       '<section class="page-h stack"><p class="eyebrow">' + esc(t.nome) + '</p><h1>' + esc(title) + '</h1><p class="muted">' +
-        (kind === 'curso' ? 'O curso inteiro numa visão: o que cada aula ensina, as comparações, os fluxos e os erros mais comuns.' : 'O nível inteiro numa visão: o essencial de cada aula, as comparações, os fluxos, os erros comuns e os desafios das etapas.') + '</p>' +
+        (kind === 'curso' ? 'Todas as aulas do curso, numeradas e organizadas por nível e etapa, com a ideia, a sintaxe, os pontos-chave e os cuidados de cada uma. No fim, a revisão com comparações, fluxos e erros comuns.' : 'Todas as aulas do nível, numeradas e organizadas por etapa, com a ideia, a sintaxe, os pontos-chave, os cuidados e o desafio de cada etapa. No fim, a revisão com comparações, fluxos e erros comuns.') + '</p>' +
         '<div class="sum-nav">' + other + '</div></section>' +
-      '<div class="sum-doc glass sum-big">' + html + '</div>';
-    view.querySelector('#sum-print').onclick = function () { printDoc(t, title, html); };
+      '<div class="sum-doc glass">' + html + '</div>';
+    view.querySelector('#sum-print').onclick = function () { printDoc(t, title, printHtml); };
   }
   function levelSummary(view, lv) { bigSummary(view, 'nivel', lv); }
   function courseSummary(view) { bigSummary(view, 'curso'); }
