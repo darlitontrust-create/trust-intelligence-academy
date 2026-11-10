@@ -414,6 +414,113 @@
     tags: function (ex) { return global.SQLEngine.tablesOf(ex).map(function (t) { return { icon: 'table', label: t }; }); },
   });
 
+  /* ------------------------- Blocos extras das aulas ------------------------- */
+  /**
+   * Conteúdo extra por trilha e aula (arquivos js/plus-*.js), todos opcionais:
+   *   o: [objetivos]              → slide Conceito ("Nesta aula você vai")
+   *   u: [onde se usa]            → chips no slide Conceito
+   *   a: [[trecho, explicação]]   → anatomia do código (marcadores nas linhas da sintaxe)
+   *   f: [título, etapa, …]       → fluxo; etapa "*X|legenda" (destaque azul) ou "!X|legenda" (destaque dourado)
+   *   v: { t, s, a:{h,d,u,c}, b:{h,d,u,c}, r } → slide extra "Lado a lado"
+   *   r: 'em resumo'              → faixa no slide de exemplo
+   *   e: { c, m, y, x } erro real · { q, y, x } equívoco comum → slide Cuidados
+   */
+  const PLUS = {};
+  function addPlus(track, map) { PLUS[track] = Object.assign(PLUS[track] || {}, map); }
+  function plusOf(ex, les) { return ((PLUS[(ex && ex.track) || 'sql'] || {})[les.key]) || {}; }
+  const FILES = { sql: 'consulta.sql', excel: 'fórmula', powerbi: 'medida.dax', python: 'script.py', powerquery: 'Editor avançado · M' };
+  /** Título com a palavra-chave na cor do curso. */
+  function twoTone(title, kw) {
+    const esc = global.UI.esc, t = String(title || ''), k = String(kw || '').trim();
+    const fold = function (x) { return x.split('').map(function (c) { return c.normalize('NFD').charAt(0).toLowerCase(); }).join(''); };
+    let i = -1, n = 0;
+    if (k) { i = fold(t).indexOf(fold(k)); n = k.length; }
+    if (i < 0) { const c = t.indexOf(':'); if (c > 0) { i = 0; n = c; } }
+    if (i < 0) return esc(t);
+    return esc(t.slice(0, i)) + '<span class="k">' + esc(t.slice(i, i + n)) + '</span>' + esc(t.slice(i + n));
+  }
+  /** Caixa de código com cabeçalho de editor (nas trilhas de código). */
+  function codeBox(ex, html, label) {
+    const f = label || FILES[(ex && ex.track) || 'sql'];
+    if (!f) return '<pre class="code-block">' + html + '</pre>';
+    return '<div class="ls-ed"><div class="ls-ed-h"><span class="ls-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>' + global.UI.esc(f) + '</span></div><pre class="code-block">' + html + '</pre></div>';
+  }
+  /**
+   * Linha do código que contém o trecho (a formatação pode ter quebrado a linha):
+   * ignora espaços e maiúsculas e, se preciso, usa só o começo do trecho.
+   */
+  function findLine(lines, want, from) {
+    const sq = function (x) { return String(x).replace(/\s+/g, '').toLowerCase(); };
+    const L2 = lines.map(sq), w = sq(want);
+    const tries = [w, w.slice(0, Math.max(6, w.indexOf('(') + 1)), w.slice(0, 12), w.slice(0, 6)].filter(function (x, i, arr) { return x && arr.indexOf(x) === i; });
+    for (let t = 0; t < tries.length; t++) {
+      for (let i = from; i < L2.length; i++) if (L2[i].indexOf(tries[t]) >= 0 || (L2[i].length >= 4 && tries[t].indexOf(L2[i]) === 0)) return i;
+      for (let i = 0; i < from; i++) if (L2[i].indexOf(tries[t]) >= 0) return i;
+    }
+    return Math.min(from, lines.length - 1);
+  }
+  /** Marca as linhas do código (já realçado) com os números da anatomia. */
+  function anatomy(code, html, list) {
+    const lines = String(code).split('\n'), hl = String(html).split('\n'), marks = {};
+    let from = 0;
+    (list || []).forEach(function (a, n) {
+      const at = findLine(lines, String(a[0]), from);
+      (marks[at] = marks[at] || []).push(n + 1); from = at;
+    });
+    if (hl.length !== lines.length) return html;
+    return hl.map(function (h, i) { return h + (marks[i] ? marks[i].map(function (m) { return '<span class="ls-mk" aria-hidden="true">' + m + '</span>'; }).join('') : ''); }).join('\n');
+  }
+  function anatomyList(list) {
+    const R = global.UI.rich;
+    return '<ol class="ls-anat">' + list.map(function (a, n) { return '<li><i>' + (n + 1) + '</i><p>' + R(a[1]) + '</p></li>'; }).join('') + '</ol>';
+  }
+  function flowHtml(f) {
+    if (!f || f.length < 3) return '';
+    const esc = global.UI.esc;
+    return '<div class="ls-flow"><span class="ls-flow-t">' + esc(f[0]) + '</span>' + f.slice(1).map(function (s, i) {
+      const cls = s.charAt(0) === '*' ? ' a' : s.charAt(0) === '!' ? ' b' : '', txt = cls ? s.slice(1) : s, p = txt.split('|');
+      return (i ? '<span class="ls-flow-arr" aria-hidden="true">→</span>' : '') + '<span class="ls-flow-s' + cls + '">' + esc(p[0]) + (p[1] ? '<small>' + esc(p[1]) + '</small>' : '') + '</span>';
+    }).join('') + '</div>';
+  }
+  function flowSpeech(f) { return f && f.length > 2 ? f[0] + ': ' + f.slice(1).map(function (s) { return s.replace(/^[*!]/, '').split('|').join(', que '); }).join('; depois, ') + '.' : ''; }
+  function goalsHtml(o) {
+    if (!o || !o.length) return '';
+    const R = global.UI.rich;
+    return '<div class="ls-goals"><span class="eyebrow">Nesta aula você vai</span><ol>' + o.map(function (g, i) { return '<li><b>' + String(i + 1).padStart(2, '0') + '</b><span>' + R(g) + '</span></li>'; }).join('') + '</ol></div>';
+  }
+  function usesHtml(u) {
+    if (!u || !u.length) return '';
+    const esc = global.UI.esc;
+    return '<div class="ls-uses"><span class="eyebrow">Onde se usa</span>' + u.map(function (x) { return '<span class="ls-use">' + esc(x) + '</span>'; }).join('') + '</div>';
+  }
+  function resumoHtml(r) { return r ? '<div class="ls-sum"><b>Em resumo</b><span>' + global.UI.rich(r) + '</span></div>' : ''; }
+  function vsSlide(ex, pack, v) {
+    const esc = global.UI.esc, R = global.UI.rich, code = /^(sql|excel|powerbi|python|powerquery)$/.test((ex && ex.track) || 'sql');
+    const col = function (c, k) {
+      return '<div class="ls-vs-c ' + k + '"><div class="ls-vs-h"><b>' + R(c.h) + '</b><span>' + R(c.d) + '</span></div><div class="ls-vs-b">' +
+        (c.u && c.u.length ? '<span class="ls-vs-l">Use para</span><ul>' + c.u.map(function (x) { return '<li>' + R(x) + '</li>'; }).join('') + '</ul>' : '') +
+        (c.c ? (code ? '<pre class="code-block">' + pack.codeHtml(fmtCode(c.c, ex)) + '</pre>' : '<p class="ls-vs-ex">' + R(c.c) + '</p>') : '') + '</div></div>';
+    };
+    return '<div class="ls-body"><h3 class="ls-title sm">' + twoTone(v.t, String(v.t).split(/\s+[×x]\s+/)[0]) + '</h3>' + (v.s ? '<p class="ls-lead">' + R(v.s) + '</p>' : '') +
+      '<div class="ls-vs">' + col(v.a, 'a') + col(v.b, 'b') + '</div>' + resumoHtml(v.r) + '</div>';
+  }
+  function vsSpeech(v) {
+    const dot = function (x) { return /[.!?]$/.test(x) ? x : x + '.'; };
+    return [v.t.replace(/\s+[×x]\s+/, ' ou ') + '?', v.s || '', v.a.h + ': ' + dot(v.a.d), v.b.h + ': ' + dot(v.b.d), v.r ? 'Em resumo: ' + v.r : ''].filter(Boolean);
+  }
+  function errHtml(ex, pack, e) {
+    if (!e) return '';
+    const R = global.UI.rich;
+    if (e.c) {
+      return '<div class="ls-err"><div class="ls-err-h">' + global.UI.icon('x') + 'Erro real</div><pre class="code-block">' + pack.codeHtml(e.c) + (e.m ? '\n<span class="ls-err-m">' + global.UI.esc(e.m) + '</span>' : '') + '</pre>' +
+        '<div class="ls-err-y"><b>Causa</b><span>' + R(e.y) + '</span></div>' +
+        (e.x ? '<div class="ls-err-x"><div class="ls-err-h ok">' + global.UI.icon('check') + 'Correção</div><pre class="code-block">' + pack.codeHtml(e.x) + '</pre></div>' : '') + '</div>';
+    }
+    return '<div class="ls-err"><div class="ls-err-h">' + global.UI.icon('x') + 'Equívoco comum</div><p class="ls-err-q">“' + R(e.q) + '”</p>' +
+      '<div class="ls-err-y"><b>Por quê</b><span>' + R(e.y) + '</span></div>' + (e.x ? '<div class="ls-err-y ok"><b>O certo</b><span>' + R(e.x) + '</span></div>' : '') + '</div>';
+  }
+  function errSpeech(e) { if (!e) return ''; return e.c ? 'Um erro comum: ' + e.y : 'Um equívoco comum: ' + e.q + '. ' + e.y + (e.x ? ' O certo: ' + e.x : ''); }
+
   /* ------------------------- Roteiro de narração ------------------------- */
   /**
    * Texto falado dos 5 slides de um exercício (o código não é lido em voz alta).
@@ -457,20 +564,23 @@
     const oc = occurrence(ex);
     if (!full && oc.k > 0) return narrationReview(ex, forExercise(ex), oc);
     const les = forExercise(ex);
-    const pk = packOf(ex), exm = pk.example(les);
+    const pk = packOf(ex), exm = pk.example(les), px = plusOf(ex, les);
     const parts = [
-      [les.titulo + '.', les.ideia, 'Uma comparação que ajuda: ' + les.analogia],
-      [typeof pk.syntaxSpeech === 'function' ? pk.syntaxSpeech(les) : (pk.syntaxSpeech || 'Agora, a sintaxe. Repare na estrutura do comando no código.')].concat(les.notas),
+      [les.titulo + '.', les.ideia].concat(px.o && px.o.length ? ['Nesta aula você vai: ' + px.o.join('; ') + '.'] : []).concat(['Uma comparação que ajuda: ' + les.analogia]),
+      [typeof pk.syntaxSpeech === 'function' ? pk.syntaxSpeech(les) : (pk.syntaxSpeech || 'Agora, a sintaxe. Repare na estrutura do comando no código.')]
+        .concat(px.a && px.a.length ? px.a.map(function (a, i) { return 'Marcador ' + (i + 1) + ': ' + a[1]; }) : []).concat(les.notas).concat(px.f ? [flowSpeech(px.f)] : []),
       ['Vamos ver na prática. ' + les.exemplo.p.replace(/:\s*$/, '.'),
         exm.speech,
-        pk.compareSpeech || 'Compare o código com o resultado na tabela.'],
-      ['Agora, alguns cuidados importantes.'].concat(les.cuidados.map(function (c, i) { return (ORD[i] || 'Também') + ': ' + c; })),
+        pk.compareSpeech || 'Compare o código com o resultado na tabela.'].concat(px.r ? ['Em resumo: ' + px.r] : []),
+      ['Agora, alguns cuidados importantes.'].concat(px.e ? [errSpeech(px.e)] : []).concat(les.cuidados.map(function (c, i) { return (ORD[i] || 'Também') + ': ' + c; })),
       ['Chegou a sua vez. O desafio é: ' + ex.n + '.', ex.s, 'O objetivo: ' + ex.g, 'Quando estiver pronto, é só clicar em Começar exercício.'],
     ];
-    return parts.map(function (p, i) {
-      const pre = (ex.track && ex.track !== 'sql') ? ex.track + '-' : '';
-      return { id: i < 4 ? pre + les.key + '-' + (i + 1) : 'ex-' + ex.id, chunks: global.Narrator.chunk(p) };
+    const pre = (ex.track && ex.track !== 'sql') ? ex.track + '-' : '';
+    const out = parts.map(function (p, i) {
+      return { id: i < 4 ? pre + les.key + '-' + (i + 1) : 'ex-' + ex.id, chunks: global.Narrator.chunk(p.filter(Boolean)) };
     });
+    if (px.v) out.splice(2, 0, { id: pre + les.key + '-vs', chunks: global.Narrator.chunk(vsSpeech(px.v)) });
+    return out;
   }
 
   /* ------------------------------ Carrossel ------------------------------ */
@@ -519,8 +629,12 @@
         opts.map(function (o, i) { return '<button type="button" class="ls-qo" data-ok="' + (o.ok ? 1 : 0) + '"><span>' + 'ABCD'[i] + '</span><span class="ls-qt">' + R(o.t) + '</span></button>'; }).join('') +
         '</div><p class="ls-qexp" hidden></p><p class="ls-qexp-src" hidden>' + R(q[5]) + '</p></div>';
     }).join('');
-    return '<div class="ls-body ls-lib-final"><h3 class="ls-h">Fixação · ' + esc(les.titulo) + '</h3>' + quiz +
-      (exs.length ? '<div class="ls-lib-ex"><h4 class="card-k">' + icon('code') + 'Pratique este conteúdo</h4><ul>' + exs.slice(0, 8).map(function (e) {
+    const m = exs[0];
+    const mini = m ? '<div class="ls-mini"><div class="ls-mini-h">' + icon('target') + '<b>Mini-desafio</b><span class="tag d-' + m.diff + '">' + esc(m.levelName) + ' ' + m.pos + '</span></div>' +
+      '<h4>' + esc(m.n) + '</h4><p>' + R(m.s) + '</p><p class="ls-mini-g"><b>Missão</b> ' + R(m.g) + '</p>' +
+      '<a class="btn btn-primary sm" href="#ex-' + m.id + '">' + icon('play') + 'Resolver agora</a></div>' : '';
+    return '<div class="ls-body ls-lib-final"><h3 class="ls-h">Fixação · ' + twoTone(les.titulo, les.kw) + '</h3>' + quiz + mini +
+      (exs.length > 1 ? '<div class="ls-lib-ex"><h4 class="card-k">' + icon('code') + 'Pratique este conteúdo</h4><ul>' + exs.slice(1, 8).map(function (e) {
         return '<li><a href="#ex-' + e.id + '"><span class="tag d-' + e.diff + '">' + e.levelName + ' ' + e.pos + '</span>' + esc(e.n) + '</a></li>'; }).join('') + '</ul></div>' : '') + '</div>';
   }
   /** Slides de revisão (2º, 3º… exercício do mesmo tema): exemplo resolvido, teste rápido e dicas. */
@@ -554,25 +668,32 @@
     const tags = pack.tags(ex);
     const oc = occurrence(ex);
     const review = !forceFull && oc.k > 0, lib = !!opts.library;
-    const STEPS_NOW = review ? ['Exemplo resolvido', 'Teste rápido', 'Dicas', 'Seu desafio'] : lib ? (pack.steps || STEPS).slice(0, -1).concat(['Fixação']) : (pack.steps || STEPS);
+    const px = review ? {} : plusOf(ex, les), hasVs = !!px.v;
+    let STEPS_NOW = review ? ['Exemplo resolvido', 'Teste rápido', 'Dicas', 'Seu desafio'] : lib ? (pack.steps || STEPS).slice(0, -1).concat(['Fixação']) : (pack.steps || STEPS);
+    if (hasVs) STEPS_NOW = STEPS_NOW.slice(0, 2).concat(['Lado a lado'], STEPS_NOW.slice(2));
     const LAST = STEPS_NOW.length - 1;
+    const kwChip = les.kw ? ' <span class="ls-kw">' + esc(les.kw) + '</span>' : '';
+    const synCode = fmtCode(les.sintaxe, ex);
+    const synHtml = px.a && px.a.length ? anatomy(synCode, pack.codeHtml(synCode), px.a) : pack.codeHtml(synCode);
     const slides = review ? reviewSlides(ex, les, pack, oc, tags) : [
       // 1 · Conceito
       '<div class="ls-body"><span class="ls-ghost" aria-hidden="true">' + esc(les.kw) + '</span>' +
-        '<h2 class="ls-title">' + esc(les.titulo) + '</h2><p class="ls-lead">' + global.UI.rich(les.ideia) + '</p>' +
-        '<div class="ls-analogy">' + icon('bulb') + '<p>' + global.UI.rich(les.analogia) + '</p></div></div>',
-      // 2 · Sintaxe
-      '<div class="ls-body"><h3 class="ls-h">' + esc(pack.syntaxTitle || 'Como se escreve') + '</h3><div class="ls-split"><pre class="code-block">' + pack.codeHtml(fmtCode(les.sintaxe, ex)) + '</pre>' +
-        '<ul class="ls-notes">' + les.notas.map(function (n) { return '<li>' + icon('chevR') + '<span>' + global.UI.rich(n) + '</span></li>'; }).join('') + '</ul></div></div>',
+        '<h2 class="ls-title">' + twoTone(les.titulo, les.kw) + '</h2><p class="ls-lead">' + global.UI.rich(les.ideia) + '</p>' + goalsHtml(px.o) +
+        '<div class="ls-analogy">' + icon('bulb') + '<p>' + global.UI.rich(les.analogia) + '</p></div>' + usesHtml(px.u) + '</div>',
+      // 2 · Sintaxe (com anatomia do código e fluxo, quando houver)
+      '<div class="ls-body"><h3 class="ls-h">' + esc(pack.syntaxTitle || 'Como se escreve') + kwChip + '</h3><div class="ls-split">' + codeBox(ex, synHtml) +
+        '<div class="ls-side">' + (px.a && px.a.length ? '<span class="eyebrow">Anatomia do código</span>' + anatomyList(px.a) : '') +
+        '<ul class="ls-notes">' + les.notas.map(function (n) { return '<li>' + icon('chevR') + '<span>' + global.UI.rich(n) + '</span></li>'; }).join('') + '</ul></div></div>' + flowHtml(px.f) + '</div>',
       // 3 · Exemplo ao vivo
-      '<div class="ls-body"><h3 class="ls-h">' + global.UI.rich(les.exemplo.p) + '</h3><div class="ls-split ex"><pre class="code-block">' + pack.codeHtml(fmtCode(exm.code, ex)) + '</pre>' +
-        '<div class="ls-live"><span class="ls-badge">' + icon('play') + esc(exm.badge) + '</span>' + exm.liveHtml + '</div></div></div>',
-      // 4 · Cuidados
-      '<div class="ls-body"><h3 class="ls-h">Cuidados e boas práticas</h3><ol class="ls-cards">' +
+      '<div class="ls-body"><h3 class="ls-h">' + global.UI.rich(les.exemplo.p) + '</h3><div class="ls-split ex">' + codeBox(ex, pack.codeHtml(fmtCode(exm.code, ex))) +
+        '<div class="ls-live"><span class="ls-badge">' + icon('play') + esc(exm.badge) + '</span>' + exm.liveHtml + '</div></div>' + resumoHtml(px.r) + '</div>',
+      // 4 · Cuidados (com o erro real ou o equívoco comum)
+      '<div class="ls-body"><h3 class="ls-h">Cuidados e boas práticas' + kwChip + '</h3>' + errHtml(ex, pack, px.e) + '<ol class="ls-cards">' +
         les.cuidados.map(function (c, i) { return '<li><span class="ls-num">' + (i + 1) + '</span><p>' + global.UI.rich(c) + '</p></li>'; }).join('') + '</ol></div>',
-      // 5 · Seu desafio (na biblioteca: fixação com o teste rápido e os exercícios do conteúdo)
+      // 5 · Seu desafio (na biblioteca: fixação com o teste rápido, o mini-desafio e os exercícios do conteúdo)
       lib ? librarySlide(les, opts.exercises || []) : finalSlide(ex, pack, tags),
     ];
+    if (hasVs) slides.splice(2, 0, vsSlide(ex, pack, px.v));
 
     const scripts = narration(ex, !review);
     if (lib) scripts[scripts.length - 1] = { id: 'lib-final', chunks: global.Narrator.chunk(['Para fixar, responda ao teste rápido e, se quiser, pratique os exercícios deste conteúdo.']) };
@@ -584,18 +705,19 @@
         '<header class="ls-top"><div class="ls-kicker">' + icon('book') + '<span>' + (review ? 'Revisão · ' : 'Conteúdo · ') + '<b>' + esc(les.titulo) + '</b></span></div>' +
         '<div class="ls-top-r">' + (review ? '<button class="btn btn-quiet sm" data-a="full">' + icon('book') + '<span>Ver aula completa</span></button>' : '') + '<button class="btn btn-ghost sm ls-voice" data-a="voice" aria-pressed="false">' + icon('volume') + '<span>Ouvir narração</span></button>' +
         '<button class="btn btn-quiet sm" data-a="skip">' + (lib ? icon('chevL') + 'Voltar à biblioteca' : 'Pular para o exercício' + icon('chevR')) + '</button></div></header>' +
-        '<ol class="ls-steps' + (review ? ' four' : '') + '">' + STEPS_NOW.map(function (s, i) { return '<li><button data-go="' + i + '" aria-label="Slide ' + (i + 1) + ': ' + s + '"><i></i><span>' + s + '</span></button></li>'; }).join('') + '</ol>' +
+        '<ol class="ls-steps' + (review ? ' four' : '') + '" style="grid-template-columns:repeat(' + STEPS_NOW.length + ',minmax(0,1fr))">' + STEPS_NOW.map(function (s, i) { return '<li><button data-go="' + i + '" aria-label="Slide ' + (i + 1) + ': ' + s + '"><i></i><span>' + s + '</span></button></li>'; }).join('') + '</ol>' +
         '<div class="ls-viewport"><div class="ls-track">' + slides.map(function (s, i) { return '<article class="ls-slide" aria-label="' + (i + 1) + ' de ' + slides.length + '" ' + (i ? 'aria-hidden="true"' : '') + '>' + s + '</article>'; }).join('') + '</div></div>' +
         '<div class="ls-narr" hidden>' +
           '<button class="icon-btn sm" data-a="toggle" aria-label="Pausar narração">' + icon('pause') + '</button>' +
           '<span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>' +
           '<p class="ls-caption" aria-live="off"></p>' +
-          '<div class="ls-narr-opts">' +
+          '<button class="icon-btn sm ls-gear" data-a="opts" aria-expanded="false" aria-label="Velocidade e voz">' + icon('gear') + '</button>' +
+          '<div class="ls-narr-opts" hidden>' +
             '<label class="ls-sel"><span>Velocidade</span><select id="nr-rate">' + rates.map(function (r) { return '<option value="' + r + '">' + String(r).replace('.', ',') + 'x</option>'; }).join('') + '</select></label>' +
             '<label class="ls-sel ls-sel-voice"><span>Voz</span><select id="nr-voice"></select></label>' +
             '<label class="ls-check"><input type="checkbox" id="nr-auto"><span>Avançar sozinho</span></label>' +
-          '</div>' +
           '<p class="ls-hint" hidden>' + icon('bulb') + '<span>A voz deste navegador é sintética. Para uma narração mais humana, abra no Microsoft Edge (vozes "Natural"), no Chrome conectado à internet (voz Google) ou ative uma voz "Aprimorada" no iPhone/Mac.</span></p>' +
+          '</div>' +
         '</div>' +
         '<footer class="ls-foot"><button class="btn btn-ghost sm" data-a="prev">' + icon('chevL') + 'Anterior</button>' +
         '<span class="ls-count"><b>1</b> / ' + slides.length + '</span>' +
@@ -623,6 +745,7 @@
       voiceSel.closest('label').hidden = !list.length;
       // dica quando só há vozes sintéticas antigas no aparelho
       hint.hidden = !list.length ? false : !!(cur && N.isNatural(cur));
+      root.querySelector('[data-a=opts]').classList.toggle('dot', !hint.hidden);
     }
     function setSpeaking(v) {
       speaking = v;
@@ -668,6 +791,8 @@
     voiceSel.onchange = function () { N.setPref('voice', voiceSel.value); fillVoices(); if (speaking) narrate(); };
     autoChk.onchange = function () { N.setPref('auto', autoChk.checked); };
     if (!N.supported) voiceBtn.classList.add('unavailable');
+    const gear = root.querySelector('[data-a=opts]'), optsBox = root.querySelector('.ls-narr-opts');
+    gear.onclick = function () { const open = optsBox.hidden; optsBox.hidden = !open; gear.setAttribute('aria-expanded', String(open)); gear.classList.toggle('on', open); };
 
     function go(i) {
       idx = Math.max(0, Math.min(LAST, i));
@@ -721,5 +846,5 @@
     return function () { document.removeEventListener('keydown', onKey); global.removeEventListener('resize', onResize); offNarr(); N.stop(true); };
   }
 
-  global.Lessons = { LESSONS: L, MAP: MAP, PACKS: PACKS, registerPack: registerPack, packOf: packOf, forExercise: forExercise, narration: narration, mount: mount, miniTable: miniTable, occurrence: occurrence };
+  global.Lessons = { LESSONS: L, MAP: MAP, PACKS: PACKS, registerPack: registerPack, addPlus: addPlus, plusOf: plusOf, findLine: findLine, twoTone: twoTone, flowHtml: flowHtml, resumoHtml: resumoHtml, PLUS: PLUS, packOf: packOf, forExercise: forExercise, narration: narration, mount: mount, miniTable: miniTable, occurrence: occurrence };
 })(typeof window !== 'undefined' ? window : globalThis);

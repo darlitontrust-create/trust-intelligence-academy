@@ -126,7 +126,8 @@
     const pos = ix.order.indexOf(key), prev = ix.order[pos - 1], next = ix.order[pos + 1], p = prog(t.id), fav = !!p.library.fav[key];
     view.innerHTML =
       '<nav class="lib-crumbs"><a href="#conteudo">' + icon('chevL') + 'Biblioteca</a><span class="muted sm">Nível ' + LV[it.group.lv] + ' · Etapa ' + it.group.stage + ' · aula ' + (pos + 1) + ' de ' + ix.order.length + '</span>' +
-        '<button class="btn btn-ghost sm lib-fav-b' + (fav ? ' on' : '') + '" data-fav="' + esc(key) + '" aria-pressed="' + fav + '">' + icon('star') + '<span>' + (fav ? 'Favorita' : 'Favoritar') + '</span></button></nav>' +
+        '<span class="lib-crumb-r"><button class="btn btn-ghost sm" id="lib-sheet">' + icon('list') + '<span>Ficha-resumo</span></button>' +
+        '<button class="btn btn-ghost sm lib-fav-b' + (fav ? ' on' : '') + '" data-fav="' + esc(key) + '" aria-pressed="' + fav + '">' + icon('star') + '<span>' + (fav ? 'Favorita' : 'Favoritar') + '</span></button></span></nav>' +
       '<div id="lib-host"></div>' +
       '<nav class="lib-pager">' + (prev ? '<a class="btn btn-ghost" href="#aula-' + encodeURIComponent(prev) + '">' + icon('chevL') + '<span><small>Anterior</small>' + esc(ix.byKey[prev].les.titulo) + '</span></a>' : '<span></span>') +
         (next ? '<a class="btn btn-ghost next" href="#aula-' + encodeURIComponent(next) + '"><span><small>Próxima</small>' + esc(ix.byKey[next].les.titulo) + '</span>' + icon('chevR') + '</a>' : '') + '</nav>';
@@ -138,6 +139,7 @@
       onClose: function () { location.hash = 'conteudo'; },
     });
     setCleanup(cleanup);
+    view.querySelector('#lib-sheet').onclick = function () { openSheet(t, it.les, it.exs[0]); };
     const fb = view.querySelector('[data-fav]');
     fb.onclick = function () {
       if (p.library.fav[key]) delete p.library.fav[key]; else p.library.fav[key] = true;
@@ -148,17 +150,52 @@
     setTimeout(function () { const l = view.querySelector('.lesson'); if (l) l.focus({ preventScroll: true }); }, 50);
   }
 
+  /* ---------------------------- Ficha-resumo ---------------------------- */
+  /** Uma tela com o essencial da aula: lado a lado (ou sintaxe), fluxo, objetivos e resumo. */
+  function sheetHtml(t, les, ex) {
+    const L = global.Lessons, pack = L.PACKS[t.id], px = L.plusOf(ex, les), R = global.UI.rich;
+    const code = function (c) { return pack.codeHtml(global.CodeFormat && /^(sql|excel|powerbi|python)$/.test(t.id) ? global.CodeFormat.lesson(c, t.id) : c); };
+    const isCode = /^(sql|excel|powerbi|python|powerquery)$/.test(t.id);
+    const col = function (c, k) { return '<div class="ls-vs-c ' + k + '"><div class="ls-vs-h"><b>' + R(c.h) + '</b><span>' + R(c.d) + '</span></div>' + (c.c ? '<div class="ls-vs-b">' + (isCode ? '<pre class="code-block">' + code(c.c) + '</pre>' : '<p class="ls-vs-ex">' + R(c.c) + '</p>') + '</div>' : '') + '</div>'; };
+    return '<article class="sheet"><header class="sheet-h"><h2 class="ls-title sm">' + L.twoTone(px.v ? px.v.t : les.titulo, px.v ? String(px.v.t).split(/\s+[×x]\s+/)[0] : les.kw) + '</h2><span class="tag">' + esc(t.short || t.nome) + ' · Ficha-resumo</span></header>' +
+      (px.v ? '<div class="ls-vs">' + col(px.v.a, 'a') + col(px.v.b, 'b') + '</div>' : '<p class="sum-idea">' + R(les.ideia) + '</p><pre class="code-block">' + code(les.sintaxe) + '</pre>') +
+      L.flowHtml(px.f) +
+      (px.o && px.o.length ? '<div class="sheet-goals"><h3>Você deve saber</h3><ul>' + px.o.map(function (g) { return '<li>' + R(g) + '</li>'; }).join('') + '</ul></div>' : '') +
+      '<div class="sheet-warn"><h3>Atenção</h3><ul>' + les.cuidados.slice(0, 2).map(function (c) { return '<li>' + R(c) + '</li>'; }).join('') + '</ul></div>' +
+      L.resumoHtml((px.v && px.v.r) || px.r || les.notas[0]) + '</article>';
+  }
+  function openSheet(t, les, ex) {
+    const m = global.UI.modal('<div class="sheet-wrap lesson">' + sheetHtml(t, les, ex) + '<div class="sheet-act"><button class="btn btn-primary sm" id="sheet-print">' + icon('printer') + 'Imprimir ou salvar PDF</button></div></div>', { wide: true });
+    m.el.querySelector('#sheet-print').onclick = function () {
+      const area = document.getElementById('print-area');
+      area.className = 'doc';
+      area.innerHTML = '<div class="print-doc"><header><b>Trust Intelligence Academy</b><span>' + esc(t.nome) + '</span></header>' + sheetHtml(t, les, ex) + '</div>';
+      document.body.classList.add('printing', 'printing-doc');
+      setTimeout(function () { global.print(); document.body.classList.remove('printing', 'printing-doc'); area.className = ''; area.innerHTML = ''; }, 200);
+    };
+  }
+
   /* ------------------------------- Resumo ------------------------------- */
   function summaryHtml(t, g) {
     const ix = index(t.id), pack = global.Lessons.PACKS[t.id], R = global.UI.rich;
     return g.keys.map(function (k, n) {
       const les = ix.byKey[k].les;
+      const px = global.Lessons.plusOf({ track: t.id }, les);
       return '<article class="sum-les"><h2><span>' + (n + 1) + '</span>' + esc(les.titulo) + '</h2>' +
-        '<p class="sum-idea">' + R(les.ideia) + '</p>' +
+        '<p class="sum-idea">' + R(les.ideia) + '</p>' + (px.r ? '<p class="sum-res"><b>Em resumo:</b> ' + R(px.r) + '</p>' : '') +
         '<div class="sum-cols"><div><h3>' + esc(pack.syntaxTitle || 'Como se escreve') + '</h3><pre class="code-block">' + pack.codeHtml(global.CodeFormat && /^(sql|excel|powerbi|python)$/.test(t.id) ? global.CodeFormat.lesson(les.sintaxe, t.id) : les.sintaxe) + '</pre></div>' +
         '<div><h3>Pontos-chave</h3><ul>' + les.notas.map(function (x) { return '<li>' + R(x) + '</li>'; }).join('') + '</ul>' +
         '<h3>Cuidados</h3><ul class="warn">' + les.cuidados.map(function (x) { return '<li>' + R(x) + '</li>'; }).join('') + '</ul></div></div></article>';
     }).join('');
+  }
+  /** Desafio da etapa: o último exercício da etapa, o que junta os conteúdos dela. */
+  function stageChallenge(t, lv, g) {
+    const bank = global.Tracks.bankOf(t.id), e = bank && bank.EXERCISES.find(function (x) { return x.level === lv && x.pos === g.range[1]; });
+    if (!e) return '';
+    const R = global.UI.rich;
+    return '<section class="ls-mini stage-ch"><div class="ls-mini-h">' + icon('flag') + '<b>Desafio da etapa</b><span class="tag d-' + e.diff + '">' + esc(e.levelName) + ' ' + e.pos + '</span></div>' +
+      '<h4>' + esc(e.n) + '</h4><p>' + R(e.s) + '</p><p class="ls-mini-g"><b>Missão</b> ' + R(e.g) + '</p>' +
+      '<a class="btn btn-primary sm" href="#ex-' + e.id + '">' + icon('play') + 'Encarar o desafio</a></section>';
   }
   function summary(view, lv, stage) {
     const t = global.Tracks.active(), ix = index(t.id);
@@ -169,6 +206,7 @@
       '<nav class="lib-crumbs"><a href="#conteudo">' + icon('chevL') + 'Biblioteca</a><span class="muted sm">' + g.keys.length + ' aulas · exercícios ' + g.range[0] + ' a ' + g.range[1] + '</span>' +
         '<button class="btn btn-primary sm" id="sum-print">' + icon('printer') + 'Imprimir ou salvar PDF</button></nav>' +
       '<section class="page-h stack"><p class="eyebrow">' + esc(t.nome) + '</p><h1>' + esc(title) + '</h1><p class="muted">O essencial de cada aula da etapa, para revisar antes da prova do certificado ou dos desafios de skills.</p></section>' +
+      stageChallenge(t, lv, g) +
       '<div class="sum-doc glass">' + summaryHtml(t, g) + '</div>';
     view.querySelector('#sum-print').onclick = function () {
       const area = document.getElementById('print-area');

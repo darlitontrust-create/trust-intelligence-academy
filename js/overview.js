@@ -231,7 +231,7 @@
       sum.map(function (s) {
         const p = withTrack(s.t.id, function () { return st.progress.achievements; });
         const got = s.achGot.slice().sort(function (a, b) { return p[a.key] < p[b.key] ? 1 : -1; });
-        return '<section class="card glass ov-ach"' + tv(s.t) + '><header class="card-h"><h2><span class="hub-ic sm">' + icon(s.t.icon) + '</span>' + esc(s.t.nome) + '</h2>' +
+        return '<section class="card glass ov-ach"' + tv(s.t) + '><header class="card-h ov-ach-h"><h2><span class="hub-ic sm">' + icon(s.t.icon) + '</span><span class="nm-l">' + esc(s.t.nome) + '</span><span class="nm-s">' + esc(s.t.short) + '</span></h2>' +
           '<a class="btn btn-quiet sm" href="#conquistas" data-go="' + s.t.id + '|conquistas">Ver as ' + s.achAll.length + icon('chevR') + '</a></header>' +
           (got.length ? '<div class="ach-grid compact">' + got.map(function (x, i) { return '<div class="ach glass on' + (i >= 6 ? ' ach-more' : i === 5 ? ' ach-6th' : '') + '"' + (i >= 6 ? ' hidden' : '') + '><div class="ach-ic">' + icon(x.icon) + '</div><div><b>' + esc(x.nome) + '</b><p>' + esc(x.desc) + '</p><span class="muted sm">Desbloqueada em ' + fmtDate(p[x.key]) + '</span></div></div>'; }).join('') + '</div>' +
             (got.length > 5 ? '<button type="button" class="btn btn-ghost sm ov-ach-all' + (got.length === 6 ? ' m-only' : '') + '" data-all="' + got.length + '" aria-expanded="false">Ver todas as ' + got.length + ' desbloqueadas' + icon('chevR') + '</button>' : '')

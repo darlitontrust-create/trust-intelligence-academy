@@ -1,0 +1,233 @@
+/* =====================================================================
+   plus-es.js — Blocos extras das aulas de Estatística Aplicada
+   ===================================================================== */
+(function (global) {
+  'use strict';
+  global.Lessons.addPlus('estatistica', {
+    tipos: {
+      o: ['Separar variáveis qualitativas e quantitativas', 'Diferenciar discretas e contínuas', 'Escolher a análise pelo tipo da variável'],
+      v: { t: 'Qualitativa × quantitativa', s: 'O tipo da variável decide a análise.',
+        a: { h: 'Qualitativa', d: 'Categorias', u: ['Contagens e %', 'Gráfico de barras'], c: 'canal, cidade, status do pedido' },
+        b: { h: 'Quantitativa', d: 'Números com sentido de medida', u: ['Média, mediana, desvio', 'Histograma'], c: 'valor do pedido, prazo, itens' },
+        r: 'CEP e código de produto são números, mas são qualitativos.' },
+      e: { q: 'O CEP é um número, então posso calcular a média dos CEPs.', y: 'CEP é um código: não mede nada.', x: 'Trate códigos como categorias.' },
+      r: 'Primeiro o tipo da variável, depois a análise.',
+    },
+    amostra: {
+      o: ['Diferenciar população e amostra', 'Diferenciar parâmetro e estatística', 'Reconhecer uma amostra enviesada'],
+      v: { t: 'Parâmetro × estatística', s: 'Da população ou da amostra?',
+        a: { h: 'Parâmetro', d: 'Descreve a população inteira', u: ['Geralmente desconhecido'], c: 'μ: ticket médio de todos os clientes' },
+        b: { h: 'Estatística', d: 'Calculada na amostra', u: ['Estima o parâmetro'], c: 'x̄: ticket médio de 400 clientes sorteados' },
+        r: 'Usamos a estatística para estimar o parâmetro.' },
+      e: { q: 'Pesquisamos só quem respondeu ao e-mail; isso representa todos os clientes.', y: 'Quem responde costuma ser diferente de quem ignora: a amostra é enviesada.', x: 'Sorteie a amostra e acompanhe quem não respondeu.' },
+      r: 'Amostra boa é a que se parece com a população.',
+    },
+    freq: {
+      o: ['Montar tabelas de frequência absoluta e relativa', 'Calcular a frequência acumulada', 'Agrupar valores em faixas'],
+      f: ['Tabela de frequência', 'contar|absoluta', 'dividir pelo total|relativa', '*somar|acumulada'],
+      r: 'A frequência relativa permite comparar grupos de tamanhos diferentes.',
+    },
+    prop: {
+      o: ['Calcular proporções e porcentagens', 'Calcular a variação percentual', 'Diferenciar pontos percentuais de variação %'],
+      v: { t: 'p.p. × %', s: 'A taxa foi de 2,5% para 3,0%.',
+        a: { h: 'Pontos percentuais', d: 'Diferença entre as taxas', u: ['Comparar taxas'], c: '3,0 − 2,5 = 0,5 p.p.' },
+        b: { h: 'Variação %', d: 'Mudança relativa', u: ['Comparar crescimento'], c: '(3,0 − 2,5) ÷ 2,5 = 20%' },
+        r: 'Diga os dois: subiu 0,5 p.p. (20%).' },
+      r: 'Variação % = (novo − antigo) ÷ antigo.',
+    },
+    centro: {
+      o: ['Calcular média, mediana e moda', 'Escolher a medida certa para cada dado', 'Reconhecer o efeito dos extremos'],
+      v: { t: 'Média × mediana', s: 'Um salário de diretor muda a média, não a mediana.',
+        a: { h: 'Média', d: 'Soma ÷ quantidade', u: ['Dados simétricos', 'Totais e projeções'], c: '(2 + 3 + 3 + 4 + 18) ÷ 5 = 6' },
+        b: { h: 'Mediana', d: 'O valor do meio', u: ['Salários, preços, prazos', 'Dados com extremos'], c: '2, 3, 3, 4, 18 → 3' },
+        r: 'Média bem acima da mediana indica extremos à direita.' },
+      r: 'A mediana resiste aos extremos; a média não.',
+    },
+    ponderada: {
+      o: ['Calcular a média ponderada', 'Saber quando os pesos importam', 'Evitar a média simples de taxas'],
+      e: { q: 'A loja A converte 4% e a B 2%; a conversão geral é 3%.', y: 'As lojas têm volumes diferentes: a média simples ignora os pesos.', x: 'Some as compras e divida pelo total de visitas.' },
+      r: 'Média ponderada = Σ(valor × peso) ÷ Σpesos.',
+    },
+    dispersao: {
+      o: ['Medir a dispersão com amplitude e desvio padrão', 'Comparar variabilidades com o CV', 'Entender por que a média não basta'],
+      f: ['Desvio padrão', 'média', 'distância de cada valor', '*elevar ao quadrado e tirar a média', '!raiz'],
+      e: { q: 'As duas transportadoras têm prazo médio de 4 dias, então são iguais.', y: 'Uma pode entregar sempre em 4 dias e a outra entre 1 e 9.', x: 'Compare também o desvio padrão.' },
+      r: 'Média diz o centro; desvio diz o quanto se pode confiar nele.',
+    },
+    quartis: {
+      o: ['Calcular quartis e o IQR', 'Ler um boxplot', 'Usar percentis para metas'],
+      f: ['Boxplot', 'mínimo', 'Q1|25%', '*mediana|50%', 'Q3|75%', 'máximo'],
+      r: 'Metade dos dados está entre Q1 e Q3.',
+    },
+    histograma: {
+      o: ['Ler a forma da distribuição', 'Reconhecer assimetria e dois picos', 'Escolher a largura das faixas'],
+      e: { q: 'O histograma tem dois picos; deve ser um erro dos dados.', y: 'Dois picos costumam indicar dois grupos misturados.', x: 'Separe os grupos (canal, região) e analise cada um.' },
+      r: 'O formato da distribuição decide qual resumo usar.',
+    },
+    outlier: {
+      o: ['Detectar outliers com a regra 1,5·IQR', 'Investigar antes de remover', 'Decidir o que fazer com o valor extremo'],
+      f: ['Diante de um outlier', 'detectar', '*investigar a causa', 'corrigir, manter ou separar', '!documentar'],
+      e: { q: 'Valor extremo é erro: vou apagar.', y: 'Pode ser uma venda corporativa legítima, que é informação valiosa.', x: 'Investigue a causa; só remova erros comprovados.' },
+      r: 'Outlier é um aviso para investigar, não uma ordem para apagar.',
+    },
+    escorez: {
+      o: ['Calcular o escore Z', 'Comparar valores de escalas diferentes', 'Interpretar o sinal e o tamanho do Z'],
+      r: 'Z = (x − média) ÷ desvio: quantos desvios o valor está da média.',
+    },
+    graficos: {
+      o: ['Escolher o gráfico pela pergunta', 'Usar barras, linhas, histograma e dispersão', 'Evitar gráficos que distorcem'],
+      v: { t: 'Barras × histograma', s: 'Parecem iguais, respondem perguntas diferentes.',
+        a: { h: 'Barras', d: 'Compara categorias', u: ['Vendas por região'], c: 'Eixo X: categorias separadas' },
+        b: { h: 'Histograma', d: 'Mostra a distribuição de um número', u: ['Valor dos pedidos em faixas'], c: 'Eixo X: faixas contínuas, sem espaço' },
+        r: 'Categoria → barras. Distribuição de um número → histograma.' },
+      r: 'Pergunta primeiro, gráfico depois.',
+    },
+    nivel1: {
+      o: ['Montar um relatório descritivo completo', 'Combinar centro, dispersão e forma', 'Apontar outliers e conclusões'],
+      f: ['Relatório descritivo', 'n', 'centro', 'dispersão', 'forma', '*outliers', '!conclusão'],
+      r: 'Descrever bem os dados vem antes de qualquer teste.',
+    },
+    prob: {
+      o: ['Calcular probabilidades simples', 'Usar as regras do E e do OU', 'Usar o complementar'],
+      v: { t: 'Regra do E × regra do OU', s: 'Multiplicar ou somar?',
+        a: { h: 'E (independentes)', d: 'Multiplica', u: ['Dois eventos ao mesmo tempo'], c: 'P(A e B) = P(A) × P(B)' },
+        b: { h: 'OU', d: 'Soma e desconta a interseção', u: ['Pelo menos um dos eventos'], c: 'P(A ou B) = P(A) + P(B) − P(A e B)' },
+        r: '“Pelo menos um” costuma ser mais fácil pelo complementar: 1 − P(nenhum).' },
+      r: 'Probabilidade vai de 0 a 1.',
+    },
+    condicional: {
+      o: ['Calcular P(A|B) numa tabela cruzada', 'Comparar condicionais em grupos', 'Não confundir P(A|B) com P(B|A)'],
+      e: { q: 'Se 80% das fraudes usam cartão novo, 80% dos cartões novos são fraude.', y: 'P(cartão novo | fraude) não é P(fraude | cartão novo).', x: 'Calcule a condicional na linha certa da tabela.' },
+      r: 'Condicional é olhar só a linha (ou coluna) do que já se sabe.',
+    },
+    bayes: {
+      o: ['Inverter uma probabilidade condicional', 'Entender o peso da taxa-base', 'Avaliar alertas de fraude e testes'],
+      f: ['Bayes', 'taxa-base|P(A)', 'evidência|P(B|A)', '*atualização', '!P(A|B)'],
+      e: { q: 'O alerta acerta 95% das fraudes, então 95% dos alertas são fraude.', y: 'Com fraudes raras, a maioria dos alertas é falso positivo.', x: 'Use Bayes com a taxa-base de fraude.' },
+      r: 'Evento raro + teste imperfeito = muitos falsos positivos.',
+    },
+    esperado: {
+      o: ['Calcular o valor esperado', 'Comparar decisões pelo resultado médio', 'Considerar o risco além da média'],
+      r: 'E[X] = Σ valor × probabilidade: o resultado médio de repetir a decisão.',
+    },
+    binomial: {
+      o: ['Reconhecer uma situação binomial', 'Calcular P(X = k)', 'Calcular média e desvio da binomial'],
+      f: ['Condições da binomial', 'n tentativas', 'sucesso ou fracasso', 'mesmo p', '*independentes'],
+      r: 'Binomial conta sucessos em n tentativas iguais.',
+    },
+    poisson: {
+      o: ['Reconhecer contagens por intervalo', 'Calcular probabilidades com λ', 'Planejar capacidade com a Poisson'],
+      v: { t: 'Binomial × Poisson', s: 'As duas contam eventos.',
+        a: { h: 'Binomial', d: 'Sucessos em n tentativas', u: ['De 50 pedidos, quantos atrasam'], c: 'n e p conhecidos' },
+        b: { h: 'Poisson', d: 'Eventos num intervalo', u: ['Chamadas por minuto', 'Pedidos por hora'], c: 'taxa média λ' },
+        r: 'Tem um número fixo de tentativas? Binomial. É uma taxa por tempo? Poisson.' },
+      r: 'Poisson: média e variância iguais a λ.',
+    },
+    normal: {
+      o: ['Reconhecer a distribuição normal', 'Usar a regra 68-95-99,7', 'Calcular probabilidades com o escore Z'],
+      f: ['Regra empírica', '±1σ|68%', '*±2σ|95%', '!±3σ|99,7%'],
+      e: { q: 'Todo dado de negócio segue a normal.', y: 'Valores de pedido e prazos costumam ser assimétricos.', x: 'Olhe o histograma antes de assumir normalidade.' },
+      r: 'Na normal, 95% dos valores ficam a 2 desvios da média.',
+    },
+    tcl: {
+      o: ['Entender a distribuição das médias', 'Calcular o erro padrão', 'Saber por que o TCL sustenta os testes'],
+      v: { t: 'Desvio padrão × erro padrão', s: 'Variação dos dados ou da média?',
+        a: { h: 'Desvio padrão (σ)', d: 'Quanto os valores variam', u: ['Descrever os dados'], c: 'σ dos pedidos = R$ 120' },
+        b: { h: 'Erro padrão (σ ÷ √n)', d: 'Quanto a média da amostra varia', u: ['Intervalos de confiança', 'Testes'], c: '120 ÷ √100 = R$ 12' },
+        r: 'Quadruplicar a amostra corta o erro padrão pela metade.' },
+      r: 'Médias de amostras são quase normais, mesmo se os dados não forem.',
+    },
+    amostragem: {
+      o: ['Escolher o plano de amostragem', 'Usar estratificação para grupos importantes', 'Evitar amostras por conveniência'],
+      v: { t: 'Aleatória simples × estratificada', s: 'Sortear todos juntos ou por grupo?',
+        a: { h: 'Aleatória simples', d: 'Sorteio na lista inteira', u: ['População homogênea'], c: 'Sortear 400 de todos os clientes' },
+        b: { h: 'Estratificada', d: 'Sorteio dentro de cada grupo', u: ['Garantir regiões pequenas', 'Mais precisão'], c: 'Sortear por região, na proporção de cada uma' },
+        r: 'Estratifique quando um grupo pequeno não pode ficar de fora.' },
+      r: 'Como você sorteia decide se a amostra representa a população.',
+    },
+    ic: {
+      o: ['Calcular o intervalo de confiança da média', 'Interpretar 95% de confiança', 'Ver o efeito de n na largura do IC'],
+      e: { q: 'Há 95% de chance de a média real estar neste intervalo específico.', y: 'O 95% fala do método: 95% dos intervalos construídos assim contêm a média real.', x: 'Diga: estimamos a média entre A e B, com 95% de confiança.' },
+      r: 'IC = estimativa ± margem de erro.',
+    },
+    icprop: {
+      o: ['Calcular a margem de erro de uma proporção', 'Interpretar pesquisas de satisfação', 'Comparar proporções com ICs'],
+      r: 'Margem de erro = z × √(p̂(1 − p̂) ÷ n).',
+    },
+    tamanho: {
+      o: ['Calcular o tamanho da amostra', 'Definir a margem de erro desejada', 'Entender o custo da precisão'],
+      e: { q: 'Para metade da margem de erro, basta o dobro da amostra.', y: 'n cresce com o quadrado da precisão.', x: 'Metade da margem de erro exige quatro vezes a amostra.' },
+      r: 'Precisão custa caro: n cresce com o quadrado.',
+    },
+    hipotese: {
+      o: ['Formular H₀ e H₁', 'Interpretar o valor-p', 'Entender os erros tipo I e tipo II'],
+      f: ['Teste de hipótese', 'H₀ e H₁', 'dados', '*valor-p', '!decisão'],
+      v: { t: 'Erro tipo I × tipo II', s: 'Os dois jeitos de errar num teste.',
+        a: { h: 'Tipo I (α)', d: 'Rejeitar H₀ verdadeira: falso alarme', u: ['Lançar uma melhoria que não melhora'], c: 'Controlado por α = 5%' },
+        b: { h: 'Tipo II (β)', d: 'Não rejeitar H₀ falsa: efeito perdido', u: ['Descartar uma melhoria real'], c: 'Reduzido com amostras maiores' },
+        r: 'Diminuir um aumenta o outro, a não ser que a amostra cresça.' },
+      e: { q: 'p-valor alto prova que não há diferença.', y: 'O teste só diz que os dados não mostraram evidência suficiente.', x: 'Diga: não encontramos evidência de diferença.' },
+      r: 'p-valor pequeno: a diferença dificilmente é só acaso.',
+    },
+    testet: {
+      o: ['Escolher entre teste t de uma, duas amostras ou pareado', 'Interpretar a estatística t', 'Conferir as condições do teste'],
+      v: { t: 'Independente × pareado', s: 'Grupos diferentes ou as mesmas unidades?',
+        a: { h: 'Duas amostras', d: 'Grupos diferentes', u: ['Loja A × loja B'], c: 'Teste t de Welch' },
+        b: { h: 'Pareado', d: 'As mesmas unidades, antes e depois', u: ['Mesmas lojas antes e depois do treinamento'], c: 'Teste t nas diferenças' },
+        r: 'Dados em pares? Use o pareado: ele é mais sensível.' },
+      r: 'O teste t compara médias levando em conta a variação.',
+    },
+    ab: {
+      o: ['Planejar um teste A/B', 'Comparar duas taxas de conversão', 'Evitar parar o teste cedo demais'],
+      f: ['Teste A/B', 'hipótese', 'tamanho da amostra', 'sorteio A/B', '*coleta', '!teste de proporções'],
+      e: { q: 'No terceiro dia, B já estava ganhando: encerramos o teste.', y: 'Olhar e parar no primeiro resultado bom infla os falsos positivos.', x: 'Defina o tamanho da amostra antes e só decida no fim.' },
+      r: 'Teste A/B: sorteio, tamanho definido antes e decisão no fim.',
+    },
+    quiquadrado: {
+      o: ['Testar a associação entre variáveis categóricas', 'Calcular as frequências esperadas', 'Interpretar o resultado do χ²'],
+      f: ['Qui-quadrado', 'tabela observada', '*tabela esperada', 'distância χ²', '!valor-p'],
+      r: 'χ² compara o que aconteceu com o que se esperaria sem associação.',
+    },
+    anova: {
+      o: ['Comparar três ou mais médias com ANOVA', 'Entender variação entre e dentro dos grupos', 'Saber o que fazer depois de um resultado significativo'],
+      e: { q: 'Vou comparar as cinco lojas com dez testes t, dois a dois.', y: 'Cada teste tem 5% de chance de falso alarme; com dez, o risco total cresce muito.', x: 'Faça a ANOVA e, se der significativa, um teste post hoc.' },
+      r: 'ANOVA diz se alguma média difere; o post hoc diz qual.',
+    },
+    correlacao: {
+      o: ['Medir a força da relação linear com r', 'Interpretar o sinal e o tamanho de r', 'Separar correlação de causalidade'],
+      v: { t: 'Correlação × causalidade', s: 'Andar juntos não é causar.',
+        a: { h: 'Correlação', d: 'As variáveis variam juntas', u: ['Encontrar pistas'], c: 'Sorvete e afogamentos sobem no verão' },
+        b: { h: 'Causalidade', d: 'Uma variável provoca a outra', u: ['Decisões e investimentos'], c: 'Comprovada com experimento (teste A/B)' },
+        r: 'Para afirmar causa, é preciso um experimento ou um desenho que controle as outras causas.' },
+      r: 'r mede relação linear, de −1 a +1.',
+    },
+    regressao: {
+      o: ['Ajustar a reta y = a + b·x', 'Interpretar o coeficiente b e o R²', 'Prever com cuidado dentro da faixa dos dados'],
+      e: { q: 'A reta vale para qualquer valor de x, inclusive bem acima dos dados.', y: 'Fora da faixa observada, a relação pode mudar.', x: 'Preveja só dentro (ou perto) da faixa dos dados.' },
+      r: 'b diz quanto y muda quando x aumenta 1.',
+    },
+    multipla: {
+      o: ['Usar várias variáveis explicativas', 'Interpretar coeficientes “mantendo o resto constante”', 'Reconhecer a multicolinearidade'],
+      r: 'Cada coeficiente é o efeito da variável com as outras fixas.',
+    },
+    series: {
+      o: ['Separar tendência, sazonalidade e ruído', 'Comparar com o mesmo período do ano anterior', 'Reconhecer padrões semanais e anuais'],
+      f: ['Componentes da série', 'tendência', '*sazonalidade', 'ruído'],
+      r: 'Em negócios sazonais, compare com o mesmo período do ano anterior.',
+    },
+    previsao: {
+      o: ['Suavizar a série com médias móveis', 'Usar previsões ingênua e sazonal', 'Medir o erro da previsão'],
+      r: 'Toda previsão vem com um erro: meça e comunique.',
+    },
+    armadilhas: {
+      o: ['Reconhecer o paradoxo de Simpson', 'Evitar o viés de sobrevivência', 'Não confundir regressão à média com efeito'],
+      e: { q: 'As lojas com pior resultado melhoraram depois da visita do gerente: a visita funcionou.', y: 'Resultados extremos tendem a voltar para a média sozinhos.', x: 'Compare com um grupo de lojas que não recebeu a visita.' },
+      r: 'Antes de concluir, procure a explicação que não depende do seu efeito.',
+    },
+    final: {
+      o: ['Seguir o roteiro da pergunta à decisão', 'Escolher o teste ou modelo certo', 'Comunicar resultado, incerteza e recomendação'],
+      f: ['Da pergunta à decisão', 'pergunta', 'dados', 'descritiva', '*teste ou modelo', 'premissas', '!decisão'],
+      r: 'Estatística serve para decidir com menos risco.',
+    },
+  });
+})(typeof window !== 'undefined' ? window : globalThis);

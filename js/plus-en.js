@@ -1,0 +1,252 @@
+/* =====================================================================
+   plus-en.js — Blocos extras das aulas de Inglês para o Dia a Dia
+   Texto entre ⟦ ⟧ é inglês (destacado e narrado em inglês).
+   Títulos do lado a lado e etapas de fluxo vão sem ⟦ ⟧.
+   ===================================================================== */
+(function (global) {
+  'use strict';
+  global.Lessons.addPlus('ingles', {
+    hello: {
+      o: ['Cumprimentar conforme a hora do dia', 'Apresentar-se e perguntar o nome', 'Responder e devolver o ⟦How are you?⟧'],
+      v: { t: 'Nice to meet you × Nice to see you', s: 'Primeiro encontro ou reencontro?',
+        a: { h: '⟦Nice to meet you⟧', d: 'Primeira vez que você conhece a pessoa', u: ['Apresentações'], c: '⟦Hi, I\'m Ana. — Nice to meet you!⟧' },
+        b: { h: '⟦Nice to see you⟧', d: 'Você já conhece a pessoa', u: ['Reencontros'], c: '⟦Nice to see you again, Tom!⟧' },
+        r: '⟦Meet⟧ é conhecer; ⟦see⟧ é rever.' },
+      e: { q: '⟦Good night!⟧ (ao chegar numa reunião às 19h)', y: '⟦Good night⟧ é despedida ou “vou dormir”.', x: '⟦Good evening!⟧' },
+      r: 'Cumprimente, apresente-se e devolva a pergunta: a conversa começa.',
+    },
+    tobe: {
+      o: ['Usar ⟦am, is, are⟧ para ser e estar', 'Fazer perguntas invertendo o verbo', 'Dizer a idade com o verbo to be'],
+      f: ['Montando frases', 'afirmativa: I am', '*pergunta: Are you…?', 'negativa: I am not'],
+      e: { q: '⟦I have 30 years.⟧', y: 'Em inglês, idade se diz com o verbo to be.', x: '⟦I\'m 30.⟧' },
+      r: 'To be é o ser e o estar do inglês.',
+    },
+    numbers: {
+      o: ['Falar preços e números grandes', 'Soletrar nomes e e-mails', 'Diferenciar ⟦thirteen⟧ e ⟦thirty⟧'],
+      v: { t: 'thirteen × thirty', s: 'A sílaba forte muda tudo.',
+        a: { h: '⟦thirteen⟧ (13)', d: 'Força no fim: thir-TEEN', u: ['Números de 13 a 19'], c: '⟦It\'s thirteen dollars.⟧' },
+        b: { h: '⟦thirty⟧ (30)', d: 'Força no começo: THIR-ty', u: ['Dezenas'], c: '⟦It\'s thirty dollars.⟧' },
+        r: 'Na dúvida, confirme: ⟦one-three or three-zero?⟧' },
+      r: 'Preço em inglês: o símbolo vem antes e o ponto separa os centavos.',
+    },
+    time: {
+      o: ['Dizer as horas', 'Usar ⟦in, on, at⟧ com tempo', 'Falar dias e datas'],
+      v: { t: 'in × on × at', s: 'Três preposições de tempo.',
+        a: { h: '⟦on⟧', d: 'Dias e datas', u: ['⟦on Monday⟧, ⟦on May 5th⟧'], c: '⟦The meeting is on Friday.⟧' },
+        b: { h: '⟦at⟧', d: 'Horas exatas', u: ['⟦at 3 pm⟧, ⟦at noon⟧'], c: '⟦See you at 9.⟧' },
+        r: '⟦in⟧ fica para meses, anos e partes do dia: ⟦in May⟧, ⟦in the morning⟧.' },
+      r: 'At para a hora, on para o dia, in para o mês.',
+    },
+    routine: {
+      o: ['Falar da rotina com o presente simples', 'Colocar o -s na terceira pessoa', 'Usar advérbios de frequência'],
+      e: { q: '⟦She work from home.⟧', y: 'Na terceira pessoa do singular, o verbo leva -s.', x: '⟦She works from home.⟧' },
+      r: 'He, she, it: verbo com -s.',
+    },
+    cafe: {
+      o: ['Pedir comida e bebida com educação', 'Perguntar sobre o cardápio', 'Pedir a conta'],
+      f: ['No restaurante', 'mesa', 'pedido', 'durante', '*conta'],
+      e: { q: '⟦I want a coffee.⟧', y: 'Soa direto demais para um pedido.', x: '⟦Could I have a coffee, please?⟧ ou ⟦I\'d like a coffee.⟧' },
+      r: '⟦I\'d like…⟧ e ⟦Could I have…?⟧ são os pedidos educados.',
+    },
+    shopping: {
+      o: ['Perguntar preço, tamanho e cor', 'Pedir para experimentar', 'Trocar e devolver produtos'],
+      r: '⟦Can I try it on?⟧ e ⟦Do you have it in a medium?⟧ resolvem quase toda compra.',
+    },
+    directions: {
+      o: ['Pedir direções', 'Entender direções com ⟦turn⟧, ⟦go straight⟧ e ⟦next to⟧', 'Confirmar o caminho'],
+      f: ['Pedindo direções', 'licença', 'pergunta', '*instruções', 'confirmação'],
+      r: 'Repita a direção para confirmar: ⟦So, left and then straight?⟧',
+    },
+    thereis: {
+      o: ['Dizer o que existe com ⟦there is⟧ e ⟦there are⟧', 'Fazer perguntas com ⟦Is there…?⟧', 'Usar ⟦some⟧ e ⟦any⟧'],
+      v: { t: 'there is × there are', s: 'Singular ou plural.',
+        a: { h: '⟦there is⟧', d: 'Uma coisa', u: ['Singular e incontáveis'], c: '⟦There is a pharmacy near here.⟧' },
+        b: { h: '⟦there are⟧', d: 'Várias coisas', u: ['Plural'], c: '⟦There are two restaurants.⟧' },
+        r: 'Não use ⟦have⟧ para dizer que algo existe num lugar.' },
+      e: { q: '⟦Have a bank near here?⟧', y: '“Tem” no sentido de existir é ⟦there is⟧.', x: '⟦Is there a bank near here?⟧' },
+      r: '“Tem um…” vira ⟦There is a…⟧.',
+    },
+    can: {
+      o: ['Pedir favores com ⟦can⟧ e ⟦could⟧', 'Falar de habilidades', 'Pedir permissão'],
+      v: { t: 'can × could', s: 'Os dois pedem; um é mais educado.',
+        a: { h: '⟦Can you…?⟧', d: 'Pedido comum, informal', u: ['Amigos e colegas'], c: '⟦Can you help me?⟧' },
+        b: { h: '⟦Could you…?⟧', d: 'Pedido mais educado', u: ['Desconhecidos, clientes, chefes'], c: '⟦Could you send me the file?⟧' },
+        r: 'Na dúvida, use ⟦could⟧.' },
+      e: { q: '⟦Can you to help me?⟧', y: 'Depois de ⟦can⟧, o verbo vem sem ⟦to⟧.', x: '⟦Can you help me?⟧' },
+      r: 'Can e could: verbo logo depois, sem to.',
+    },
+    past: {
+      o: ['Contar o fim de semana no passado simples', 'Usar verbos regulares e irregulares', 'Fazer perguntas com ⟦did⟧'],
+      e: { q: '⟦Did you went to the beach?⟧', y: 'Com ⟦did⟧, o verbo volta para a forma básica.', x: '⟦Did you go to the beach?⟧' },
+      r: 'Na pergunta com did, o verbo não vai para o passado.',
+    },
+    plans: {
+      o: ['Falar de planos com ⟦going to⟧', 'Perguntar sobre planos', 'Diferenciar plano de decisão na hora'],
+      v: { t: 'going to × will', s: 'Plano feito ou decisão na hora?',
+        a: { h: '⟦going to⟧', d: 'Plano já decidido', u: ['Viagens marcadas', 'Intenções'], c: '⟦I\'m going to visit my parents.⟧' },
+        b: { h: '⟦will⟧', d: 'Decisão no momento ou promessa', u: ['Ofertas', 'Promessas'], c: '⟦I\'ll call you back.⟧' },
+        r: 'Já estava planejado? Going to. Decidiu agora? Will.' },
+      r: 'Going to fala de planos com intenção.',
+    },
+    phone: {
+      o: ['Atender e fazer ligações', 'Pedir para repetir ou falar mais devagar', 'Deixar recados'],
+      f: ['Ligação', 'cumprimentar', 'identificar-se', '*motivo', 'despedida'],
+      r: '⟦Could you speak more slowly, please?⟧ salva qualquer ligação.',
+    },
+    airport: {
+      o: ['Fazer o check-in e despachar a bagagem', 'Responder às perguntas da imigração', 'Entender avisos de embarque'],
+      f: ['No aeroporto', 'check-in', 'segurança', 'imigração', '*portão', '!embarque'],
+      r: 'Na imigração, respostas curtas e diretas.',
+    },
+    hotel: {
+      o: ['Fazer check-in e check-out', 'Pedir serviços', 'Reclamar de um problema no quarto'],
+      r: '⟦There\'s a problem with…⟧ abre qualquer reclamação no hotel.',
+    },
+    transport: {
+      o: ['Comprar passagens', 'Perguntar trajetos e horários', 'Usar ⟦take⟧ e ⟦get off⟧'],
+      e: { q: '⟦I go to work with the bus.⟧', y: 'Meio de transporte usa ⟦by⟧.', x: '⟦I go to work by bus.⟧' },
+      r: 'Pegar é ⟦take⟧; descer é ⟦get off⟧.',
+    },
+    health: {
+      o: ['Descrever sintomas', 'Pedir remédios na farmácia', 'Entender orientações do médico'],
+      r: '⟦I have a headache⟧: dor usa ⟦have⟧.',
+    },
+    experiences: {
+      o: ['Falar de experiências com o present perfect', 'Usar ⟦ever⟧ e ⟦never⟧', 'Saber quando usar o passado simples'],
+      v: { t: 'present perfect × past simple', s: 'Quando importa a data?',
+        a: { h: '⟦I have been to London.⟧', d: 'Experiência, sem dizer quando', u: ['⟦ever⟧, ⟦never⟧, ⟦already⟧'], c: '⟦Have you ever been to London?⟧' },
+        b: { h: '⟦I went to London in 2023.⟧', d: 'Momento definido no passado', u: ['⟦yesterday⟧, ⟦last year⟧, ⟦in 2023⟧'], c: '⟦When did you go?⟧' },
+        r: 'Disse quando? Passado simples.' },
+      e: { q: '⟦I have been to London last year.⟧', y: 'Com tempo definido no passado, use o passado simples.', x: '⟦I went to London last year.⟧' },
+      r: 'Present perfect conta a experiência; past simple conta o quando.',
+    },
+    compare: {
+      o: ['Comparar com ⟦-er⟧ e ⟦more⟧', 'Usar o superlativo', 'Usar ⟦better⟧ e ⟦worse⟧'],
+      v: { t: 'cheaper × more expensive', s: 'Palavras curtas ou longas.',
+        a: { h: '⟦-er than⟧', d: 'Adjetivos curtos', u: ['⟦cheap⟧, ⟦fast⟧, ⟦big⟧'], c: '⟦This plan is cheaper than that one.⟧' },
+        b: { h: '⟦more … than⟧', d: 'Adjetivos longos', u: ['⟦expensive⟧, ⟦comfortable⟧'], c: '⟦It\'s more expensive than the other.⟧' },
+        r: 'Nunca os dois juntos: ⟦more cheaper⟧ está errado.' },
+      e: { q: '⟦This hotel is more better.⟧', y: '⟦better⟧ já é a forma comparativa.', x: '⟦This hotel is better.⟧' },
+      r: 'Curtos com -er; longos com more.',
+    },
+    future: {
+      o: ['Fazer ofertas e promessas com ⟦will⟧', 'Decidir na hora', 'Fazer previsões'],
+      r: '⟦I\'ll…⟧ é a resposta rápida para ajudar ou prometer.',
+    },
+    advice: {
+      o: ['Dar conselhos com ⟦should⟧', 'Falar de regras com ⟦must⟧ e ⟦have to⟧', 'Dizer o que não é necessário'],
+      v: { t: 'mustn\'t × don\'t have to', s: 'Proibido ou opcional?',
+        a: { h: '⟦You mustn\'t…⟧', d: 'Proibido', u: ['Regras'], c: '⟦You mustn\'t smoke here.⟧' },
+        b: { h: '⟦You don\'t have to…⟧', d: 'Não é obrigatório', u: ['Opções'], c: '⟦You don\'t have to wear a suit.⟧' },
+        r: 'Confundir os dois muda totalmente o sentido.' },
+      r: 'Should aconselha; must e have to obrigam.',
+    },
+    smalltalk: {
+      o: ['Puxar conversa leve', 'Escolher temas seguros', 'Manter a conversa com perguntas'],
+      e: { q: '⟦How much do you earn?⟧ (para um colega novo)', y: 'Salário, idade, política e religião não são temas de small talk.', x: '⟦How was your weekend?⟧' },
+      r: 'Tempo, fim de semana e viagens são temas seguros.',
+    },
+    invites: {
+      o: ['Convidar alguém', 'Aceitar com entusiasmo', 'Recusar com educação e alternativa'],
+      f: ['Recusa educada', 'agradecer', '*desculpa e motivo', 'alternativa'],
+      r: 'Recusa educada: agradeça, explique e sugira outra data.',
+    },
+    complaints: {
+      o: ['Reclamar sem ser grosseiro', 'Explicar o problema e o que você quer', 'Pedir reembolso ou troca'],
+      f: ['Reclamação educada', 'contexto', 'problema', '*pedido', 'agradecimento'],
+      r: 'Diga o problema e o que você quer: ⟦I\'d like a refund, please.⟧',
+    },
+    phrasal1: {
+      o: ['Entender phrasal verbs comuns', 'Usar ⟦pick up⟧, ⟦turn on⟧ e ⟦find out⟧', 'Saber quando o objeto pode ir no meio'],
+      r: 'A partícula muda o sentido: ⟦look⟧ é olhar; ⟦look for⟧ é procurar.',
+    },
+    stories: {
+      o: ['Contar histórias com o past continuous', 'Combinar past continuous e past simple', 'Usar ⟦when⟧ e ⟦while⟧'],
+      v: { t: 'past continuous × past simple', s: 'O cenário e o acontecimento.',
+        a: { h: '⟦was -ing⟧', d: 'Ação em andamento: o cenário', u: ['O que estava acontecendo'], c: '⟦I was driving home…⟧' },
+        b: { h: 'passado simples', d: 'Ação curta que interrompe', u: ['O que aconteceu'], c: '⟦…when my phone rang.⟧' },
+        r: 'O longo fica no -ing; o que interrompe vai no passado simples.' },
+      r: 'While para o cenário; when para o acontecimento.',
+    },
+    meetings: {
+      o: ['Dar opinião em reuniões', 'Concordar e discordar com educação', 'Pedir esclarecimento'],
+      e: { q: '⟦You are wrong.⟧', y: 'Soa agressivo numa reunião.', x: '⟦I see your point, but I have a different view.⟧' },
+      r: 'Discorde da ideia, não da pessoa.',
+    },
+    emails: {
+      o: ['Estruturar um e-mail profissional', 'Escolher saudação e despedida', 'Usar frases prontas para pedidos'],
+      f: ['E-mail profissional', 'saudação', 'motivo', '*pedido', 'próximos passos', 'despedida'],
+      e: { q: '⟦I write to you for ask about the order.⟧', y: 'Tradução literal e estrutura errada.', x: '⟦I\'m writing to ask about the order.⟧' },
+      r: 'Motivo na primeira linha, pedido claro e despedida curta.',
+    },
+    data: {
+      o: ['Descrever subidas e quedas', 'Falar percentuais', 'Apresentar um gráfico em inglês'],
+      v: { t: 'increase by × increase to', s: 'Quanto subiu ou até onde subiu?',
+        a: { h: '⟦by⟧', d: 'O tamanho da variação', u: ['Diferença'], c: '⟦Sales increased by 12%.⟧' },
+        b: { h: '⟦to⟧', d: 'O valor final', u: ['Nível alcançado'], c: '⟦Sales increased to 2 million.⟧' },
+        r: 'By é a variação; to é o ponto de chegada.' },
+      r: 'Rise, fall, peak e remain stable descrevem quase todo gráfico.',
+    },
+    interview: {
+      o: ['Apresentar-se numa entrevista', 'Falar de experiências e conquistas', 'Fazer perguntas ao entrevistador'],
+      f: ['Resposta de entrevista', 'situação', 'tarefa', '*ação', '!resultado'],
+      r: 'Conte conquistas com números: situação, ação e resultado.',
+    },
+    negotiation: {
+      o: ['Fazer propostas', 'Pedir e oferecer concessões', 'Fechar o acordo'],
+      r: '⟦If you…, we can…⟧ é a frase-chave da negociação.',
+    },
+    conditionals: {
+      o: ['Falar de possibilidades reais', 'Falar de hipóteses', 'Montar frases com ⟦if⟧'],
+      v: { t: 'First × second conditional', s: 'Possível ou imaginário?',
+        a: { h: 'Primeira condicional', d: 'Possibilidade real', u: ['⟦If + presente, will⟧'], c: '⟦If it rains, we will stay home.⟧' },
+        b: { h: 'Segunda condicional', d: 'Hipótese pouco provável', u: ['⟦If + passado, would⟧'], c: '⟦If I won the lottery, I would travel.⟧' },
+        r: 'Real: presente + will. Imaginário: passado + would.' },
+      e: { q: '⟦If it will rain, we stay home.⟧', y: 'Depois de ⟦if⟧, não se usa ⟦will⟧.', x: '⟦If it rains, we will stay home.⟧' },
+      r: 'Nunca will depois de if.',
+    },
+    passive: {
+      o: ['Montar a voz passiva', 'Usar a passiva em relatórios', 'Saber quando quem fez não importa'],
+      v: { t: 'Voz ativa × passiva', s: 'Quem fez ou o que foi feito?',
+        a: { h: 'Ativa', d: 'Destaca quem fez', u: ['Responsabilidade clara'], c: '⟦The team fixed the bug.⟧' },
+        b: { h: 'Passiva', d: 'Destaca o que foi feito', u: ['Relatórios', 'Quem fez não importa'], c: '⟦The bug was fixed.⟧' },
+        r: 'Passiva = to be + particípio.' },
+      r: 'Em relatórios, a passiva põe o resultado em primeiro lugar.',
+    },
+    reported: {
+      o: ['Contar o que alguém disse', 'Recuar os tempos verbais', 'Usar ⟦say⟧ e ⟦tell⟧'],
+      v: { t: 'say × tell', s: 'Os dois contam; só um pede a pessoa.',
+        a: { h: '⟦say⟧', d: 'Sem dizer para quem', u: ['⟦She said that…⟧'], c: '⟦He said he was late.⟧' },
+        b: { h: '⟦tell⟧', d: 'Com a pessoa logo depois', u: ['⟦She told me that…⟧'], c: '⟦He told me he was late.⟧' },
+        r: 'Tell sempre tem alguém: ⟦tell me⟧, ⟦tell them⟧.' },
+      r: 'No discurso indireto, o verbo recua um tempo.',
+    },
+    falsefriends: {
+      o: ['Reconhecer falsos cognatos', 'Evitar mal-entendidos comuns', 'Usar a palavra certa em português e em inglês'],
+      v: { t: 'actually × currently', s: 'Parece “atualmente”, mas não é.',
+        a: { h: '⟦actually⟧', d: '“Na verdade”', u: ['Corrigir uma informação'], c: '⟦Actually, the meeting is at 3.⟧' },
+        b: { h: '⟦currently⟧', d: '“Atualmente”', u: ['O momento presente'], c: '⟦I\'m currently working in sales.⟧' },
+        r: 'Atualmente = currently. Na verdade = actually.' },
+      e: { q: '⟦I pretend to travel next year.⟧ (querendo dizer “pretendo”)', y: '⟦pretend⟧ significa fingir.', x: '⟦I intend to travel next year.⟧' },
+      r: 'Palavra parecida não é palavra igual.',
+    },
+    bizphrasal: {
+      o: ['Usar phrasal verbs do trabalho', 'Fazer follow-up de tarefas', 'Marcar e remarcar compromissos'],
+      r: '⟦follow up⟧, ⟦set up⟧ e ⟦put off⟧ aparecem em toda semana de trabalho.',
+    },
+    calls: {
+      o: ['Resolver problemas técnicos na chamada', 'Pedir para repetir', 'Conduzir a videochamada'],
+      r: '⟦You\'re on mute⟧ e ⟦You\'re breaking up⟧ são as frases mais úteis da chamada.',
+    },
+    feedback: {
+      o: ['Dar feedback construtivo', 'Receber feedback com profissionalismo', 'Suavizar mensagens difíceis'],
+      f: ['Feedback', 'situação', 'comportamento', '*impacto', 'próximo passo'],
+      r: 'Feedback bom descreve o fato e o impacto, não a pessoa.',
+    },
+    final: {
+      o: ['Juntar tudo num dia de trabalho em inglês', 'Escolher o tom certo para cada situação', 'Ganhar confiança para falar'],
+      f: ['Um dia de trabalho', 'small talk', 'reunião', 'e-mail', '*chamada', '!feedback'],
+      r: 'Fluência é ser entendido, não ser perfeito.',
+    },
+  });
+})(typeof window !== 'undefined' ? window : globalThis);
