@@ -300,6 +300,8 @@
     else if (page === 'conteudo') global.Library.render(view, S.state);
     else if (page === 'desafios') global.Skills.render(view, S.state);
     else if (h.indexOf('aula-') === 0) global.Library.reader(view, decodeURIComponent(h.slice(5)), function (c) { currentCleanup = c; });
+    else if (h === 'resumo-curso') global.Library.courseSummary(view);
+    else if (h.indexOf('resumo-') === 0 && h.split('-').length === 2) global.Library.levelSummary(view, +h.split('-')[1]);
     else if (h.indexOf('resumo-') === 0) global.Library.summary(view, +h.split('-')[1], +h.split('-')[2]);
     else if (page === 'certificado') global.Certificate.render(view, S.state);
     else global.Dashboard.render(view, S.state);

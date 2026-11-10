@@ -2060,3 +2060,51 @@ html.tk-on .lib-prog i { background: linear-gradient(90deg, var(--tc-a), var(--t
 .lib-pager .btn { min-width: 0; white-space: normal; text-align: left; }
 .lib-pager .btn span { min-width: 0; overflow-wrap: anywhere; }
 .lib-pager .btn.next { text-align: right; }
+/* resumos do nível e do curso */
+.lib-level-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.lib-level-h h2 { display: flex; align-items: center; gap: 10px; font-size: 18px; margin: 0; }
+.lib-level-h h2 .ic { color: var(--tc-a, var(--cyan)); }
+.lib-tools .lib-course-sum { flex: none; }
+.sum-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.sum-big { gap: 28px; }
+.sum-intro { color: var(--ink-2); font-size: 15.5px; line-height: 1.6; margin: 0; max-width: 72ch; }
+.sum-block { display: grid; gap: 14px; }
+.sum-block + .sum-block { border-top: 1px solid var(--line); padding-top: 24px; }
+.sum-block > h2 { display: flex; align-items: center; gap: 10px; font-size: 19px; margin: 0; flex-wrap: wrap; }
+.sum-block > h2 .ic { color: var(--tc-a, var(--cyan)); }
+.sum-block > h2 .btn { margin-left: auto; }
+.sum-stage { display: grid; gap: 8px; }
+.sum-stage h3 { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 6px 0 0; font-size: 15px; }
+.sum-stage h3 span { color: var(--tc-a, var(--cyan)); font: 700 12px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; }
+.sum-stage h3 small { color: var(--ink-3); font-weight: 500; font-size: 12.5px; }
+.sum-mini { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 10px; counter-reset: sm; }
+.sum-mini li { counter-increment: sm; position: relative; padding: 10px 12px 10px 40px; border: 1px solid var(--line); border-radius: 12px; background: rgba(5,7,13,.35); min-width: 0; }
+.sum-mini li::before { content: counter(sm); position: absolute; left: 10px; top: 10px; width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; font: 700 11px var(--f-mono); color: var(--tc-ink, #fff); background: linear-gradient(135deg, var(--tc-a, var(--blue)), var(--tc-b, var(--violet))); }
+.sum-mini li a { color: var(--ink); text-decoration: none; }
+.sum-mini li a:hover b { text-decoration: underline; }
+.sum-mini li b { font-size: 14px; }
+.sum-mini li p { margin: 4px 0 0; color: var(--ink-2); font-size: 13px; line-height: 1.45; }
+.sum-mini.compact li p { font-size: 12.5px; }
+.sum-vs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 10px; }
+.sum-vs-c { display: grid; gap: 4px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: rgba(5,7,13,.35); min-width: 0; }
+.sum-vs-c > b { font-family: var(--f-disp); font-weight: 400; font-size: 21px; line-height: 1.15; }
+.sum-vs-c > b .k { color: var(--tc-a, var(--cyan)); font-style: italic; }
+.sum-vs-c p { margin: 0; color: var(--ink-2); font-size: 13.5px; }
+.sum-vs-c small { color: var(--ink-3); font-size: 11.5px; }
+.sum-flows { display: grid; gap: 8px; }
+.sum-errs { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.sum-errs li { display: grid; grid-template-columns: minmax(0, 16em) minmax(0, 1fr); gap: 12px; padding: 9px 12px; border-left: 3px solid rgba(248,113,113,.6); background: rgba(248,113,113,.05); border-radius: 0 10px 10px 0; font-size: 13.5px; }
+.sum-errs b { font-size: 13px; }
+.sum-errs span { color: var(--ink-2); }
+.sum-ch { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.sum-ch a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px dashed rgba(164,107,255,.5); border-radius: 12px; color: var(--ink); text-decoration: none; }
+@media (max-width: 640px) {
+  .sum-errs li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .sum-block > h2 .btn { margin-left: 0; }
+}
+@media print {
+  body.printing-doc #print-area .sum-mini { grid-template-columns: 1fr 1fr; }
+  body.printing-doc #print-area .sum-mini li, body.printing-doc #print-area .sum-vs-c { break-inside: avoid; background: none; }
+  body.printing-doc #print-area .sum-block { break-inside: auto; }
+  body.printing-doc #print-area .ls-flow { break-inside: avoid; background: none; }
+}
