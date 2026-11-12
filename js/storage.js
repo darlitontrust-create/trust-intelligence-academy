@@ -273,6 +273,16 @@
   }
 
   function logout() { saveNow(); remote = null; setSession(null); state = null; uid = null; }
+  /** Exclusão de conta: apaga deste navegador os dados do usuário atual (e o rascunho de visitante, se for ele). */
+  function deleteLocal() {
+    const id = uid;
+    remote = null; state = null; uid = null; setSession(null);
+    if (!id) return;
+    [keyFor(id), keyFor(id) + ':bak', LEGACY_PREFIX + 'user:' + id, LEGACY_PREFIX + 'user:' + id + ':bak'].forEach(remove);
+    try {
+      Object.keys(global.localStorage).forEach(function (k) { if ((k.indexOf(PREFIX) === 0 || k.indexOf(LEGACY_PREFIX) === 0) && k.indexOf(':' + id) > 0) remove(k); });
+    } catch (e) { /* ignora */ }
+  }
   function setRemote(fn) { remote = fn; }
 
   /* ------------------------------- Eventos ------------------------------- */
@@ -290,6 +300,6 @@
     get uid() { return uid; },
     get available() { return available; },
     getSession: getSession, load: load, peek: peek, setRemote: setRemote, mergeStates: mergeStates, applyRemote: applyRemote, signature: signature, plain: plain, save: save, saveNow: saveNow, setTrack: setTrack,
-    exportBackup: exportBackup, importBackup: importBackup, resetProgress: resetProgress, logout: logout, on: on,
+    exportBackup: exportBackup, importBackup: importBackup, resetProgress: resetProgress, logout: logout, deleteLocal: deleteLocal, on: on,
   };
 })(window);

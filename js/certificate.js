@@ -11,7 +11,9 @@
      etapa → faixa lateral com hexágono do tema, estrelas da etapa e medalha
      nível → escudo com louros, estrelas e faixa
      final → escudo dourado com coroa, raios, louros e o logo
-   Carga horária: exercícios × 20 min.
+   Carga horária estimada: exercícios × 20 min.
+   • Imagem em 2× (3200 × 2260) para não pixelar ao ampliar; aviso de
+     curso livre na margem inferior; o código é identificador, não verificação.
    Ações: Baixar PDF (jsPDF), Imprimir, Compartilhar. Dentro de um
    visualizador que bloqueia arquivos, mostra a imagem para salvar.
    ===================================================================== */
@@ -23,6 +25,7 @@
 
   const MIN_PER_EX = 20;
   const W = 1600, H = 1130;
+  let SB = 1;   // shadowBlur não acompanha c.scale(): multiplica pela escala do desenho
   const F = {
     display: '"Instrument Serif", Georgia, serif',
     sans: 'Geist, "Segoe UI", system-ui, sans-serif',
@@ -162,7 +165,7 @@
     c.save();
     c.font = font; c.fillStyle = fill; c.textAlign = align || 'left'; c.textBaseline = 'alphabetic';
     if ('letterSpacing' in c) c.letterSpacing = (spacing || 0) + 'px';
-    if (glowColor) { c.shadowColor = glowColor; c.shadowBlur = blur || 18; }
+    if (glowColor) { c.shadowColor = glowColor; c.shadowBlur = (blur || 18) * SB; }
     c.fillText(s, x, y);
     c.restore();
   }
@@ -206,7 +209,7 @@
     for (let i = 0; i < n; i++) {
       const x = r() * W, y = r() * H, s = r() * 1.8 + 0.4;
       c.save(); c.globalAlpha = 0.25 + r() * 0.6; c.fillStyle = colors[i % colors.length];
-      c.shadowColor = c.fillStyle; c.shadowBlur = 8;
+      c.shadowColor = c.fillStyle; c.shadowBlur = (8) * SB;
       c.beginPath(); c.arc(x, y, s, 0, Math.PI * 2); c.fill(); c.restore();
     }
   }
@@ -223,10 +226,10 @@
   }
   function neonFrame(c, inset, r, grad, width, glowColor, blur) {
     c.save(); rr(c, inset, inset, W - inset * 2, H - inset * 2, r);
-    c.strokeStyle = grad; c.lineWidth = width; c.shadowColor = glowColor; c.shadowBlur = blur; c.stroke(); c.restore();
+    c.strokeStyle = grad; c.lineWidth = width; c.shadowColor = glowColor; c.shadowBlur = (blur) * SB; c.stroke(); c.restore();
   }
   function corners(c, inset, len, color, width) {
-    c.save(); c.strokeStyle = color; c.lineWidth = width; c.lineCap = 'round'; c.shadowColor = color; c.shadowBlur = 14;
+    c.save(); c.strokeStyle = color; c.lineWidth = width; c.lineCap = 'round'; c.shadowColor = color; c.shadowBlur = (14) * SB;
     [[inset, inset, 1, 1], [W - inset, inset, -1, 1], [inset, H - inset, 1, -1], [W - inset, H - inset, -1, -1]].forEach(function (p) {
       c.beginPath(); c.moveTo(p[0], p[1] + len * p[3]); c.lineTo(p[0], p[1]); c.lineTo(p[0] + len * p[2], p[1]); c.stroke();
     });
@@ -297,7 +300,7 @@
     c.beginPath();
     c.moveTo(cx - w / 2, cy - h / 2); c.quadraticCurveTo(cx, cy - h / 2 + h * 0.35, cx + w / 2, cy - h / 2);
     c.lineTo(cx + w / 2, cy + h / 2); c.quadraticCurveTo(cx, cy + h / 2 + h * 0.35, cx - w / 2, cy + h / 2); c.closePath();
-    c.fillStyle = fill; c.shadowColor = 'rgba(0,0,0,0.5)'; c.shadowBlur = 12; c.fill();
+    c.fillStyle = fill; c.shadowColor = 'rgba(0,0,0,0.5)'; c.shadowBlur = (12) * SB; c.fill();
     c.restore();
     txt(c, label, cx, cy + h * 0.22, font, textFill, 'center', spacing == null ? 3 : spacing);
   }
@@ -398,12 +401,12 @@
     c.save(); hexPath(c, cx, cy, r);
     const fill = c.createRadialGradient(cx, cy - r * 0.3, 0, cx, cy, r);
     fill.addColorStop(0, alpha(tr.color.b, 0.28)); fill.addColorStop(1, 'rgba(8,10,20,0.95)');
-    c.fillStyle = fill; c.fill(); c.strokeStyle = g; c.lineWidth = r * 0.07; c.shadowColor = tr.color.a; c.shadowBlur = 24; c.stroke(); c.restore();
+    c.fillStyle = fill; c.fill(); c.strokeStyle = g; c.lineWidth = r * 0.07; c.shadowColor = tr.color.a; c.shadowBlur = (24) * SB; c.stroke(); c.restore();
     c.save(); hexPath(c, cx, cy, r * 0.82); c.strokeStyle = alpha(tr.color.a, 0.4); c.lineWidth = 1.5; c.stroke(); c.restore();
-    c.save(); c.shadowColor = tr.color.a; c.shadowBlur = 18; trackSymbol(c, tr.id, cx, cy, r * 0.95, tr.color.a); c.restore();
+    c.save(); c.shadowColor = tr.color.a; c.shadowBlur = (18) * SB; trackSymbol(c, tr.id, cx, cy, r * 0.95, tr.color.a); c.restore();
     for (let i = 0; i < stars; i++) {
       const x = cx + (i - (stars - 1) / 2) * r * 0.42;
-      c.save(); starPath(c, x, cy - r - r * 0.3, r * 0.16); c.fillStyle = starColor || tr.color.a; c.shadowColor = starColor || tr.color.a; c.shadowBlur = 14; c.fill(); c.restore();
+      c.save(); starPath(c, x, cy - r - r * 0.3, r * 0.16); c.fillStyle = starColor || tr.color.a; c.shadowColor = starColor || tr.color.a; c.shadowBlur = (14) * SB; c.fill(); c.restore();
     }
   }
   /** Medalha geométrica (hexágono lapidado em Bronze, Prata ou Ouro) com fitas angulares na cor do tema. */
@@ -414,7 +417,7 @@
       c.moveTo(cx + sd * r * 0.18, cy - r * 0.55); c.lineTo(cx + sd * r * 0.56, cy - r * 1.55);
       c.lineTo(cx + sd * r * 0.96, cy - r * 1.55); c.lineTo(cx + sd * r * 0.6, cy - r * 0.5); c.closePath();
       c.fillStyle = lin(c, cx, cy - r * 1.6, cx, cy - r * 0.5, [[0, i ? tr.color.b : tr.color.a], [1, alpha(i ? tr.color.a : tr.color.b, 0.75)]]);
-      c.shadowColor = 'rgba(0,0,0,0.5)'; c.shadowBlur = 8; c.fill(); c.restore();
+      c.shadowColor = 'rgba(0,0,0,0.5)'; c.shadowBlur = (8) * SB; c.fill(); c.restore();
       c.save(); c.beginPath(); c.moveTo(cx + sd * r * 0.56, cy - r * 1.55); c.lineTo(cx + sd * r * 0.96, cy - r * 1.55);
       c.strokeStyle = alpha('#ffffff', 0.35); c.lineWidth = 2; c.stroke(); c.restore();
     });
@@ -425,7 +428,7 @@
     // corpo metálico
     c.save(); hexPath(c, cx, cy, r);
     c.fillStyle = lin(c, cx - r, cy - r, cx + r, cy + r, [[0, m.a], [0.45, m.b], [1, m.c]]);
-    c.shadowColor = alpha(m.b, 0.85); c.shadowBlur = 28; c.fill(); c.restore();
+    c.shadowColor = alpha(m.b, 0.85); c.shadowBlur = (28) * SB; c.fill(); c.restore();
     // facetas (lapidação): 6 triângulos alternando luz e sombra
     const ri = r * 0.8;
     for (let i = 0; i < 6; i++) {
@@ -440,7 +443,7 @@
     // núcleo com estrela
     c.save(); hexPath(c, cx, cy, r * 0.42); c.fillStyle = lin(c, cx, cy - r * 0.4, cx, cy + r * 0.4, [[0, m.c], [1, alpha(m.c, 0.75)]]); c.fill();
     c.strokeStyle = alpha(m.a, 0.9); c.lineWidth = r * 0.03; c.stroke(); c.restore();
-    c.save(); starPath(c, cx, cy + r * 0.02, r * 0.26); c.fillStyle = lin(c, cx, cy - r * 0.26, cx, cy + r * 0.26, [[0, '#ffffff'], [1, m.a]]); c.shadowColor = m.a; c.shadowBlur = 10; c.fill(); c.restore();
+    c.save(); starPath(c, cx, cy + r * 0.02, r * 0.26); c.fillStyle = lin(c, cx, cy - r * 0.26, cx, cy + r * 0.26, [[0, '#ffffff'], [1, m.a]]); c.shadowColor = m.a; c.shadowBlur = (10) * SB; c.fill(); c.restore();
     if (label !== false) {
       txt(c, 'MEDALHA', cx, cy + r + 30, '600 13px ' + F.mono, 'rgba(195,200,222,0.7)', 'center', 3);
       txt(c, m.name.toUpperCase(), cx, cy + r + 56, '700 20px ' + F.sans, m.b, 'center', 4, alpha(m.b, 0.5), 10);
@@ -457,7 +460,7 @@
     const halo = c.createRadialGradient(cx, cy, 0, cx, cy, s * 0.9);
     halo.addColorStop(0, alpha(tone.a, 0.28)); halo.addColorStop(1, 'rgba(0,0,0,0)');
     c.fillStyle = halo; c.fillRect(cx - s, cy - s, s * 2, s * 2);
-    c.save(); c.shadowColor = tone.a; c.shadowBlur = 12;
+    c.save(); c.shadowColor = tone.a; c.shadowBlur = (12) * SB;
     laurel(c, cx, cy + s * 0.02, s * 0.6, lin(c, cx - s, cy, cx + s, cy, [[0, tone.a], [1, tone.b]]), 8, s * 0.16);
     c.restore();
     const grad = lin(c, cx - s / 2, cy - s / 2, cx + s / 2, cy + s / 2, [[0, tone.a], [1, tone.b]]);
@@ -465,13 +468,13 @@
     const fill = c.createRadialGradient(cx, cy - s * 0.2, 0, cx, cy, s * 0.6);
     fill.addColorStop(0, alpha(tone.b, 0.35)); fill.addColorStop(1, 'rgba(8,10,20,0.96)');
     c.fillStyle = fill; c.fill();
-    c.strokeStyle = grad; c.lineWidth = s * 0.035; c.shadowColor = tone.b; c.shadowBlur = 30; c.stroke(); c.restore();
+    c.strokeStyle = grad; c.lineWidth = s * 0.035; c.shadowColor = tone.b; c.shadowBlur = (30) * SB; c.stroke(); c.restore();
     c.save(); shieldPath(c, cx, cy, s * 0.64, s * 0.82); c.strokeStyle = alpha('#ffffff', 0.35); c.lineWidth = 1.5; c.stroke(); c.restore();
     trackSymbol(c, global.Tracks.activeId(), cx, cy - s * 0.08, s * 0.3, '#ffffff');
     txt(c, String(level), cx, cy + s * 0.26, Math.round(s * 0.2) + 'px ' + F.display, '#ffffff', 'center', 0, tone.a, 20);
     for (let i = 0; i < 3; i++) {   // nível concluído = 3 etapas
       const x = cx + (i - 1) * s * 0.13;
-      c.save(); starPath(c, x, cy - s * 0.62, s * 0.05); c.fillStyle = tone.a; c.shadowColor = tone.a; c.shadowBlur = 14; c.fill(); c.restore();
+      c.save(); starPath(c, x, cy - s * 0.62, s * 0.05); c.fillStyle = tone.a; c.shadowColor = tone.a; c.shadowBlur = (14) * SB; c.fill(); c.restore();
     }
     ribbon(c, cx, cy + s * 0.56, s * 0.92, s * 0.16, grad, LEVEL_NAMES[level].toUpperCase(), '700 ' + Math.round(s * 0.06) + 'px ' + F.sans, '#0a0d18');
   }
@@ -489,16 +492,16 @@
     const halo = c.createRadialGradient(cx, cy, 0, cx, cy, s * 0.95);
     halo.addColorStop(0, 'rgba(255,210,122,0.35)'); halo.addColorStop(0.6, 'rgba(164,107,255,0.12)'); halo.addColorStop(1, 'rgba(0,0,0,0)');
     c.fillStyle = halo; c.fillRect(cx - s, cy - s, s * 2, s * 2);
-    c.save(); c.shadowColor = '#ffd27a'; c.shadowBlur = 16;
+    c.save(); c.shadowColor = '#ffd27a'; c.shadowBlur = (16) * SB;
     laurel(c, cx, cy + s * 0.02, s * 0.66, gold, 9, s * 0.17);
     c.restore();
     // escudo
-    c.save(); shieldPath(c, cx, cy, s * 0.8, s); c.fillStyle = gold; c.shadowColor = '#ffd27a'; c.shadowBlur = 36; c.fill(); c.restore();
+    c.save(); shieldPath(c, cx, cy, s * 0.8, s); c.fillStyle = gold; c.shadowColor = '#ffd27a'; c.shadowBlur = (36) * SB; c.fill(); c.restore();
     c.save(); shieldPath(c, cx, cy, s * 0.7, s * 0.88);
     const inner = c.createRadialGradient(cx, cy - s * 0.15, 0, cx, cy, s * 0.55);
     inner.addColorStop(0, '#1e2147'); inner.addColorStop(1, '#070812'); c.fillStyle = inner; c.fill();
     c.strokeStyle = lin(c, cx - s / 2, cy, cx + s / 2, cy, [[0, tr.color.a], [0.5, tr.color.b], [1, tr.color.a]]);
-    c.lineWidth = s * 0.018; c.shadowColor = tr.color.b; c.shadowBlur = 20; c.stroke(); c.restore();
+    c.lineWidth = s * 0.018; c.shadowColor = tr.color.b; c.shadowBlur = (20) * SB; c.stroke(); c.restore();
     // logo
     const lr = s * 0.24;
     if (logoImg.complete && logoImg.naturalWidth) {
@@ -514,11 +517,11 @@
       c.lineTo(cx + cw * p[0], cyb + chh * p[1]);
     });
     c.lineTo(cx + cw / 2, cyb); c.closePath();
-    c.fillStyle = gold; c.shadowColor = '#ffd27a'; c.shadowBlur = 20; c.fill(); c.restore();
+    c.fillStyle = gold; c.shadowColor = '#ffd27a'; c.shadowBlur = (20) * SB; c.fill(); c.restore();
     c.save(); rr(c, cx - cw / 2, cyb - chh * 0.05, cw, chh * 0.3, 4); c.fillStyle = gold; c.fill(); c.restore();
     [['#2fd8f0', -0.5, -1], ['#a46bff', 0, -1.15], ['#ff5ccf', 0.5, -1]].forEach(function (g) {
       c.save(); c.beginPath(); c.arc(cx + cw * g[1], cyb + chh * g[2], s * 0.028, 0, Math.PI * 2);
-      c.fillStyle = g[0]; c.shadowColor = g[0]; c.shadowBlur = 16; c.fill(); c.restore();
+      c.fillStyle = g[0]; c.shadowColor = g[0]; c.shadowBlur = (16) * SB; c.fill(); c.restore();
     });
     [-0.22, 0, 0.22].forEach(function (k, i) {
       c.save(); c.beginPath(); c.arc(cx + cw * k, cyb + chh * 0.1, s * 0.016, 0, Math.PI * 2); c.fillStyle = ['#4d7cff', '#ff5ccf', '#2fd8f0'][i]; c.fill(); c.restore();
@@ -572,7 +575,7 @@
     for (let i = 0; i < total; i++) {
       const x = cx + (i - (total - 1) / 2) * r * 2.7;
       c.save(); starPath(c, x, y, r);
-      if (i < filled) { c.fillStyle = color; c.shadowColor = color; c.shadowBlur = 16; c.fill(); }
+      if (i < filled) { c.fillStyle = color; c.shadowColor = color; c.shadowBlur = (16) * SB; c.fill(); }
       else { c.strokeStyle = alpha('#ffffff', 0.22); c.lineWidth = 2; c.stroke(); }
       c.restore();
     }
@@ -595,7 +598,7 @@
     for (let i = 0; i < 3; i++) {
       const sx = bx + i * (bw + gap);
       c.save(); rr(c, sx, y0 + 772, bw, 10, 5);
-      if (i < cert.stage) { c.fillStyle = lin(c, sx, 0, sx + bw, 0, [[0, t.a], [1, t.b]]); c.shadowColor = t.a; c.shadowBlur = 10; }
+      if (i < cert.stage) { c.fillStyle = lin(c, sx, 0, sx + bw, 0, [[0, t.a], [1, t.b]]); c.shadowColor = t.a; c.shadowBlur = (10) * SB; }
       else c.fillStyle = 'rgba(255,255,255,0.1)';
       c.fill(); c.restore();
       txt(c, 'Etapa ' + (i + 1), sx + bw / 2, y0 + 808, '500 14px ' + F.sans, i < cert.stage ? '#ffffff' : 'rgba(195,200,222,0.5)', 'center');
@@ -609,8 +612,8 @@
     rr(c, x0, y0, w, h, 24);
     c.fillStyle = '#0d1427'; c.fill();
     c.fillStyle = lin(c, 0, y0, 0, y0 + h, [[0, alpha(ca, 0.17)], [0.55, alpha(cb, 0.07)], [1, alpha(ca, 0.13)]]); c.fill();
-    c.strokeStyle = alpha(ca, 0.38); c.lineWidth = 1.5; c.shadowColor = alpha(ca, 0.5); c.shadowBlur = 18; c.stroke();
-    c.clip(); c.shadowBlur = 0; c.strokeStyle = alpha(ca, 0.05); c.lineWidth = 1;
+    c.strokeStyle = alpha(ca, 0.38); c.lineWidth = 1.5; c.shadowColor = alpha(ca, 0.5); c.shadowBlur = (18) * SB; c.stroke();
+    c.clip(); c.shadowBlur = (0) * SB; c.strokeStyle = alpha(ca, 0.05); c.lineWidth = 1;
     for (let k = -h; k < w + h; k += 22) { c.beginPath(); c.moveTo(x0 + k, y0); c.lineTo(x0 + k - h, y0 + h); c.stroke(); }
     c.fillStyle = lin(c, 0, y0, 0, y0 + h, [[0, ca], [1, cb]]); c.fillRect(x0, y0, 6, h);
     c.restore();
@@ -637,13 +640,13 @@
       ? [1, 2, 3].map(function (lv) { return { k: 'Nível ' + lv, n: LEVEL_NAMES[lv], m: MEDALS[lv] }; })
       : G.PROMOTIONS.filter(function (p) { return p.level === cert.level; }).map(function (p, i) { return { k: 'Etapa ' + (i + 1), n: p.nome }; });
     const nx = x0 + 70, top = y0 + 672, step = 78;
-    c.save(); c.strokeStyle = lin(c, 0, top, 0, top + step * 2, [[0, t.a], [1, t.b]]); c.lineWidth = 3; c.shadowColor = t.a; c.shadowBlur = 8;
+    c.save(); c.strokeStyle = lin(c, 0, top, 0, top + step * 2, [[0, t.a], [1, t.b]]); c.lineWidth = 3; c.shadowColor = t.a; c.shadowBlur = (8) * SB;
     c.beginPath(); c.moveTo(nx, top); c.lineTo(nx, top + step * 2); c.stroke(); c.restore();
     items.forEach(function (it, i) {
       const y = top + i * step;
       if (it.m) { drawMedal(c, nx, y + 4, 19, it.m, tr, false); }
       else {
-        c.save(); hexPath(c, nx, y, 20); c.fillStyle = lin(c, nx - 20, y - 20, nx + 20, y + 20, [[0, t.a], [1, t.b]]); c.shadowColor = t.a; c.shadowBlur = 14; c.fill(); c.restore();
+        c.save(); hexPath(c, nx, y, 20); c.fillStyle = lin(c, nx - 20, y - 20, nx + 20, y + 20, [[0, t.a], [1, t.b]]); c.shadowColor = t.a; c.shadowBlur = (14) * SB; c.fill(); c.restore();
         c.save(); c.strokeStyle = '#06111a'; c.lineWidth = 3.4; c.lineCap = 'round'; c.lineJoin = 'round';
         c.beginPath(); c.moveTo(nx - 8, y + 1); c.lineTo(nx - 2, y + 7); c.lineTo(nx + 9, y - 6); c.stroke(); c.restore();
       }
@@ -690,7 +693,7 @@
     });
     c.restore();
     // rodapé
-    const items = [['Data', new Date(cert.date || Date.now()).toLocaleDateString('pt-BR')], ['Exercícios', String(cert.exCount)], ['Carga horária', cert.hours], ['Prova', examTxt(cert)], ['Verificação', cert.code]];
+    const items = [['Data', new Date(cert.date || Date.now()).toLocaleDateString('pt-BR')], ['Exercícios', String(cert.exCount)], ['Carga estimada', cert.hours], ['Prova', examTxt(cert)], ['Código', cert.code]];
     const colW = maxW / 5;
     c.save(); c.strokeStyle = alpha(t.a, 0.25); c.beginPath(); c.moveTo(x, 880); c.lineTo(W - 130, 880); c.stroke(); c.restore();
     items.forEach(function (it, i) {
@@ -724,7 +727,7 @@
     const y = wrap(c, (cert.track.id === 'sixsigma' ? 'concluiu a formação no conteúdo de ' + cert.title + ' (' + cert.exCount + ' exercícios práticos do nível ' + t.name + ' da trilha ' + cert.track.nome + ')' : 'concluiu os ' + cert.exCount + ' exercícios práticos do nível ' + t.name + ' da trilha ' + cert.track.nome) + ', cumpriu as três etapas, foi aprovado na prova do nível e alcançou o cargo de ' + cert.role + '.', x, 612, maxW, 32, '21px ' + F.sans, 'rgba(232,234,246,0.9)', 'left');
     leftChips(c, cert.topics, x, y + 26, maxW, t, 2);
     const sw = (maxW - 4 * 12) / 5, sy = 818;
-    [['Exercícios', String(cert.exCount)], ['Carga horária', cert.hours], ['XP no nível', fmt(cert.xp) + ' XP'], ['Prova', examTxt(cert)], ['Data', new Date(cert.date || Date.now()).toLocaleDateString('pt-BR')]].forEach(function (st, i) {
+    [['Exercícios', String(cert.exCount)], ['Carga estimada', cert.hours], ['XP no nível', fmt(cert.xp) + ' XP'], ['Prova', examTxt(cert)], ['Data', new Date(cert.date || Date.now()).toLocaleDateString('pt-BR')]].forEach(function (st, i) {
       stat(c, x + i * (sw + 12), sy, sw, 92, st[0], st[1], i === 1 || i === 3 ? t.a : '#ffffff');
     });
     signature(c, x + maxW * 0.25, 1002, 'Coordenação Pedagógica', 'Trust Intelligence Academy', '#ffffff');
@@ -777,12 +780,14 @@
   function draw(st, cert, scale) {
     scale = scale || 1;
     const cv = document.createElement('canvas'); cv.width = Math.round(W * scale); cv.height = Math.round(H * scale);
-    const c = cv.getContext('2d'); c.scale(scale, scale);
+    const c = cv.getContext('2d'); c.scale(scale, scale); SB = scale;
     const person = personOf(st);
     cert.code = verificationCode(person.full + '|' + cert.id + '|' + (cert.date || ''));
     if (cert.type === 'stage') drawStage(c, cert, person);
     else if (cert.type === 'level') drawLevel(c, cert, person);
     else drawFinal(c, cert, person);
+    // aviso de curso livre, na margem inferior (fora do painel)
+    txt(c, 'Curso livre, sem reconhecimento do MEC. Certifica a conclusão das atividades na plataforma Trust Intelligence Academy.', W / 2, H - 46, '500 15px ' + F.sans, 'rgba(195,200,222,0.62)', 'center', 0.5);
     if (!cert.unlocked) {
       c.save(); c.translate(W / 2, H / 2); c.rotate(-0.28);
       c.fillStyle = 'rgba(255,255,255,0.08)'; c.font = '800 200px ' + F.sans; c.textAlign = 'center'; c.fillText('PRÉVIA', 0, 70); c.restore();
@@ -797,26 +802,28 @@
       '<p class="muted">Este ambiente bloqueia downloads e a janela de impressão. Clique com o botão direito na imagem (ou toque e segure no celular) e escolha "Salvar imagem". Rodando o projeto localmente, os botões funcionam normalmente.</p>' +
       '<img class="cert-img" src="' + dataUrl + '" alt="Certificado">', { wide: true });
   }
+  /** Escala de exportação: 2× (3200 × 2260 px) — nítido ao ampliar ou imprimir. */
+  const HI = 2;
   async function downloadPdf(st, cert) {
-    const url = draw(st, cert).toDataURL('image/png');
+    const cv = draw(st, cert, HI), url = cv.toDataURL('image/png'), jpg = cv.toDataURL('image/jpeg', 0.93);
     if (framed) return blockedNotice(url, 'Download');
     try {
       if (!global.jspdf) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
       const pdf = new global.jspdf.jsPDF({ orientation: 'landscape', unit: 'px', format: [W, H], hotfixes: ['px_scaling'] });
-      pdf.addImage(url, 'PNG', 0, 0, W, H);
+      pdf.addImage(jpg, 'JPEG', 0, 0, W, H);   // JPEG 2×: nítido e leve (~1–2 MB)
       pdf.save('certificado-' + cert.id + '.pdf');
       toast('PDF gerado.', 'success');
     } catch (e) { blockedNotice(url, 'Download'); }
   }
   function print(st, cert) {
-    const url = draw(st, cert).toDataURL('image/png');
+    const url = draw(st, cert, HI).toDataURL('image/png');
     if (framed) return blockedNotice(url, 'Impressão');
     document.getElementById('print-area').innerHTML = '<img src="' + url + '" alt="Certificado">';
     document.body.classList.add('printing');
     setTimeout(function () { global.print(); document.body.classList.remove('printing'); }, 150);
   }
   function share(st, cert) {
-    const text = 'Conquistei o ' + cert.kicker.toLowerCase() + ' "' + cert.title + '" na Trust Intelligence Academy: ' + cert.exCount + ' exercícios práticos, ' + cert.hours + ' de carga horária. Código ' + cert.code + '.';
+    const text = 'Conquistei o ' + cert.kicker.toLowerCase() + ' "' + cert.title + '" na Trust Intelligence Academy: ' + cert.exCount + ' exercícios práticos, ' + cert.hours + ' de carga horária estimada (curso livre). Código do certificado: ' + cert.code + '.';
     if (navigator.share && !framed) navigator.share({ title: cert.title, text: text }).catch(function () { copyText(text, 'Texto do certificado copiado.'); });
     else copyText(text, 'Texto do certificado copiado para compartilhar.');
   }
@@ -853,7 +860,7 @@
           '<dl class="cert-dl">' +
             '<div><dt>Medalha</dt><dd><span class="medal-dot m-' + cert.medal.name.toLowerCase() + '"></span>' + cert.medal.name + '</dd></div>' +
             '<div><dt>Exercícios</dt><dd>' + cert.exCount + '</dd></div>' +
-            '<div><dt>Carga horária</dt><dd>' + esc(cert.hours) + '</dd></div>' +
+            '<div><dt>Carga horária estimada</dt><dd>' + esc(cert.hours) + '</dd></div>' +
             '<div><dt>Cargo</dt><dd>' + esc(cert.role) + '</dd></div>' +
             '<div><dt>Prova</dt><dd>' + (cert.examScore != null ? cert.examScore + '/' + QUESTIONS + (cert.passed ? ' · aprovado' : '') : '—') + '</dd></div>' +
             '<div><dt>' + (cert.unlocked ? 'Data' : 'Progresso') + '</dt><dd>' + (cert.unlocked ? dateTxt(cert.date) : Math.min(cert.have, cert.need) + ' / ' + cert.need) + '</dd></div>' +
@@ -861,7 +868,7 @@
         '</div>' +
       '</div>', { wide: true });
     const img = m.el.querySelector('.cert-img');
-    fontsReady().then(function () { img.src = draw(st, cert).toDataURL('image/png'); });
+    fontsReady().then(function () { img.src = draw(st, cert, HI).toDataURL('image/png'); });
     if (cert.unlocked) {
       m.el.querySelector('[data-c=pdf]').onclick = function () { downloadPdf(st, cert); };
       m.el.querySelector('[data-c=print]').onclick = function () { print(st, cert); };

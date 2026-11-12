@@ -171,13 +171,7 @@
   }
   function openSheet(t, les, ex) {
     const m = global.UI.modal('<div class="sheet-wrap lesson">' + sheetHtml(t, les, ex) + '<div class="sheet-act"><button class="btn btn-primary sm" id="sheet-print">' + icon('printer') + 'Imprimir ou salvar PDF</button></div></div>', { wide: true });
-    m.el.querySelector('#sheet-print').onclick = function () {
-      const area = document.getElementById('print-area');
-      area.className = 'doc';
-      area.innerHTML = '<div class="print-doc"><header><b>Trust Intelligence Academy</b><span>' + esc(t.nome) + '</span></header>' + sheetHtml(t, les, ex) + '</div>';
-      document.body.classList.add('printing', 'printing-doc');
-      setTimeout(function () { global.print(); document.body.classList.remove('printing', 'printing-doc'); area.className = ''; area.innerHTML = ''; }, 200);
-    };
+    m.el.querySelector('#sheet-print').onclick = function () { printScreen(t, null, '<div class="sheet-wrap lesson glass">' + sheetHtml(t, les, ex) + '</div>'); };
   }
 
   /* ------------------------------- Resumo ------------------------------- */
@@ -215,13 +209,7 @@
         '<div class="sum-nav"><a class="btn btn-ghost sm" href="#resumo-' + lv + '">' + icon('book') + 'Nível ' + LV[lv] + ' inteiro</a><a class="btn btn-ghost sm" href="#resumo-curso">Curso inteiro</a></div></section>' +
       stageChallenge(t, lv, g) +
       '<div class="sum-doc glass">' + summaryHtml(t, g) + '</div>';
-    view.querySelector('#sum-print').onclick = function () {
-      const area = document.getElementById('print-area');
-      area.className = 'doc';
-      area.innerHTML = '<div class="print-doc"><header><b>Trust Intelligence Academy</b><span>' + esc(t.nome) + '</span></header><h1>' + esc(title) + '</h1>' + summaryHtml(t, g) + '</div>';
-      document.body.classList.add('printing', 'printing-doc');
-      setTimeout(function () { global.print(); document.body.classList.remove('printing', 'printing-doc'); area.className = ''; area.innerHTML = ''; }, 200);
-    };
+    view.querySelector('#sum-print').onclick = function () { printScreen(t, title, '<div class="sum-doc glass">' + summaryHtml(t, g) + '</div>'); };
   }
 
   /* ---------------------- Resumo do nível e do curso ---------------------- */
@@ -292,13 +280,25 @@
     const gs = index(t.id).groups, R = global.UI.rich;
     return (t.summary ? '<p class="sum-intro">Este curso vai ' + R(t.summary) + '.</p>' : '') + lessonsHtml(t, gs, { levels: true }) + reviewHtml(t, gs, 'do curso', 30);
   }
-  function printDoc(t, title, html) {
+  /**
+   * Impressão/PDF no mesmo visual da tela, no tema ativo (escuro ou claro):
+   * copia o conteúdo para #print-area com as mesmas classes e liga as cores de fundo.
+   */
+  function printScreen(t, title, html) {
     const area = document.getElementById('print-area');
-    area.className = 'doc';
-    area.innerHTML = '<div class="print-doc"><header><b>Trust Intelligence Academy</b><span>' + esc(t.nome) + '</span></header><h1>' + esc(title) + '</h1>' + html + '</div>';
-    document.body.classList.add('printing', 'printing-doc');
-    setTimeout(function () { global.print(); document.body.classList.remove('printing', 'printing-doc'); area.className = ''; area.innerHTML = ''; }, 200);
+    area.className = 'screen';
+    area.innerHTML = '<div class="ps">' +
+      '<header class="ps-h"><span class="ps-brand"><img src="assets/logo-256.png" alt="" width="34" height="34"><b>Trust Intelligence Academy</b></span><span class="ps-track">' + esc(t.nome) + '</span></header>' +
+      (title ? '<section class="page-h stack ps-title"><p class="eyebrow">' + esc(t.nome) + '</p><h1>' + esc(title) + '</h1></section>' : '') +
+      html + '<footer class="ps-f">Trust Intelligence Academy · ' + esc(t.nome) + ' · gerado em ' + new Date().toLocaleDateString('pt-BR') + '</footer></div>';
+    document.body.classList.add('printing', 'printing-screen');
+    const done = function () { document.body.classList.remove('printing', 'printing-screen'); area.className = ''; area.innerHTML = ''; global.removeEventListener('afterprint', done); global.removeEventListener('hashchange', done); };
+    const imgs = Array.prototype.slice.call(area.querySelectorAll('img'));
+    Promise.all(imgs.map(function (im) { return im.complete ? 1 : new Promise(function (r) { im.onload = im.onerror = r; }); })).then(function () {
+      setTimeout(function () { global.addEventListener('afterprint', done); global.addEventListener('hashchange', done); global.print(); }, 150);
+    });
   }
+
   function bigSummary(view, kind, lv) {
     const t = global.Tracks.active(), ix = index(t.id);
     const gs = kind === 'curso' ? ix.groups : ix.groups.filter(function (g) { return g.lv === lv; });
@@ -316,7 +316,7 @@
         (kind === 'curso' ? 'Todas as aulas do curso, numeradas e organizadas por nível e etapa, com a ideia, a sintaxe, os pontos-chave e os cuidados de cada uma. No fim, a revisão com comparações, fluxos e erros comuns.' : 'Todas as aulas do nível, numeradas e organizadas por etapa, com a ideia, a sintaxe, os pontos-chave, os cuidados e o desafio de cada etapa. No fim, a revisão com comparações, fluxos e erros comuns.') + '</p>' +
         '<div class="sum-nav">' + other + '</div></section>' +
       '<div class="sum-doc glass">' + html + '</div>';
-    view.querySelector('#sum-print').onclick = function () { printDoc(t, title, printHtml); };
+    view.querySelector('#sum-print').onclick = function () { printScreen(t, title, '<div class="sum-doc glass">' + printHtml + '</div>'); };
   }
   function levelSummary(view, lv) { bigSummary(view, 'nivel', lv); }
   function courseSummary(view) { bigSummary(view, 'curso'); }

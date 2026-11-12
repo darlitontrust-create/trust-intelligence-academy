@@ -1,0 +1,18 @@
+html[data-theme="light"] body::before {
+  background:
+    radial-gradient(900px 520px at 12% -8%, rgba(77,124,255,.12), transparent 60%),
+    radial-gradient(760px 520px at 100% 8%, rgba(164,107,255,.10), transparent 60%),
+    radial-gradient(700px 500px at 60% 110%, rgba(47,216,240,.08), transparent 60%),
+    linear-gradient(var(--bg), var(--bg));
+}
+html[data-theme="light"] body::after { opacity: .7; background-image: linear-gradient(rgba(40,52,110,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(40,52,110,.05) 1px, transparent 1px); }
+html[data-theme="light"] .glass { box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 14px 40px -28px rgba(30,40,90,.35); }
+html[data-theme="light"] .switch span::after { background: #fff; }
+html[data-theme="light"] .modal-wrap { background: rgba(20,26,46,.35); }
+html[data-theme="light"] .btn-danger { color: #b42323; }
+html[data-theme="light"] :is(.editor-host, .code-block, .py-out, .login-code, .calc-screen) { background: #0f1320; }
+html[data-theme="light"] .fe, html[data-theme="light"] .pbi-editor .fe { background: #0f1320; }
+html[data-theme="light"] .xl-bar .fe { border-radius: 0 10px 10px 0; }
+html[data-theme="light"] .btn-google { background: #fff; color: #141a2e; box-shadow: 0 0 0 1px var(--line-2), 0 12px 30px -16px rgba(47,100,240,.45); }
+html[data-theme="light"] .btn-google:hover { background: #f6f8ff; box-shadow: 0 0 0 1px rgba(59,102,240,.45), 0 14px 34px -14px rgba(47,100,240,.55); }
+html[data-theme="light"] .btn-google .ic { color: #3b66f0; }

@@ -189,7 +189,7 @@
             '<div class="top-progress" title="Progresso global"><i id="gp-bar"></i></div>' +
             '<div class="top-inner">' +
               '<div class="top-left"><span class="gp-label" id="gp-label"></span></div>' +
-              '<div class="top-right"><span class="save-state" id="save-state"></span><button class="icon-btn sm" id="sound-btn" aria-pressed="true"></button><span class="xp-chip" id="xp-chip"></span>' +
+              '<div class="top-right"><span class="save-state" id="save-state"></span>' + global.Theme.button() + '<button class="icon-btn sm" id="sound-btn" aria-pressed="true"></button><span class="xp-chip" id="xp-chip"></span>' +
               '<a class="avatar" href="#perfil" id="avatar" aria-label="Perfil"></a></div>' +
             '</div>' +
           '</header>' +
@@ -223,6 +223,8 @@
       toast(on ? 'Sons de vitória ligados.' : 'Sons de vitória desligados.', 'info');
     };
     paintSound();
+    global.Theme.mount(app);
+    global.addEventListener('themechange', function () { trackColors(); });
   }
   /** Atualiza barra global, chip de XP, avatar e card lateral. */
   function refreshChrome() {
@@ -321,8 +323,11 @@
     document.documentElement.classList.toggle('tk-on', on);
     if (on) {
       const lum = function (hex) { const n = parseInt(hex.slice(1), 16), c = [n >> 16 & 255, n >> 8 & 255, n & 255].map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
-      de.setProperty('--tc-a', tr.color.a); de.setProperty('--tc-b', tr.color.b);
-      de.setProperty('--tc-ink', lum(tr.color.b) > 0.28 ? '#0b0e17' : '#ffffff');
+      // tema claro: a cor de destaque fica mais escura para ter contraste no fundo branco
+      const deep = function (hex, max) { const n = parseInt(hex.slice(1), 16); let r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255; const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2; if (l <= max) return hex; const k = max / l; r *= k; g *= k; b *= k; return '#' + [r, g, b].map(function (v) { return Math.round(v * 255).toString(16).padStart(2, '0'); }).join(''); };
+      const light = document.documentElement.getAttribute('data-theme') === 'light';
+      de.setProperty('--tc-a', light ? deep(tr.color.a, 0.42) : tr.color.a); de.setProperty('--tc-b', light ? deep(tr.color.b, 0.5) : tr.color.b);
+      de.setProperty('--tc-ink', lum(light ? deep(tr.color.b, 0.5) : tr.color.b) > 0.28 ? '#0b0e17' : '#ffffff');
     } else ['--tc-a', '--tc-b', '--tc-ink'].forEach(function (k) { de.removeProperty(k); });
     if (id === 'sixsigma') { de.setProperty('--tk-a', '#5eead4'); de.setProperty('--tk-b', '#14b8a6'); de.setProperty('--tk-c', '#99f6e4'); de.setProperty('--tk-ink', '#042f2e'); }
     else if (id === 'estatistica') { de.setProperty('--tk-a', '#a5b4fc'); de.setProperty('--tk-b', '#6366f1'); de.setProperty('--tk-c', '#c7d2fe'); de.setProperty('--tk-ink', '#0f1240'); }
@@ -830,7 +835,11 @@
           '<label class="switch"><input type="checkbox" id="free-mode"' + (st.settings.freeMode ? ' checked' : '') + '><span></span>Desbloquear todos os exercícios</label>' +
           '<div class="help-row sfx-row"><span class="muted sm">Ouvir comemorações:</span><button class="btn btn-ghost sm" data-sfx="goal">' + icon('volume') + 'Acerto</button><button class="btn btn-ghost sm" data-sfx="promotion">' + icon('volume') + 'Promoção</button><button class="btn btn-ghost sm" data-sfx="legend">' + icon('volume') + esc(G.FINAL.nome) + '</button></div>' +
           '<label class="switch"><input type="checkbox" id="show-lessons"' + (st.settings.showLessons !== false ? ' checked' : '') + '><span></span>Mostrar o conteúdo em slides antes de cada exercício</label></section>' +
+        '<section class="card glass pf-privacy"><h2>' + icon('shield') + 'Privacidade e dados</h2><p class="muted">Veja quais dados a plataforma usa, onde eles ficam e como exercer seus direitos pela LGPD.</p>' +
+          '<div class="help-row"><button class="btn btn-ghost sm" data-privacy>' + icon('lock') + 'Política de privacidade</button><a class="btn btn-ghost sm" href="mailto:' + global.Legal.CONTACT + '?subject=' + encodeURIComponent('Privacidade - Trust Intelligence Academy') + '">' + icon('mail') + 'Falar com a gente</a></div>' +
+          '<p class="muted sm">' + global.Legal.contactLine() + '</p></section>' +
         '<section class="card glass danger"><h2>Recomeçar do zero</h2><p class="muted">Apaga XP, exercícios, conquistas e promoções do tema atual. Seu nome e os outros temas são mantidos.</p><div id="reset-zone"><button class="btn btn-danger sm" id="pf-reset">Apagar progresso</button></div></section>' +
+        '<section class="card glass danger"><h2>' + icon('trash') + 'Excluir conta e dados</h2><p class="muted">' + (global.Cloud && global.Cloud.uid ? 'Apaga para sempre seu perfil, progresso de todos os temas, conquistas, certificados e sua posição no ranking, na nuvem e neste navegador, e encerra sua conta na plataforma.' : 'Apaga para sempre seu perfil, progresso de todos os temas, conquistas e certificados salvos neste navegador.') + ' Certificados já baixados e códigos de backup continuam com você.</p><div id="del-zone"><button class="btn btn-danger sm" id="pf-del">' + icon('trash') + 'Excluir minha conta</button></div></section>' +
       '</div>';
     currentCleanup = global.Profile.mount(view.querySelector('#pf-public'), st, S, function () {
       refreshChrome();
@@ -851,6 +860,27 @@
     view.querySelectorAll('[data-sfx]').forEach(function (b) { b.onclick = function () { if (!global.Sfx.enabled()) { toast('Os sons estão desligados. Ligue pelo ícone de alto-falante no topo.', 'warn'); return; } global.Sfx.play(b.dataset.sfx); }; });
     view.querySelector('#show-lessons').onchange = function (e) { st.settings.showLessons = e.target.checked; S.saveNow(); toast(e.target.checked ? 'O conteúdo aparecerá antes de cada exercício novo.' : 'Os exercícios abrirão direto na prática.', 'info'); };
     view.querySelector('#free-mode').onchange = function (e) { st.settings.freeMode = e.target.checked; S.saveNow(); toast(e.target.checked ? 'Modo prática ativado.' : 'Ordem da trilha restaurada.', 'info'); };
+    view.querySelector('#pf-del').onclick = function () {
+      const z = view.querySelector('#del-zone');
+      z.innerHTML = '<p><b>Esta ação não pode ser desfeita.</b> Para confirmar, digite <b>EXCLUIR</b>.</p><label class="field"><input id="del-in" autocomplete="off" placeholder="EXCLUIR"></label>' +
+        '<div class="help-row"><button class="btn btn-danger sm" id="d-yes" disabled>' + icon('trash') + 'Excluir para sempre</button><button class="btn btn-quiet sm" id="d-no">Cancelar</button></div>';
+      const inp = z.querySelector('#del-in'), yes = z.querySelector('#d-yes');
+      inp.oninput = function () { yes.disabled = inp.value.trim().toUpperCase() !== 'EXCLUIR'; };
+      inp.focus();
+      z.querySelector('#d-no').onclick = function () { renderProfile(view); };
+      yes.onclick = function () {
+        yes.disabled = true; yes.innerHTML = 'Excluindo…';
+        const C = global.Cloud, cloud = C && C.uid;
+        const finish = function (msg, kind) { S.deleteLocal(); location.hash = ''; showLogin(); toast(msg, kind || 'success', 7000); };
+        if (!cloud) return finish('Conta e dados excluídos deste navegador.');
+        C.deleteAccount().then(function (r) {
+          finish(r.authDeleted ? 'Conta excluída. Seus dados foram apagados da nuvem e deste navegador.' : 'Seus dados foram apagados da nuvem e deste navegador. Para encerrar também o login Google na plataforma, escreva para ' + global.Legal.CONTACT + '.', r.authDeleted ? 'success' : 'warn');
+        }).catch(function () {
+          yes.disabled = false; yes.innerHTML = icon('trash') + 'Excluir para sempre';
+          toast('Não foi possível excluir agora. Confira a internet e tente de novo. Se persistir, escreva para ' + global.Legal.CONTACT + '.', 'error', 8000);
+        });
+      };
+    };
     view.querySelector('#pf-reset').onclick = function () {
       const z = view.querySelector('#reset-zone');
       z.innerHTML = '<p><b>Tem certeza?</b> Esta ação não pode ser desfeita.</p><div class="help-row"><button class="btn btn-danger sm" id="r-yes">Sim, apagar tudo</button><button class="btn btn-quiet sm" id="r-no">Cancelar</button></div>';

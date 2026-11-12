@@ -18,8 +18,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap">
-<link rel="stylesheet" href="css/codemirror.css?v=202611101926">
-<link rel="stylesheet" href="css/styles.css?v=202611101926">
+<link rel="stylesheet" href="css/codemirror.css?v=202611112107">
+<link rel="stylesheet" href="css/styles.css?v=202611112107">
+<link rel="stylesheet" href="css/theme-light.css?v=202611112107">
+<script>try{if(localStorage.getItem('trustacademy:theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
 </head>
 <body>
 <!-- Tela de carregamento enquanto o SQLite e o editor carregam -->
@@ -35,76 +37,78 @@
 <div id="app"></div>
 
 <!-- Dados e módulos (ordem importa: dados → utilidades → regras → telas) -->
-<script src="js/seed.js?v=202611101926"></script>
-<script src="js/exercises.js?v=202611101926"></script>
-<script src="js/excel-engine.js?v=202611101926"></script>
-<script src="js/excel-data.js?v=202611101926"></script>
-<script src="js/excel-exercises.js?v=202611101926"></script>
-<script src="js/dax-data.js?v=202611101926"></script>
-<script src="js/dax-engine.js?v=202611101926"></script>
-<script src="js/gq-data.js?v=202611101926"></script>
-<script src="js/gq-charts.js?v=202611101926"></script>
-<script src="js/gq-exercises.js?v=202611101926"></script>
-<script src="js/ss-data.js?v=202611101926"></script>
-<script src="js/ss-exercises.js?v=202611101926"></script>
-<script src="js/es-data.js?v=202611101926"></script>
-<script src="js/dv-exercises.js?v=202611101926"></script>
-<script src="js/pq-exercises.js?v=202611101926"></script>
-<script src="js/es-exercises.js?v=202611101926"></script>
-<script src="js/en-exercises.js?v=202611101926"></script>
-<script src="js/py-data.js?v=202611101926"></script>
-<script src="js/py-exercises.js?v=202611101926"></script>
-<script src="js/dax-exercises.js?v=202611101926"></script>
-<script src="js/tracks.js?v=202611101926"></script>
-<script src="js/ui.js?v=202611101926"></script>
-<script src="js/storage.js?v=202611101926"></script>
-<script src="js/overall.js?v=202611101926"></script>
-<script src="js/cloud.js?v=202611101926"></script>
-<script src="js/sql-engine.js?v=202611101926"></script>
-<script src="js/achievements.js?v=202611101926"></script>
-<script src="js/sfx.js?v=202611101926"></script>
-<script src="js/narrator.js?v=202611101926"></script>
-<script src="js/formula-editor.js?v=202611101926"></script>
-<script src="js/dax-lang.js?v=202611101926"></script>
-<script src="js/py-engine.js?v=202611101926"></script>
-<script src="js/py-lang.js?v=202611101926"></script>
-<script src="js/code-format.js?v=202611101926"></script>
-<script src="js/lessons.js?v=202611101926"></script>
-<script src="js/quiz-sql.js?v=202611101926"></script>
-<script src="js/excel-lessons.js?v=202611101926"></script>
-<script src="js/dax-lessons.js?v=202611101926"></script>
-<script src="js/gq-lessons.js?v=202611101926"></script>
-<script src="js/ss-lessons.js?v=202611101926"></script>
-<script src="js/dv-lessons.js?v=202611101926"></script>
-<script src="js/pq-lessons.js?v=202611101926"></script>
-<script src="js/es-lessons.js?v=202611101926"></script>
-<script src="js/en-lessons.js?v=202611101926"></script>
-<script src="js/py-outputs.js?v=202611101926"></script>
-<script src="js/py-lessons.js?v=202611101926"></script>
-<script src="js/plus-sql.js?v=202611101926"></script>
-<script src="js/plus-python.js?v=202611101926"></script>
-<script src="js/plus-excel.js?v=202611101926"></script>
-<script src="js/plus-dax.js?v=202611101926"></script>
-<script src="js/plus-pq.js?v=202611101926"></script>
-<script src="js/plus-es.js?v=202611101926"></script>
-<script src="js/plus-gq.js?v=202611101926"></script>
-<script src="js/plus-ss.js?v=202611101926"></script>
-<script src="js/plus-en.js?v=202611101926"></script>
-<script src="js/plus-dv.js?v=202611101926"></script>
-<script src="js/auth.js?v=202611101926"></script>
-<script src="js/profile.js?v=202611101926"></script>
-<script src="js/dashboard.js?v=202611101926"></script>
-<script src="js/certificate.js?v=202611101926"></script>
-<script src="js/exams.js?v=202611101926"></script>
-<script src="js/skills.js?v=202611101926"></script>
-<script src="js/library.js?v=202611101926"></script>
-<script src="js/excel-ui.js?v=202611101926"></script>
-<script src="js/dax-ui.js?v=202611101926"></script>
-<script src="js/calculator.js?v=202611101926"></script>
-<script src="js/gq-ui.js?v=202611101926"></script>
-<script src="js/py-ui.js?v=202611101926"></script>
-<script src="js/en-ui.js?v=202611101926"></script>
-<script src="js/overview.js?v=202611101926"></script>
-<script src="js/app.js?v=202611101926"></script>
+<script src="js/seed.js?v=202611112107"></script>
+<script src="js/exercises.js?v=202611112107"></script>
+<script src="js/excel-engine.js?v=202611112107"></script>
+<script src="js/excel-data.js?v=202611112107"></script>
+<script src="js/excel-exercises.js?v=202611112107"></script>
+<script src="js/dax-data.js?v=202611112107"></script>
+<script src="js/dax-engine.js?v=202611112107"></script>
+<script src="js/gq-data.js?v=202611112107"></script>
+<script src="js/gq-charts.js?v=202611112107"></script>
+<script src="js/gq-exercises.js?v=202611112107"></script>
+<script src="js/ss-data.js?v=202611112107"></script>
+<script src="js/ss-exercises.js?v=202611112107"></script>
+<script src="js/es-data.js?v=202611112107"></script>
+<script src="js/dv-exercises.js?v=202611112107"></script>
+<script src="js/pq-exercises.js?v=202611112107"></script>
+<script src="js/es-exercises.js?v=202611112107"></script>
+<script src="js/en-exercises.js?v=202611112107"></script>
+<script src="js/py-data.js?v=202611112107"></script>
+<script src="js/py-exercises.js?v=202611112107"></script>
+<script src="js/dax-exercises.js?v=202611112107"></script>
+<script src="js/tracks.js?v=202611112107"></script>
+<script src="js/ui.js?v=202611112107"></script>
+<script src="js/storage.js?v=202611112107"></script>
+<script src="js/overall.js?v=202611112107"></script>
+<script src="js/cloud.js?v=202611112107"></script>
+<script src="js/sql-engine.js?v=202611112107"></script>
+<script src="js/achievements.js?v=202611112107"></script>
+<script src="js/sfx.js?v=202611112107"></script>
+<script src="js/narrator.js?v=202611112107"></script>
+<script src="js/formula-editor.js?v=202611112107"></script>
+<script src="js/dax-lang.js?v=202611112107"></script>
+<script src="js/py-engine.js?v=202611112107"></script>
+<script src="js/py-lang.js?v=202611112107"></script>
+<script src="js/code-format.js?v=202611112107"></script>
+<script src="js/lessons.js?v=202611112107"></script>
+<script src="js/quiz-sql.js?v=202611112107"></script>
+<script src="js/excel-lessons.js?v=202611112107"></script>
+<script src="js/dax-lessons.js?v=202611112107"></script>
+<script src="js/gq-lessons.js?v=202611112107"></script>
+<script src="js/ss-lessons.js?v=202611112107"></script>
+<script src="js/dv-lessons.js?v=202611112107"></script>
+<script src="js/pq-lessons.js?v=202611112107"></script>
+<script src="js/es-lessons.js?v=202611112107"></script>
+<script src="js/en-lessons.js?v=202611112107"></script>
+<script src="js/py-outputs.js?v=202611112107"></script>
+<script src="js/py-lessons.js?v=202611112107"></script>
+<script src="js/plus-sql.js?v=202611112107"></script>
+<script src="js/plus-python.js?v=202611112107"></script>
+<script src="js/plus-excel.js?v=202611112107"></script>
+<script src="js/plus-dax.js?v=202611112107"></script>
+<script src="js/plus-pq.js?v=202611112107"></script>
+<script src="js/plus-es.js?v=202611112107"></script>
+<script src="js/plus-gq.js?v=202611112107"></script>
+<script src="js/plus-ss.js?v=202611112107"></script>
+<script src="js/plus-en.js?v=202611112107"></script>
+<script src="js/plus-dv.js?v=202611112107"></script>
+<script src="js/auth.js?v=202611112107"></script>
+<script src="js/profile.js?v=202611112107"></script>
+<script src="js/dashboard.js?v=202611112107"></script>
+<script src="js/certificate.js?v=202611112107"></script>
+<script src="js/legal.js?v=202611112107"></script>
+<script src="js/theme.js?v=202611112107"></script>
+<script src="js/exams.js?v=202611112107"></script>
+<script src="js/skills.js?v=202611112107"></script>
+<script src="js/library.js?v=202611112107"></script>
+<script src="js/excel-ui.js?v=202611112107"></script>
+<script src="js/dax-ui.js?v=202611112107"></script>
+<script src="js/calculator.js?v=202611112107"></script>
+<script src="js/gq-ui.js?v=202611112107"></script>
+<script src="js/py-ui.js?v=202611112107"></script>
+<script src="js/en-ui.js?v=202611112107"></script>
+<script src="js/overview.js?v=202611112107"></script>
+<script src="js/app.js?v=202611112107"></script>
 </body>
 </html>

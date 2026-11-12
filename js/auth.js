@@ -42,6 +42,7 @@
   /* ------------------------------ Tela de login ------------------------------ */
   function renderLogin(root, onLogin) {
     root.innerHTML =
+      '<div class="login-theme">' + (global.Theme ? global.Theme.button('') : '') + '</div>' +
       '<main class="login">' +
         '<section class="login-hero">' +
           '<div class="brand-lg">' + global.UI.logo('lg') + '<span>Trust Intelligence <b>Academy</b></span></div>' +
@@ -67,9 +68,11 @@
           '<div class="or"><span>ou</span></div>' +
           '<button class="btn btn-ghost" id="btn-guest">Continuar sem login</button>' +
           '<p class="fine">Sem login, o progresso fica salvo só neste navegador. Em Perfil você pode gerar um código de backup para levar a evolução para outro dispositivo.</p>' +
+          '<p class="fine legal-fine">Ao continuar, você concorda com a <a href="#" data-privacy>Política de privacidade</a>. Dúvidas: <a href="mailto:' + (global.Legal ? global.Legal.CONTACT : '') + '">' + (global.Legal ? global.Legal.CONTACT : '') + '</a></p>' +
         '</section>' +
       '</main>';
 
+    if (global.Theme) global.Theme.mount(root);
     // palavra do título alterna entre as linguagens das trilhas
     const words = ['SELECT', 'CALCULATE', 'import pandas', 'PROCX', 'prompt', 'x̄ = Σx/n'];
     const rot = root.querySelector('#rot');
@@ -151,7 +154,7 @@
           '<label class="field"><span>Nome</span><input id="pf-nome" autocomplete="given-name" value="' + esc(p.nome) + '" required></label>' +
           '<label class="field"><span>Sobrenome</span><input id="pf-sobrenome" autocomplete="family-name" value="' + esc(p.sobrenome) + '" required></label>' +
         '</div>' +
-        '<label class="field"><span>Como você gostaria de ser chamado durante sua jornada?</span><input id="pf-apelido" placeholder="Ex.: Dani, Professor X, Rafa" value="' + esc(p.apelido) + '" required></label>' +
+        '<label class="field"><span>Como você gostaria de ser chamado durante sua jornada?</span><input id="pf-apelido" maxlength="40" placeholder="Ex.: Dani, Professor X, Rafa" value="' + esc(p.apelido) + '" required></label>' +
         '<p class="field-err" id="pf-err" hidden></p>' +
         '<button class="btn btn-primary" type="submit">' + (editing ? 'Salvar alterações' : 'Começar a jornada') + '</button>' +
       '</form>', { closable: !!editing });

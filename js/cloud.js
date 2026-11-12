@@ -152,7 +152,7 @@
     const xp = {};
     Object.keys(st.tracks || {}).forEach(function (k) { xp[k] = st.tracks[k].xp || 0; });
     const total = Object.keys(xp).reduce(function (s, k) { return s + xp[k]; }, 0);
-    return { nome: (st.profile && (st.profile.apelido || st.profile.nome)) || 'Aluno', avatar: (st.profile && st.profile.avatar) || '', xp: xp, total: total, updatedAt: global.firebase.firestore.FieldValue.serverTimestamp() };
+    return { nome: String((st.profile && (st.profile.apelido || st.profile.nome)) || 'Aluno').slice(0, 40), avatar: String((st.profile && st.profile.avatar) || '').slice(0, 40), xp: xp, total: total, updatedAt: global.firebase.firestore.FieldValue.serverTimestamp() };
   }
   /** Envia o progresso: lê a nuvem, une com este aparelho e grava o resultado (transação). */
   function flush() {
@@ -241,6 +241,33 @@
     rawAll = null;
   }
 
+  /**
+   * Exclui a conta (LGPD): apaga leaderboard/{uid} e users/{uid} no Firestore e
+   * depois a conta no Firebase Authentication. Se o Google pedir login recente,
+   * reabre o popup do Google e tenta de novo. Retorna { authDeleted }.
+   */
+  async function deleteAccount() {
+    await init();
+    const me = uid || (auth.currentUser && auth.currentUser.uid);
+    if (!me) throw new Error('Nenhuma conta conectada.');
+    detach();   // para envios pendentes: nada pode recriar os documentos
+    for (let i = 0; writing && i < 50; i++) await new Promise(function (r) { setTimeout(r, 100); });
+    await db.collection('leaderboard').doc(me).delete();
+    await db.collection('users').doc(me).delete();
+    Object.keys(boards).forEach(function (k) { delete boards[k]; delete boardAt[k]; });
+    rawAll = null;
+    const u = auth.currentUser;
+    if (!u) return { authDeleted: false };
+    try { await u.delete(); }
+    catch (e) {
+      if (e && e.code === 'auth/requires-recent-login') {
+        try { await u.reauthenticateWithPopup(new global.firebase.auth.GoogleAuthProvider()); await u.delete(); }
+        catch (e2) { try { await auth.signOut(); } catch (e3) { /* ignora */ } return { authDeleted: false }; }
+      } else { try { await auth.signOut(); } catch (e3) { /* ignora */ } return { authDeleted: false }; }
+    }
+    return { authDeleted: true };
+  }
+
   if (typeof document !== 'undefined') {
     document.addEventListener('visibilitychange', function () { if (document.hidden) flush(); });
     global.addEventListener('pagehide', function () { flush(); });
@@ -249,7 +276,7 @@
 
   global.Cloud = {
     enabled: enabled, init: init, preload: preload, currentUser: currentUser, redirectPending: redirectPending, lastRedirectMode: lastRedirectMode,
-    signIn: signIn, signOut: signOut, profileFrom: profileFrom, load: load, attach: attach, detach: detach, queueSave: queueSave, flush: flush,
+    signIn: signIn, signOut: signOut, deleteAccount: deleteAccount, profileFrom: profileFrom, load: load, attach: attach, detach: detach, queueSave: queueSave, flush: flush,
     board: board, refreshBoard: refreshBoard, on: on,
     get uid() { return uid; }, get status() { return status; },
   };

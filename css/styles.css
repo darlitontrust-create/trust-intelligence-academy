@@ -2130,3 +2130,42 @@ html.tk-on .lib-prog i { background: linear-gradient(90deg, var(--tc-a), var(--t
 }
 .sum-doc > *, .stage-ch, .stage-ch > * { min-width: 0; }
 .stage-ch p, .stage-ch h4, .ls-mini p { overflow-wrap: anywhere; }
+/* política de privacidade e exclusão de conta */
+.legal-wrap { display: grid; gap: 16px; max-height: min(78vh, 900px); overflow: auto; padding-right: 6px; }
+.legal { display: grid; gap: 14px; font-size: 14.5px; line-height: 1.6; color: var(--ink-2); }
+.legal h2 { font-family: var(--f-display); font-weight: 400; font-size: 34px; margin: 0; color: var(--ink); }
+.legal h3 { font-size: 15.5px; margin: 0 0 4px; color: var(--ink); }
+.legal p, .legal ul { margin: 0; }
+.legal ul { padding-left: 20px; display: grid; gap: 4px; }
+.legal a, .legal-fine a, .pf-privacy a:not(.btn) { color: var(--cyan); }
+.legal-act { display: flex; justify-content: flex-end; }
+.pf-privacy h2, .profile-grid .danger h2 { display: flex; align-items: center; gap: 8px; }
+.pf-privacy h2 .ic { color: var(--cyan); }
+.legal-fine { margin-top: 6px; }
+.login-theme { position: fixed; top: max(14px, env(safe-area-inset-top, 0px)); right: 14px; z-index: 30; }
+/* impressão/PDF no visual da tela (tema ativo) */
+#print-area.screen .ps { display: grid; gap: 18px; }
+.ps-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line-2); }
+.ps-brand { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+.ps-brand img { border-radius: 50%; }
+.ps-track { color: var(--tc-a, var(--cyan)); font: 600 12px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; }
+.ps-title { margin: 0; }
+.ps-f { color: var(--ink-4); font-size: 11px; text-align: center; padding-top: 8px; border-top: 1px solid var(--line); }
+@media print {
+  @page screendoc { size: A4; margin: 10mm 9mm; }
+  html:has(body.printing-screen), body.printing-screen { background: var(--bg) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body.printing-screen #print-area { page: screendoc; display: block !important; color: var(--ink); font-family: var(--f-ui); font-size: 13px; }
+  body.printing-screen #print-area * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body.printing-screen #print-area .glass { backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; background: var(--glass-2); }
+  body.printing-screen #print-area .no-print, body.printing-screen #print-area .sum-sep .btn, body.printing-screen #print-area .sum-lvsep .btn, body.printing-screen #print-area .sheet-act { display: none !important; }
+  body.printing-screen #print-area .sum-mini li, body.printing-screen #print-area .sum-vs-c, body.printing-screen #print-area .ls-flow, body.printing-screen #print-area .sum-errs li, body.printing-screen #print-area pre { break-inside: avoid; }
+  body.printing-screen #print-area .sum-sep, body.printing-screen #print-area .sum-lvsep, body.printing-screen #print-area h2, body.printing-screen #print-area h3 { break-after: avoid; }
+  body.printing-screen #print-area .sum-doc { padding: 18px; }
+  body.printing-screen #print-area .ps { zoom: .82; }
+  body.printing-screen #print-area .sheet-wrap.glass { padding: 22px; border-radius: 18px; }
+  body.printing-screen #print-area .ps-brand img { width: 34px !important; height: 34px; }
+  body.printing-screen #print-area .sum-cols { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) !important; }
+  body.printing-screen #print-area .sum-les h2 { break-after: avoid; }
+  body.printing-screen #print-area .sum-les + .sum-les { break-before: auto; }
+  body.printing-screen #print-area .page-h h1 { font-size: 30px; }
+}
