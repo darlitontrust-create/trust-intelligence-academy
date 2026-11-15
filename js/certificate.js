@@ -14,7 +14,8 @@
    Carga horária estimada: exercícios × 20 min.
    • Imagem em 2× (3200 × 2260) para não pixelar ao ampliar; aviso de
      curso livre na margem inferior; o código é identificador, não verificação.
-   Ações: Baixar PDF (jsPDF), Imprimir, Compartilhar. Dentro de um
+   Ações: Baixar PDF (jsPDF), Imprimir, Compartilhar, LinkedIn (adicionar
+   ao perfil pelo link oficial "profile/add" ou publicar no feed com imagem). Dentro de um
    visualizador que bloqueia arquivos, mostra a imagem para salvar.
    ===================================================================== */
 (function (global) {
@@ -828,6 +829,68 @@
     else copyText(text, 'Texto do certificado copiado para compartilhar.');
   }
 
+  /* ----------------------------- LinkedIn ----------------------------- */
+  const ISSUER = 'Trust Intelligence Academy';
+  /** Nome do certificado como aparece em "Licenças e certificados" no LinkedIn. */
+  function linkedinName(cert) {
+    const tr = cert.track, SS = tr.id === 'sixsigma';
+    if (cert.type === 'final') return cert.title;
+    if (cert.type === 'level') return tr.nome + ' · ' + (SS ? cert.title + ' (formação no conteúdo)' : cert.title);
+    return tr.nome + ' · Nível ' + cert.tone.name + ' · Etapa ' + cert.stage + ': ' + cert.title;
+  }
+  function siteUrl() { return /^https?:/.test(location.protocol) ? location.origin + location.pathname : ''; }
+  /** Link oficial "Adicionar ao perfil" do LinkedIn, já preenchido. */
+  function linkedinAddUrl(cert) {
+    const d = new Date(cert.date || Date.now()), q = {
+      startTask: 'CERTIFICATION_NAME', name: linkedinName(cert), organizationName: ISSUER,
+      issueYear: d.getFullYear(), issueMonth: d.getMonth() + 1, certId: cert.code };
+    const u = siteUrl(); if (u) q.certUrl = u;
+    return 'https://www.linkedin.com/profile/add?' + Object.keys(q).map(function (k) { return k + '=' + encodeURIComponent(q[k]); }).join('&');
+  }
+  /** Texto sugerido para a publicação no feed. */
+  function linkedinPost(cert) {
+    const tr = cert.track, u = siteUrl();
+    const what = cert.type === 'final' ? 'concluí a trilha completa de ' + tr.nome
+      : cert.type === 'level' ? 'concluí o ' + (tr.id === 'sixsigma' ? 'conteúdo de ' + cert.title : cert.title + ' de ' + tr.nome)
+      : 'concluí a Etapa ' + cert.stage + ' do Nível ' + cert.tone.name + ' de ' + tr.nome + ' e conquistei o cargo de ' + cert.title;
+    return '🎓 Mais um passo na minha jornada de dados: ' + what + ' na ' + ISSUER + '!\n\n' +
+      '✅ ' + cert.exCount + ' exercícios práticos resolvidos\n' +
+      '⏱️ ' + cert.hours + ' de carga horária estimada\n' +
+      (cert.examScore != null ? '📝 Prova: ' + cert.examScore + '/' + QUESTIONS + '\n' : '') +
+      '\nCurso livre · código do certificado ' + cert.code + (u ? '\n' + u : '') +
+      '\n\n#' + tr.nome.replace(/[^A-Za-zÀ-ú0-9]/g, '') + ' #Dados #AprendizadoContinuo #TrustIntelligenceAcademy';
+  }
+  function downloadImage(st, cert) {
+    const url = draw(st, cert, HI).toDataURL('image/jpeg', 0.93);
+    if (framed) { blockedNotice(url, 'Download'); return false; }
+    const a = document.createElement('a'); a.href = url; a.download = 'certificado-' + cert.id + '.jpg';
+    document.body.appendChild(a); a.click(); a.remove();
+    return true;
+  }
+  function linkedin(st, cert) {
+    if (!cert.code) cert.code = verificationCode(personOf(st).full + '|' + cert.id + '|' + (cert.date || ''));
+    const post = linkedinPost(cert);
+    const m = modal(
+      '<div class="li-share">' +
+        '<p class="eyebrow">' + icon('linkedin') + 'Compartilhar no LinkedIn</p><h3>' + esc(linkedinName(cert)) + '</h3>' +
+        '<section class="li-opt"><span class="li-n">1</span><div><b>Adicionar ao perfil</b><p class="muted sm">Abre o LinkedIn com o certificado já preenchido em <i>Licenças e certificados</i>: nome, emissor (' + ISSUER + '), data e código. É só conferir e salvar.</p>' +
+          '<a class="btn btn-primary sm li-btn" href="' + esc(linkedinAddUrl(cert)) + '" target="_blank" rel="noopener">' + icon('linkedin') + 'Adicionar ao perfil</a></div></section>' +
+        '<section class="li-opt"><span class="li-n">2</span><div><b>Publicar no feed</b><p class="muted sm">Baixa a imagem do certificado, copia o texto abaixo e abre uma nova publicação. No LinkedIn, cole o texto (se não vier preenchido), anexe a imagem pelo ícone de foto e publique.</p>' +
+          '<textarea class="li-text" rows="8">' + esc(post) + '</textarea>' +
+          '<div class="help-row"><button class="btn btn-primary sm li-btn" data-l="post">' + icon('linkedin') + 'Baixar imagem e publicar</button><button class="btn btn-ghost sm" data-l="copy">' + icon('copy') + 'Copiar texto</button><button class="btn btn-ghost sm" data-l="img">' + icon('download') + 'Só a imagem</button></div></div></section>' +
+      '</div>');
+    const ta = m.el.querySelector('.li-text');   // o texto pode ser editado antes de publicar
+    m.el.querySelector('[data-l=post]').onclick = function () {
+      const w = global.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(ta.value), '_blank');
+      if (w) try { w.opener = null; } catch (e) { /* ignora */ }
+      copyText(ta.value, 'Texto copiado. Anexe a imagem baixada na publicação.');
+      downloadImage(st, cert);
+      if (!w && !framed) toast('Se a nova aba não abriu, abra o LinkedIn e cole o texto copiado.', 'warn', 7000);
+    };
+    m.el.querySelector('[data-l=copy]').onclick = function () { copyText(ta.value, 'Texto da publicação copiado.'); };
+    m.el.querySelector('[data-l=img]').onclick = function () { if (downloadImage(st, cert)) toast('Imagem do certificado baixada.', 'success'); };
+  }
+
   /* ------------------------------- Tela ------------------------------- */
   let pendingOpen = null;   // certificado a abrir ao entrar na página
   function open(id) { pendingOpen = id; if (location.hash === '#certificado') global.dispatchEvent(new HashChangeEvent('hashchange')); else location.hash = 'certificado'; }
@@ -847,7 +910,7 @@
   function viewer(st, cert) {
     const name = cert.type === 'final' ? G.FINAL.nome : cert.title;
     let action;
-    if (cert.unlocked) action = '<div class="cert-actions"><button class="btn btn-primary sm" data-c="pdf">' + icon('download') + 'Baixar PDF</button><button class="btn btn-ghost sm" data-c="print">' + icon('printer') + 'Imprimir</button><button class="btn btn-ghost sm" data-c="share">' + icon('share') + 'Compartilhar</button></div>';
+    if (cert.unlocked) action = '<div class="cert-actions"><button class="btn btn-primary sm" data-c="pdf">' + icon('download') + 'Baixar PDF</button><button class="btn btn-ghost sm" data-c="print">' + icon('printer') + 'Imprimir</button><button class="btn btn-ghost sm" data-c="share">' + icon('share') + 'Compartilhar</button><button class="btn btn-ghost sm li-btn" data-c="linkedin">' + icon('linkedin') + 'LinkedIn</button></div>';
     else if (cert.eligible) action = '<div class="exam-cta"><p>' + icon('target') + '<span><b>Prova liberada.</b> ' + QUESTIONS + ' questões sobre os conteúdos ' + (cert.type === 'stage' ? 'da etapa' : cert.type === 'level' ? 'do nível' : 'da trilha') + '. Nota mínima: ' + PASS + '/' + QUESTIONS + ' (70%).</span></p>' +
       '<p class="muted sm">' + examNote(cert) + '</p><button class="btn btn-primary" data-c="exam">' + icon('play') + (cert.exam && cert.exam.attempts ? 'Refazer prova' : 'Fazer prova') + '</button></div>';
     else action = '<p class="lock-note">' + icon('lock') + 'Faltam ' + (cert.need - cert.have) + ' exercício(s) para liberar a prova.</p>';
@@ -873,6 +936,7 @@
       m.el.querySelector('[data-c=pdf]').onclick = function () { downloadPdf(st, cert); };
       m.el.querySelector('[data-c=print]').onclick = function () { print(st, cert); };
       m.el.querySelector('[data-c=share]').onclick = function () { share(st, cert); };
+      m.el.querySelector('[data-c=linkedin]').onclick = function () { linkedin(st, cert); };
     }
     const eb = m.el.querySelector('[data-c=exam]');
     if (eb) eb.onclick = function () { m.close(); global.Exams.start(cert.id); };
@@ -928,5 +992,5 @@
   }
 
   function find(st, id) { return catalog(st).find(function (c) { return c.id === id; }); }
-  global.Certificate = { render: render, draw: draw, catalog: catalog, find: find, forPromotion: forPromotion, open: open, PASS: PASS, QUESTIONS: QUESTIONS, MEDALS: MEDALS };
+  global.Certificate = { render: render, draw: draw, catalog: catalog, find: find, forPromotion: forPromotion, open: open, linkedin: linkedin, linkedinAddUrl: linkedinAddUrl, PASS: PASS, QUESTIONS: QUESTIONS, MEDALS: MEDALS };
 })(window);

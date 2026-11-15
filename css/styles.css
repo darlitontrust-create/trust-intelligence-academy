@@ -2169,3 +2169,18 @@ html.tk-on .lib-prog i { background: linear-gradient(90deg, var(--tc-a), var(--t
   body.printing-screen #print-area .sum-les + .sum-les { break-before: auto; }
   body.printing-screen #print-area .page-h h1 { font-size: 30px; }
 }
+/* compartilhar no LinkedIn */
+.li-btn .ic { color: inherit; }
+.btn-ghost.li-btn { color: #4c9be8; }
+.li-share { display: grid; gap: 14px; }
+.li-share .eyebrow { display: flex; align-items: center; gap: 8px; margin: 0; color: #4c9be8; }
+.li-share h3 { margin: 0; font-size: 19px; }
+.li-opt { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--glass); }
+.li-opt > div { display: grid; gap: 8px; justify-items: start; min-width: 0; }
+.li-opt p { margin: 0; }
+.li-n { width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; font: 700 13px var(--f-mono); color: #fff; background: #0a66c2; }
+.btn-primary.li-btn { background: #0a66c2; color: #fff; box-shadow: 0 10px 24px -14px rgba(10,102,194,.9); }
+.btn-primary.li-btn:hover { background: #0b74dc; }
+.li-text { width: 100%; resize: vertical; font: 13px/1.5 var(--f-ui); color: var(--ink); background: rgba(5,7,13,.35); border: 1px solid var(--line-2); border-radius: 10px; padding: 10px 12px; }
+html[data-theme="light"] .li-text { background: #fff; }
+html[data-theme="light"] .btn-ghost.li-btn, html[data-theme="light"] .li-share .eyebrow { color: #0a66c2; }

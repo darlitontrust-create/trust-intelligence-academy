@@ -259,6 +259,10 @@ html[data-theme="light"] :is(.code-block, .ls-ed, .ls-vs-ex, .editor-host, .Code
 :where(html[data-theme="light"]) .ls-err-q { color: #3f0101; }
 :where(html[data-theme="light"]) .sum-mini li { background: rgba(248,249,252,0.35); }
 :where(html[data-theme="light"]) .sum-vs-c { background: rgba(248,249,252,0.35); }
+:where(html[data-theme="light"]) .btn-ghost.li-btn { color: #1767b5; }
+:where(html[data-theme="light"]) .li-share .eyebrow { color: #1767b5; }
+:where(html[data-theme="light"]) .li-text { background: rgba(248,249,252,0.35); }
+:where(html[data-theme="light"]) [data-theme="light"] .li-text { background: #000000; }
 
 /* ---- ajustes manuais (build/theme-light-tail.css) ---- */
 html[data-theme="light"] body::before {
