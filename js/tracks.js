@@ -99,7 +99,25 @@
       related: [{ id: 'powerbi', label: 'Ferramenta para os painéis' }, { id: 'estatistica', label: 'Base para comparações honestas' }],
     },
     {
-      id: 'ia', status: 'em-breve', icon: 'sparkle', nome: 'IA para Dados', short: 'IA', tag: 'Inteligência Artificial',
+      id: 'lovable', status: 'ativo', icon: 'heart', start: 'dashboard', kind: 'lovable',
+      nome: 'Apps com Lovable', short: 'Lovable', tag: 'Criação com IA',
+      color: { a: '#f0abfc', b: '#d946ef' },            // fúcsia
+      desc: 'Crie apps completos conversando com a IA: prompts que funcionam, design, banco de dados, login, segurança, integrações e lançamento.',
+      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'LVBank',
+      summary: 'do primeiro prompt e dos modos Plan e Build ao design, banco de dados no Lovable Cloud, login, regras de acesso, segredos, integrações, depuração, GitHub, créditos e lançamento com qualidade e LGPD',
+      related: [{ id: 'claude', label: 'IA para planejar e revisar' }, { id: 'sql', label: 'Base para o banco de dados' }],
+    },
+    {
+      id: 'claude', status: 'ativo', icon: 'chat', start: 'dashboard', kind: 'claude',
+      nome: 'Claude no Trabalho', short: 'Claude', tag: 'Inteligência Artificial',
+      color: { a: '#f4b98c', b: '#d97757' },            // terracota
+      desc: 'Use o Claude de verdade no trabalho: prompts claros, análise de dados, Projetos, artefatos, pesquisa, conectores, Claude Code e API.',
+      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'CLBank',
+      summary: 'dos fundamentos e da escolha de modelos a prompts claros com exemplos e tags, Projetos, artefatos, análise de dados, SQL e DAX, pesquisa, conectores e MCP, skills, raciocínio, avaliação de prompts, Claude Code e a API com ferramentas e custos',
+      related: [{ id: 'lovable', label: 'Construir apps com IA' }, { id: 'python', label: 'Base para a API e automações' }],
+    },
+    {
+      id: 'ia', status: 'em-breve', icon: 'bulb', nome: 'IA para Dados', short: 'IA', tag: 'Inteligência Artificial',
       color: { a: '#d8b4fe', b: '#a46bff' },            // violeta
       desc: 'Prompts para análise, automação de relatórios e integração de IA com bancos e painéis.', facts: ['Prompts', 'Automação', 'Integrações'],
     },
@@ -112,6 +130,11 @@
       id: 'automacao', status: 'em-breve', icon: 'bolt', nome: 'Automação com Power Automate', short: 'Automação', tag: 'Produtividade',
       color: { a: '#fda4af', b: '#f43f5e' },            // rosa-coral
       desc: 'Relatórios que se enviam sozinhos, alertas de indicadores e fluxos entre Excel, Power BI, Teams e e-mail, sem programar.', facts: ['Fluxos', 'Alertas', 'Integrações'],
+    },
+    {
+      id: 'fabric', status: 'em-breve', icon: 'grid', nome: 'Microsoft Fabric na Prática', short: 'Fabric', tag: 'Engenharia de dados',
+      color: { a: '#5eead4', b: '#0d9488' },            // verde-azulado
+      desc: 'Lakehouse, Dataflows Gen2, pipelines e notebooks para levar os dados da origem ao Power BI, com governança e capacidade.', facts: ['Lakehouse', 'Pipelines', 'Direct Lake'],
     },
   ];
 
