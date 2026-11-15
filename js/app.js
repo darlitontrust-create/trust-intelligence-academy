@@ -224,7 +224,7 @@
     };
     paintSound();
     global.Theme.mount(app);
-    global.addEventListener('themechange', function () { trackColors(); });
+    global.addEventListener('themechange', function () { trackColors(); if (!document.querySelector('.lesson')) rerender(); });
   }
   /** Atualiza barra global, chip de XP, avatar e card lateral. */
   function refreshChrome() {
@@ -332,6 +332,8 @@
     if (id === 'sixsigma') { de.setProperty('--tk-a', '#5eead4'); de.setProperty('--tk-b', '#14b8a6'); de.setProperty('--tk-c', '#99f6e4'); de.setProperty('--tk-ink', '#042f2e'); }
     else if (id === 'estatistica') { de.setProperty('--tk-a', '#a5b4fc'); de.setProperty('--tk-b', '#6366f1'); de.setProperty('--tk-c', '#c7d2fe'); de.setProperty('--tk-ink', '#0f1240'); }
     else if (id === 'storytelling') { de.setProperty('--tk-a', '#fdba74'); de.setProperty('--tk-b', '#f97316'); de.setProperty('--tk-c', '#fed7aa'); de.setProperty('--tk-ink', '#3b1604'); }
+    else if (id === 'lovable') { de.setProperty('--tk-a', '#f0abfc'); de.setProperty('--tk-b', '#d946ef'); de.setProperty('--tk-c', '#f5d0fe'); de.setProperty('--tk-ink', '#3b0a45'); }
+    else if (id === 'claude') { de.setProperty('--tk-a', '#f4b98c'); de.setProperty('--tk-b', '#d97757'); de.setProperty('--tk-c', '#fbd9bf'); de.setProperty('--tk-ink', '#3a1407'); }
     else if (id === 'powerquery') { de.setProperty('--tk-a', '#7dd3fc'); de.setProperty('--tk-b', '#0284c7'); de.setProperty('--tk-c', '#bae6fd'); de.setProperty('--tk-ink', '#04243a'); }
     else ['--tk-a', '--tk-b', '--tk-c', '--tk-ink'].forEach(function (k) { de.removeProperty(k); });
   }
@@ -371,7 +373,10 @@
         '<div><p class="eyebrow">Trust Intelligence Academy</p><h1>Olá, ' + esc(st.profile.apelido || st.profile.nome) + '. O que vamos aprender hoje?</h1>' +
         '<p class="muted">Dados, BI e IA em trilhas práticas. Cada uma tem progresso, carreira, conquistas, provas e certificados próprios.</p></div>' +
       '</section>' +
-      '<section class="hub-grid">' + global.Tracks.TRACKS.map(function (t) {
+      '<section class="hub-grid">' + global.Tracks.TRACKS.filter(function (t) { return t.status === 'ativo'; }).map(card).join('') + '</section>' +
+      '<header class="hub-soon-h"><h2>' + icon('sparkle') + 'Em breve</h2><p class="muted">Próximas trilhas em produção.</p></header>' +
+      '<section class="hub-grid hub-soon-grid">' + global.Tracks.TRACKS.filter(function (t) { return t.status !== 'ativo'; }).map(card).join('') + '</section>';
+    function card(t) {
         const active = t.status === 'ativo';
         const tp = st.tracks[t.id];
         const solved = tp ? Object.keys(tp.solved).length : 0;
@@ -390,7 +395,7 @@
                 const ps = G.PROMOTIONS.filter(function (p) { return p.level === l.id; }).map(function (p) { return p.nome; });
                 return '<li><span class="hl-n">' + l.id + '</span><span class="hl-t"><b>' + esc(l.nome) + '</b><small>' + esc(ps.join(' · ')) + '</small></span><span class="hl-c">' + c + '/50</span></li>';
               }).join('') + '</ul>' +
-              '<ul class="hub-feats"><li>' + icon('book') + nLessons + ' aulas narradas</li><li>' + icon('code') + (t.kind === 'excel' ? 'Planilha com correção automática' : t.kind === 'powerbi' ? 'Editor DAX com correção automática' : t.kind === 'gestao' ? 'Casos práticos com correção automática' : t.kind === 'sixsigma' ? 'Casos com dados reais e estatística na hora' : t.kind === 'estatistica' ? 'Cálculos e gráficos com dados reais' : t.kind === 'storytelling' ? 'Casos com gráficos para melhorar e decidir' : t.kind === 'powerquery' ? 'Tabelas antes e depois e código M' : t.kind === 'python' ? 'Python no navegador com correção automática' : t.kind === 'ingles' ? 'Diálogos com áudio e prática de fala' : 'Editor com correção automática') + '</li>' +
+              '<ul class="hub-feats"><li>' + icon('book') + nLessons + ' aulas narradas</li><li>' + icon('code') + (t.kind === 'excel' ? 'Planilha com correção automática' : t.kind === 'powerbi' ? 'Editor DAX com correção automática' : t.kind === 'gestao' ? 'Casos práticos com correção automática' : t.kind === 'sixsigma' ? 'Casos com dados reais e estatística na hora' : t.kind === 'estatistica' ? 'Cálculos e gráficos com dados reais' : t.kind === 'storytelling' ? 'Casos com gráficos para melhorar e decidir' : t.kind === 'powerquery' ? 'Tabelas antes e depois e código M' : t.kind === 'lovable' ? 'Casos do portal NexusHub, do prompt ao lançamento' : t.kind === 'claude' ? 'Prompts, análises e automações do dia a dia' : t.kind === 'python' ? 'Python no navegador com correção automática' : t.kind === 'ingles' ? 'Diálogos com áudio e prática de fala' : 'Editor com correção automática') + '</li>' +
               '<li>' + icon('award') + gotC + '/' + certs.length + ' certificados com prova</li><li>' + icon('trophy') + 'Carreira até ' + esc(G.FINAL.nome) + '</li></ul>';
           });
         }
@@ -402,7 +407,7 @@
           (active ? '<button class="btn btn-primary" data-track="' + t.id + '">' + icon('play') + (solved ? 'Continuar' : 'Começar') + '</button>'
                   : '<button class="btn btn-ghost" disabled>' + icon('lock') + 'Disponível em breve</button>') +
         '</article>';
-      }).join('') + '</section>';
+    }
     bindRelated(view);
     view.querySelectorAll('[data-track]').forEach(function (b) {
       b.onclick = function () { global.Overview.focus(b.dataset.track); location.hash = global.Tracks.get(b.dataset.track).start; };
@@ -541,8 +546,8 @@
     if (currentCleanup) { currentCleanup(); currentCleanup = null; }
     const wantsLesson = mode === 'lesson' || (!mode && st.settings.showLessons !== false && !st.progress.solved[ex.id] && !st.progress.lessonsSeen[ex.id]);
     if (wantsLesson) return renderLessonStage(view, ex);
-    if (ex.track === 'excel' || ex.track === 'powerbi' || ex.track === 'gestao' || ex.track === 'python' || ex.track === 'ingles' || ex.track === 'sixsigma' || ex.track === 'estatistica' || ex.track === 'storytelling' || ex.track === 'powerquery') {
-      ({ excel: global.ExcelPractice, powerbi: global.DaxPractice, gestao: global.GQPractice, python: global.PyPractice, ingles: global.EnPractice, sixsigma: global.GQPractice, estatistica: global.GQPractice, storytelling: global.GQPractice, powerquery: global.GQPractice })[ex.track].render(view, ex, {
+    if (ex.track === 'excel' || ex.track === 'powerbi' || ex.track === 'gestao' || ex.track === 'python' || ex.track === 'ingles' || ex.track === 'sixsigma' || ex.track === 'estatistica' || ex.track === 'storytelling' || ex.track === 'powerquery' || ex.track === 'lovable' || ex.track === 'claude') {
+      ({ excel: global.ExcelPractice, powerbi: global.DaxPractice, gestao: global.GQPractice, python: global.PyPractice, ingles: global.EnPractice, sixsigma: global.GQPractice, estatistica: global.GQPractice, storytelling: global.GQPractice, powerquery: global.GQPractice, lovable: global.GQPractice, claude: global.GQPractice })[ex.track].render(view, ex, {
         st: st, S: S,
         header: exHeader(st, ex, '<button class="btn btn-ghost sm" id="b-lesson">' + icon('book') + 'Conteúdo</button>'),
         setCleanup: function (fn) { currentCleanup = fn; },

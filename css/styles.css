@@ -2184,3 +2184,25 @@ html.tk-on .lib-prog i { background: linear-gradient(90deg, var(--tc-a), var(--t
 .li-text { width: 100%; resize: vertical; font: 13px/1.5 var(--f-ui); color: var(--ink); background: rgba(5,7,13,.35); border: 1px solid var(--line-2); border-radius: 10px; padding: 10px 12px; }
 html[data-theme="light"] .li-text { background: #fff; }
 html[data-theme="light"] .btn-ghost.li-btn, html[data-theme="light"] .li-share .eyebrow { color: #0a66c2; }
+/* seção "Em breve" do hub: 4 colunas iguais */
+.hub-soon-h { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 30px 0 12px; }
+.hub-soon-h h2 { display: flex; align-items: center; gap: 8px; font-size: 20px; margin: 0; }
+.hub-soon-h h2 .ic { color: var(--violet); }
+.hub-soon-h p { margin: 0; }
+.hub-grid.hub-soon-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; }
+.hub-soon-grid .hub-card.soon { grid-column: auto; align-self: stretch; }
+@media (max-width: 1180px) { .hub-grid.hub-soon-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .hub-grid.hub-soon-grid { grid-template-columns: minmax(0, 1fr); } }
+/* caixa de prompt (trilhas Lovable e Claude) */
+.gq-prompt { border: 1px solid var(--line-2); border-radius: 14px; overflow: hidden; background: #0d111c; color: #e8eaf6; }
+.gq-prompt-h { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font: 600 11.5px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: #c3c8de; background: rgba(255,255,255,.04); border-bottom: 1px solid rgba(150,165,255,.12); }
+.gq-prompt-h i { width: 8px; height: 8px; border-radius: 50%; background: var(--tk-a, var(--tc-a, var(--cyan))); box-shadow: 0 0 10px var(--tk-a, var(--tc-a, var(--cyan))); }
+.gq-prompt pre { margin: 0; padding: 12px 14px; white-space: pre-wrap; word-break: break-word; font: 13px/1.6 var(--f-mono); color: #e8eaf6; }
+.gq-prompt .pr-tag { color: #f4b98c; }
+.gq-prompt .pr-slot { color: #7dd3fc; }
+.gq-prompt .pr-head { color: #f0abfc; }
+.gq-prompt-r { padding: 10px 14px 12px; border-top: 1px dashed rgba(150,165,255,.18); }
+.gq-prompt-r span { display: block; font: 600 10.5px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: #8e94b0; margin-bottom: 4px; }
+.gq-prompt-r p { margin: 0; font-size: 13.5px; line-height: 1.55; color: #c3c8de; }
+.ls-split.ex.solo { grid-template-columns: minmax(0, 1fr) !important; }
+.ls-split.ex.solo .ls-live { max-width: 860px; }

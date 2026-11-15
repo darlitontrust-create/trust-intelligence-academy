@@ -685,7 +685,7 @@
         '<div class="ls-side">' + (px.a && px.a.length ? '<span class="eyebrow">Anatomia do código</span>' + anatomyList(px.a) : '') +
         '<ul class="ls-notes">' + les.notas.map(function (n) { return '<li>' + icon('chevR') + '<span>' + global.UI.rich(n) + '</span></li>'; }).join('') + '</ul></div></div>' + flowHtml(px.f) + '</div>',
       // 3 · Exemplo ao vivo
-      '<div class="ls-body"><h3 class="ls-h">' + global.UI.rich(les.exemplo.p) + '</h3><div class="ls-split ex">' + codeBox(ex, pack.codeHtml(fmtCode(exm.code, ex))) +
+      '<div class="ls-body"><h3 class="ls-h">' + global.UI.rich(les.exemplo.p) + '</h3><div class="ls-split ex' + (exm.code ? '' : ' solo') + '">' + (exm.code ? codeBox(ex, pack.codeHtml(fmtCode(exm.code, ex))) : '') +
         '<div class="ls-live"><span class="ls-badge">' + icon('play') + esc(exm.badge) + '</span>' + exm.liveHtml + '</div></div>' + resumoHtml(px.r) + '</div>',
       // 4 · Cuidados (com o erro real ou o equívoco comum)
       '<div class="ls-body"><h3 class="ls-h">Cuidados e boas práticas' + kwChip + '</h3>' + errHtml(ex, pack, px.e) + '<ol class="ls-cards">' +

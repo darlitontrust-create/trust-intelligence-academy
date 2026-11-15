@@ -368,6 +368,22 @@
       c.beginPath(); c.moveTo(cx, y + h); c.lineTo(cx, y + h + s * 0.2); c.moveTo(cx - s * 0.18, y + h + s * 0.2); c.lineTo(cx + s * 0.18, y + h + s * 0.2); c.stroke();
       c.lineWidth = s * 0.06; c.beginPath(); c.moveTo(x + w * 0.14, y + h * 0.76); c.lineTo(x + w * 0.4, y + h * 0.52); c.lineTo(x + w * 0.58, y + h * 0.64); c.lineTo(x + w * 0.84, y + h * 0.26); c.stroke();
       c.beginPath(); c.arc(x + w * 0.84, y + h * 0.26, s * 0.065, 0, Math.PI * 2); c.fill();
+    } else if (kind === 'lovable') {
+      // coração formado por duas curvas, com um cursor de construção
+      const r = s * 0.2, top = cy - s * 0.18;
+      c.beginPath(); c.moveTo(cx, cy + s * 0.34);
+      c.bezierCurveTo(cx - s * 0.5, cy + s * 0.02, cx - s * 0.42, top - r * 1.4, cx, top + s * 0.02);
+      c.bezierCurveTo(cx + s * 0.42, top - r * 1.4, cx + s * 0.5, cy + s * 0.02, cx, cy + s * 0.34);
+      c.closePath(); c.stroke();
+      c.lineWidth = s * 0.05; c.beginPath(); c.moveTo(cx - s * 0.12, cy + s * 0.02); c.lineTo(cx - s * 0.2, cy + s * 0.08); c.lineTo(cx - s * 0.12, cy + s * 0.14);
+      c.moveTo(cx + s * 0.12, cy + s * 0.02); c.lineTo(cx + s * 0.2, cy + s * 0.08); c.lineTo(cx + s * 0.12, cy + s * 0.14); c.stroke();
+    } else if (kind === 'claude') {
+      // balão de conversa com uma estrela de raios
+      const w = s * 0.84, h = s * 0.56, x = cx - w / 2, y = cy - h / 2 - s * 0.08;
+      rr(c, x, y, w, h, s * 0.14); c.stroke();
+      c.beginPath(); c.moveTo(x + w * 0.24, y + h); c.lineTo(x + w * 0.18, y + h + s * 0.18); c.lineTo(x + w * 0.42, y + h); c.stroke();
+      const sx = cx, sy = y + h / 2; c.lineWidth = s * 0.05;
+      for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4, r1 = s * 0.05, r2 = s * (i % 2 ? 0.14 : 0.2); c.beginPath(); c.moveTo(sx + Math.cos(a) * r1, sy + Math.sin(a) * r1); c.lineTo(sx + Math.cos(a) * r2, sy + Math.sin(a) * r2); c.stroke(); }
     } else if (kind === 'powerquery') {
       // funil com linhas de dados entrando e uma saída limpa
       const top = cy - s * 0.34, w = s * 0.86;

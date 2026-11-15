@@ -122,7 +122,7 @@
     view.querySelectorAll('[data-f]').forEach(function (b) { b.onclick = function () { filter = b.dataset.f; view.querySelectorAll('[data-f]').forEach(function (x) { x.classList.toggle('on', x === b); x.setAttribute('aria-selected', x === b); }); list(view, t); }; });
     list(view, t);
   }
-  function example(id) { return { sql: 'JOIN', excel: 'PROCV', powerbi: 'CALCULATE', python: 'groupby', gestao: 'Pareto', sixsigma: 'DMAIC', ingles: 'present perfect', estatistica: 'mediana', storytelling: 'título', powerquery: 'mesclar' }[id] || 'média'; }
+  function example(id) { return { sql: 'JOIN', excel: 'PROCV', powerbi: 'CALCULATE', python: 'groupby', gestao: 'Pareto', sixsigma: 'DMAIC', ingles: 'present perfect', estatistica: 'mediana', storytelling: 'título', powerquery: 'mesclar' , lovable: 'Plan e Build', claude: 'tags XML'}[id] || 'média'; }
 
   /* ------------------------------- Leitura ------------------------------- */
   function reader(view, key, setCleanup) {

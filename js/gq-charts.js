@@ -11,7 +11,7 @@
   'use strict';
   const esc = function (x) { return String(x == null ? '' : x).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   const FS = 1.18; // escala das fontes dos gráficos (legibilidade em colunas estreitas)
-  const THEMES = { gestao: { a: '#ff9a76', b: '#ff5e3a', rgb: '255,154,118', rgb2: '255,94,58' }, sixsigma: { a: '#5eead4', b: '#14b8a6', rgb: '94,234,212', rgb2: '20,184,166' }, estatistica: { a: '#a5b4fc', b: '#6366f1', rgb: '165,180,252', rgb2: '99,102,241' }, storytelling: { a: '#fdba74', b: '#f97316', rgb: '253,186,116', rgb2: '249,115,22' }, powerquery: { a: '#7dd3fc', b: '#0284c7', rgb: '125,211,252', rgb2: '2,132,199' } };
+  const THEMES = { gestao: { a: '#ff9a76', b: '#ff5e3a', rgb: '255,154,118', rgb2: '255,94,58' }, sixsigma: { a: '#5eead4', b: '#14b8a6', rgb: '94,234,212', rgb2: '20,184,166' }, estatistica: { a: '#a5b4fc', b: '#6366f1', rgb: '165,180,252', rgb2: '99,102,241' }, storytelling: { a: '#fdba74', b: '#f97316', rgb: '253,186,116', rgb2: '249,115,22' }, powerquery: { a: '#7dd3fc', b: '#0284c7', rgb: '125,211,252', rgb2: '2,132,199' } , lovable: { a: '#f0abfc', b: '#d946ef', rgb: '240,171,252', rgb2: '217,70,239' }, claude: { a: '#f4b98c', b: '#d97757', rgb: '244,185,140', rgb2: '217,119,87' } };
   const COL = { a: '#ff9a76', b: '#ff5e3a', rgb: '255,154,118', rgb2: '255,94,58', line: '#7dd3fc', ok: '#4ade80', bad: '#f87171', warn: '#fbbf24', ink: '#e8ebf6', ink2: '#b6bdd6', ink3: '#7e86a6', grid: 'rgba(255,255,255,0.08)' };
 
   /* ------------------------------ Números ------------------------------ */
@@ -455,6 +455,19 @@
     return { html: html, speech: f.speech || ('A consulta tem ' + f.items.length + ' etapas aplicadas.'), stats: {} };
   };
 
+  /** Caixa de prompt (Lovable, Claude): f.code, f.role (rótulo), f.reply (resposta opcional). Realça [campos], <tags> e títulos. */
+  R.prompt = function (f) {
+    const mark = function (txt) {
+      return esc(txt).replace(/(&lt;\/?[a-z_][a-z0-9_-]*&gt;)|(\[[^\]\n]{1,60}\])|(^#+ .*$)/gim, function (all, tag, slot, head) {
+        if (tag) return '<span class="pr-tag">' + tag + '</span>';
+        if (slot) return '<span class="pr-slot">' + slot + '</span>';
+        return '<b class="pr-head">' + head + '</b>';
+      });
+    };
+    const html = '<div class="gq-prompt"><div class="gq-prompt-h"><i></i>' + esc(f.role || 'Prompt') + '</div><pre>' + mark(f.code) + '</pre>' +
+      (f.reply ? '<div class="gq-prompt-r"><span>' + esc(f.replyRole || 'Resposta') + '</span><p>' + esc(f.reply) + '</p></div>' : '') + '</div>';
+    return { html: html, speech: f.speech || '', stats: {} };
+  };
   R.table = function (f) {
     const html = '<div class="dt"><div class="dt-scroll"><table class="gq-tbl"><thead><tr>' + f.cols.map(function (h) { return '<th class="plain">' + esc(h) + '</th>'; }).join('') + '</tr></thead><tbody>' +
       f.rows.map(function (r, i) { return '<tr' + (f.hl && f.hl.indexOf(i) >= 0 ? ' class="top"' : '') + (f.tot && i === f.rows.length - 1 ? ' class="tot"' : '') + '>' + r.map(function (v) { return '<td' + (typeof v === 'number' ? ' class="n"' : '') + '>' + esc(typeof v === 'number' ? fmt(v) : v) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table></div></div>' + (f.note ? '<p class="gq-cap">' + esc(f.note) + '</p>' : '');
@@ -562,7 +575,14 @@
   function legend(items) { return '<ul class="gq-leg">' + items.map(function (i) { return '<li><i style="background:' + i[0] + '"></i>' + esc(i[1]) + '</li>'; }).join('') + '</ul>'; }
 
   /** Paleta da trilha atual (Gestão: coral · Lean Six Sigma: verde-água). */
-  function theme(id) { const th = THEMES[id] || THEMES.gestao; COL.a = th.a; COL.b = th.b; COL.rgb = th.rgb; COL.rgb2 = th.rgb2; }
+  function theme(id) {
+    const th = THEMES[id] || THEMES.gestao; COL.a = th.a; COL.b = th.b; COL.rgb = th.rgb; COL.rgb2 = th.rgb2;
+    // textos, grade e cores de apoio acompanham o tema claro/escuro da plataforma
+    const light = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'light';
+    Object.assign(COL, light
+      ? { line: '#0284c7', ok: '#16a34a', bad: '#dc2626', warn: '#b45309', ink: '#1c2238', ink2: '#3d4663', ink3: '#6b7390', grid: 'rgba(20,30,60,0.10)' }
+      : { line: '#7dd3fc', ok: '#4ade80', bad: '#f87171', warn: '#fbbf24', ink: '#e8ebf6', ink2: '#b6bdd6', ink3: '#7e86a6', grid: 'rgba(255,255,255,0.08)' });
+  }
   function render(fig) {
     if (!fig) return { html: '', speech: '', stats: {} };
     theme(fig.theme || (global.Tracks && global.Tracks.activeId ? global.Tracks.activeId() : 'gestao'));

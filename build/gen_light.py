@@ -21,7 +21,7 @@ PW = ':where(html[data-theme="light"])'   # sem especificidade extra: estados (.
 
 KEEP_DARK = ['.code-block', '.ls-ed', '.ls-vs-ex', '.editor-host', '.CodeMirror', '.cm-', '.py-out', '.login-code',
              '.fe ', '.fe-', '.pbi-editor .fe', '.tech code', '.cert-thumb', '.cert-img', '.cv-img', '.calc-screen', '.ls-code',
-             '.sheet-code', '.sum-code', '.pq-m', '.gq-code', '.chart-code', '.hl-', '.tok-', '.ls-mk', '.t-kw', '.t-str', '.t-num', '.t-com', '.t-ref', '#print-area']
+             '.sheet-code', '.sum-code', '.pq-m', '.gq-code', '.chart-code', '.hl-', '.tok-', '.ls-mk', '.gq-prompt', '.t-kw', '.t-str', '.t-num', '.t-com', '.t-ref', '#print-area']
 COLOR_PROPS = ('background', 'background-color', 'background-image', 'color', 'border', 'border-color', 'border-top', 'border-bottom',
                'border-left', 'border-right', 'border-top-color', 'border-bottom-color', 'border-left-color', 'border-right-color',
                'outline-color', 'fill', 'stroke', 'caret-color', '-webkit-text-fill-color', 'text-decoration-color')
@@ -120,6 +120,8 @@ def rules(blocks):
             cols = COLOR_RE.findall(val)
             if not cols: continue
             if prop == 'color' and accent_bg: continue
+            if prop.startswith('background') and 'transparent' in val and all(hls(c)[1] > .9 for c in cols):
+                continue   # brilho branco (shimmer/reflexo) sobre elementos coloridos: igual nos dois temas
             nv = COLOR_RE.sub(lambda m: flip(m.group(0), prop), val)
             if nv != val:
                 new.append(f'{prop}: {nv}')
