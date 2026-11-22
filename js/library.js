@@ -10,6 +10,8 @@
    • #resumo-<n>      → resumo do nível: mapa das etapas, comparações,
                         fluxos, erros comuns e desafios das etapas.
    • #resumo-curso    → resumo do curso inteiro, nível a nível.
+   • Botões “PPT”     → exportam curso, nível, etapa ou aula como .pptx (deck.js).
+   • Visuais          → figuras dos exercícios de cada aula, abaixo do carrossel.
    • Visão geral      → progresso de leitura por tema e busca em todos.
    Estado: progress.library = { seen: { chave: data }, fav: { chave: true } }
    ===================================================================== */
@@ -85,10 +87,10 @@
         any = true;
         const read = g.keys.filter(function (k) { return seen(t.id, k); }).length;
         return '<section class="lib-stage"><header><div><span class="eyebrow">Etapa ' + g.stage + ' · exercícios ' + g.range[0] + ' a ' + g.range[1] + '</span><span class="muted sm">' + read + ' de ' + g.keys.length + ' aulas lidas</span></div>' +
-          '<a class="btn btn-ghost sm" href="#resumo-' + lv + '-' + g.stage + '">' + icon('book') + 'Resumo da etapa</a></header><ul class="lib-list">' + items.map(function (it) { return row(t, it); }).join('') + '</ul></section>';
+          '<span class="lib-h-act"><a class="btn btn-ghost sm" href="#resumo-' + lv + '-' + g.stage + '">' + icon('book') + 'Resumo da etapa</a><button class="btn btn-ghost sm lib-ppt" data-deck="stage" data-lv="' + lv + '" data-stage="' + g.stage + '" title="Exportar a etapa como apresentação do PowerPoint">' + icon('present') + 'PPT</button></span></header><ul class="lib-list">' + items.map(function (it) { return row(t, it); }).join('') + '</ul></section>';
       }).join('');
       if (blocks) html += '<section class="lib-level glass"><header class="lib-level-h"><h2>' + icon('bars') + 'Nível ' + LV[lv] + '</h2>' +
-        '<a class="btn btn-ghost sm" href="#resumo-' + lv + '">' + icon('book') + 'Resumo do nível</a></header>' + blocks + '</section>';
+        '<span class="lib-h-act"><a class="btn btn-ghost sm" href="#resumo-' + lv + '">' + icon('book') + 'Resumo do nível</a><button class="btn btn-ghost sm lib-ppt" data-deck="level" data-lv="' + lv + '" title="Exportar o nível como apresentação do PowerPoint">' + icon('present') + 'PPT</button></span></header>' + blocks + '</section>';
     });
     view.querySelector('#lib-results').innerHTML = any ? html : '<div class="empty-mini glass">' + icon('search') + (filter === 'fav' && !q ? 'Nenhuma aula favorita ainda. Toque na estrela para guardar uma aula.' : 'Nenhuma aula encontrada para essa busca.') + '</div>';
     bindItems(view, t);
@@ -114,6 +116,7 @@
       '<div class="lib-prog"><i style="width:' + (c.total ? c.seen / c.total * 100 : 0) + '%"></i></div></section>' +
       '<div class="lib-tools glass"><label class="lib-search">' + icon('search') + '<input type="search" id="lib-q" placeholder="Buscar aula, comando ou conceito (ex.: ' + esc(example(t.id)) + ')" value="' + esc(query) + '" autocomplete="off"></label>' +
         '<a class="btn btn-ghost sm lib-course-sum" href="#resumo-curso">' + icon('book') + 'Resumo do curso</a>' +
+        '<button class="btn btn-ghost sm lib-course-sum lib-ppt" data-deck="course" title="Exportar o curso como apresentação do PowerPoint">' + icon('present') + 'Exportar PPT</button>' +
         '<div class="seg" role="tablist">' + [['all', 'Todas'], ['unread', 'Não lidas'], ['fav', 'Favoritas']].map(function (f) { return '<button role="tab" class="seg-b' + (filter === f[0] ? ' on' : '') + '" data-f="' + f[0] + '" aria-selected="' + (filter === f[0]) + '">' + f[1] + '</button>'; }).join('') + '</div></div>' +
       '<div id="lib-results"></div>';
     const qi = view.querySelector('#lib-q');
@@ -132,8 +135,9 @@
     view.innerHTML =
       '<nav class="lib-crumbs"><a href="#conteudo">' + icon('chevL') + 'Biblioteca</a><span class="muted sm">Nível ' + LV[it.group.lv] + ' · Etapa ' + it.group.stage + ' · aula ' + (pos + 1) + ' de ' + ix.order.length + '</span>' +
         '<span class="lib-crumb-r"><button class="btn btn-ghost sm" id="lib-sheet">' + icon('list') + '<span>Ficha-resumo</span></button>' +
+        '<button class="btn btn-ghost sm lib-ppt" data-deck="lesson" data-key="' + esc(key) + '" title="Exportar a aula como apresentação do PowerPoint">' + icon('present') + '<span>PPT</span></button>' +
         '<button class="btn btn-ghost sm lib-fav-b' + (fav ? ' on' : '') + '" data-fav="' + esc(key) + '" aria-pressed="' + fav + '">' + icon('star') + '<span>' + (fav ? 'Favorita' : 'Favoritar') + '</span></button></span></nav>' +
-      '<div id="lib-host"></div>' +
+      '<div id="lib-host"></div>' + figsHtml(t, it.exs) +
       '<nav class="lib-pager">' + (prev ? '<a class="btn btn-ghost" href="#aula-' + encodeURIComponent(prev) + '">' + icon('chevL') + '<span><small>Anterior</small>' + esc(ix.byKey[prev].les.titulo) + '</span></a>' : '<span></span>') +
         (next ? '<a class="btn btn-ghost next" href="#aula-' + encodeURIComponent(next) + '"><span><small>Próxima</small>' + esc(ix.byKey[next].les.titulo) + '</span>' + icon('chevR') + '</a>' : '') + '</nav>';
     const mark = function () { if (!p.library.seen[key]) { p.library.seen[key] = new Date().toISOString(); S().save(); } };
@@ -153,6 +157,38 @@
       fb.classList.toggle('on', on); fb.setAttribute('aria-pressed', on); fb.querySelector('span').textContent = on ? 'Favorita' : 'Favoritar';
     };
     setTimeout(function () { const l = view.querySelector('.lesson'); if (l) l.focus({ preventScroll: true }); }, 50);
+  }
+
+  /* ----------------------- Exportar como PPT ----------------------- */
+  document.addEventListener('click', function (e) {
+    const b = e.target.closest && e.target.closest('[data-deck]');
+    if (!b || !global.Deck) return;
+    e.preventDefault();
+    const k = b.dataset.deck, t = global.Tracks.active();
+    const scope = k === 'course' ? { kind: 'course' } : k === 'level' ? { kind: 'level', lv: +b.dataset.lv } : k === 'stage' ? { kind: 'stage', lv: +b.dataset.lv, stage: +b.dataset.stage } : { kind: 'lesson', key: b.dataset.key };
+    b.disabled = true;
+    Promise.resolve(global.Deck.export(t, scope)).then(function () { b.disabled = false; });
+  });
+
+  /* ----------------------- Visuais dos exercícios ----------------------- */
+  /** Figuras (gráficos, tabelas, fluxos) que ilustram os exercícios desta aula. */
+  function figuresOf(t, exs) {
+    if (!global.GQCharts) return [];
+    return exs.filter(function (e) { return e.d; }).map(function (e) {
+      let out = null;
+      try { out = global.GQCharts.render(Object.assign({ theme: t.id }, e.d)); } catch (err) { out = null; }
+      return out && out.html ? { ex: e, html: out.html, title: e.d.title || e.n } : null;
+    }).filter(Boolean);
+  }
+  function figsHtml(t, exs) {
+    const figs = figuresOf(t, exs);
+    if (!figs.length) return '';
+    return '<section class="lib-figs glass"><header class="lib-figs-h"><h2>' + icon('bars') + 'Visuais dos exercícios</h2><p class="muted sm">' +
+      (figs.length === 1 ? 'O visual usado no exercício desta aula.' : 'Os ' + figs.length + ' visuais usados nos exercícios desta aula.') + '</p></header>' +
+      '<div class="lib-figs-grid">' + figs.map(function (f) {
+        return '<figure class="lib-fig"><figcaption><b>' + esc(f.ex.n) + '</b><a class="btn btn-quiet sm" href="#ex-' + esc(f.ex.id) + '">Exercício ' + f.ex.pos + ' · Nível ' + LV[f.ex.level] + icon('chevR') + '</a></figcaption>' +
+          '<div class="lib-fig-b gq-data">' + f.html + '</div></figure>';
+      }).join('') + '</div></section>';
   }
 
   /* ---------------------------- Ficha-resumo ---------------------------- */
@@ -204,6 +240,7 @@
     const title = 'Resumo · Nível ' + LV[lv] + ' · Etapa ' + stage;
     view.innerHTML =
       '<nav class="lib-crumbs"><a href="#conteudo">' + icon('chevL') + 'Biblioteca</a><span class="muted sm">' + g.keys.length + ' aulas · exercícios ' + g.range[0] + ' a ' + g.range[1] + '</span>' +
+        '<button class="btn btn-ghost sm lib-ppt" data-deck="stage" data-lv="' + lv + '" data-stage="' + stage + '">' + icon('present') + 'Exportar PPT</button>' +
         '<button class="btn btn-primary sm" id="sum-print">' + icon('printer') + 'Imprimir ou salvar PDF</button></nav>' +
       '<section class="page-h stack"><p class="eyebrow">' + esc(t.nome) + '</p><h1>' + esc(title) + '</h1><p class="muted">O essencial de cada aula da etapa, para revisar antes da prova do certificado ou dos desafios de skills.</p>' +
         '<div class="sum-nav"><a class="btn btn-ghost sm" href="#resumo-' + lv + '">' + icon('book') + 'Nível ' + LV[lv] + ' inteiro</a><a class="btn btn-ghost sm" href="#resumo-curso">Curso inteiro</a></div></section>' +
@@ -311,6 +348,7 @@
       : '<a class="btn btn-ghost sm" href="#resumo-curso">' + icon('book') + 'Curso inteiro</a>' + gs.map(function (g) { return '<a class="btn btn-ghost sm" href="#resumo-' + lv + '-' + g.stage + '">Etapa ' + g.stage + '</a>'; }).join('');
     view.innerHTML =
       '<nav class="lib-crumbs"><a href="#conteudo">' + icon('chevL') + 'Biblioteca</a><span class="muted sm">' + nLes + ' aulas · ' + gs.length + ' etapas</span>' +
+        '<button class="btn btn-ghost sm lib-ppt" data-deck="' + (kind === 'curso' ? 'course' : 'level') + '" data-lv="' + (lv || '') + '">' + icon('present') + 'Exportar PPT</button>' +
         '<button class="btn btn-primary sm" id="sum-print">' + icon('printer') + 'Imprimir ou salvar PDF</button></nav>' +
       '<section class="page-h stack"><p class="eyebrow">' + esc(t.nome) + '</p><h1>' + esc(title) + '</h1><p class="muted">' +
         (kind === 'curso' ? 'Todas as aulas do curso, numeradas e organizadas por nível e etapa, com a ideia, a sintaxe, os pontos-chave e os cuidados de cada uma. No fim, a revisão com comparações, fluxos e erros comuns.' : 'Todas as aulas do nível, numeradas e organizadas por etapa, com a ideia, a sintaxe, os pontos-chave, os cuidados e o desafio de cada etapa. No fim, a revisão com comparações, fluxos e erros comuns.') + '</p>' +
@@ -357,5 +395,5 @@
     };
   }
 
-  global.Library = { render: render, reader: reader, summary: summary, levelSummary: levelSummary, courseSummary: courseSummary, renderOverview: renderOverview, index: index, counts: counts, seen: seen };
+  global.Library = { render: render, reader: reader, figuresOf: figuresOf, summary: summary, levelSummary: levelSummary, courseSummary: courseSummary, renderOverview: renderOverview, index: index, counts: counts, seen: seen };
 })(window);

@@ -18,7 +18,7 @@
       nome: 'SQL Prático', short: 'SQL', tag: 'Banco de dados',
       color: { a: '#2fd8f0', b: '#4d7cff' },            // azul
       desc: 'Do primeiro SELECT a window functions, triggers e otimização, com correção automática em SQLite.',
-      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'SQLBank',
+      facts: ['150 exercícios', '3 níveis', '54h'], total: 150, bankName: 'SQLBank',
       summary: 'do primeiro SELECT a window functions, CTEs recursivas, triggers, procedures, MERGE e otimização de consultas',
     },
     {
@@ -26,7 +26,7 @@
       nome: 'Excel Prático', short: 'Excel', tag: 'Planilhas',
       color: { a: '#4ade80', b: '#10b981' },            // verde
       desc: 'Fórmulas, PROCX, SOMASES, matrizes dinâmicas e análises de negócio, com correção automática em planilha.',
-      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'ExcelBank',
+      facts: ['150 exercícios', '3 níveis', '54h'], total: 150, bankName: 'ExcelBank',
       summary: 'das primeiras fórmulas a PROCX, ÍNDICE e CORRESP, SOMASES, matrizes dinâmicas, LET, estatística e matemática financeira',
     },
     {
@@ -34,7 +34,7 @@
       nome: 'Power BI & DAX', short: 'Power BI', tag: 'Business Intelligence',
       color: { a: '#ffd76a', b: '#f2a900' },            // amarelo
       desc: 'Medidas DAX, CALCULATE, contexto de filtro, inteligência de tempo e rankings, com correção automática num modelo estrela.',
-      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'PBIBank',
+      facts: ['150 exercícios', '3 níveis', '54h'], total: 150, bankName: 'PBIBank',
       summary: 'das primeiras medidas a CALCULATE, contexto de filtro, iteradores, inteligência de tempo, RANKX, curva ABC e tabelas virtuais',
     },
     {
@@ -42,7 +42,7 @@
       nome: 'Power Query', short: 'Power Query', tag: 'Preparação de dados',
       color: { a: '#7dd3fc', b: '#0284c7' },            // azul-céu
       desc: 'Limpe, combine e remodele dados no Excel e no Power BI: etapas aplicadas, mesclagens, unpivot, linguagem M e atualização automática.',
-      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'PQBank',
+      facts: ['150 exercícios', '3 níveis', '54h'], total: 150, bankName: 'PQBank',
       summary: 'dos primeiros passos no editor (fontes, tipos, filtros e limpeza de texto) a mesclar, acrescentar, agrupar e transformar colunas em linhas, à linguagem M, parâmetros, funções, query folding, atualização e preparação do modelo estrela',
       related: [{ id: 'powerbi', label: 'Próximo passo: medidas DAX' }, { id: 'excel', label: 'Também funciona no Excel' }, { id: 'sql', label: 'Base para fontes de banco' }],
     },
@@ -51,7 +51,7 @@
       nome: 'Gestão da Qualidade', short: 'Gestão', tag: 'Melhoria contínua',
       color: { a: '#ff9a76', b: '#ff5e3a' },            // coral
       desc: 'PDCA, Pareto, Ishikawa, Lean, CEP, Seis Sigma e FMEA, com casos práticos e correção automática na operação da NexusMarket.',
-      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'GQBank',
+      facts: ['150 exercícios', '3 níveis', '54h'], total: 150, bankName: 'GQBank',
       summary: 'dos conceitos de qualidade e do PDCA às ferramentas da qualidade, MASP, 8D, Lean, controle estatístico, Seis Sigma, FMEA e ISO 9001',
       related: [{ id: 'sixsigma', label: 'Próximo passo' }],
     },
@@ -60,7 +60,7 @@
       nome: 'Python para Dados', short: 'Python', tag: 'Programação',
       color: { a: '#fff59d', b: '#d4c21a' },            // amarelo em outro tom (limão)
       desc: 'Do primeiro print() ao pandas: listas, dicionários, funções, limpeza de dados, groupby e merge, com Python de verdade no navegador.',
-      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'PyBank',
+      facts: ['150 exercícios', '3 níveis', '54h'], total: 150, bankName: 'PyBank',
       summary: 'dos fundamentos (variáveis, listas, dicionários, laços e funções) à análise de dados com a biblioteca padrão e com pandas: filtros, groupby, merge, tabelas dinâmicas e datas',
     },
     {
@@ -77,7 +77,7 @@
       nome: 'Inglês para o Dia a Dia', short: 'Inglês', tag: 'Idiomas',
       color: { a: '#ff9fd2', b: '#e8459b' },            // rosa
       desc: 'Conversação para viagem, vida social e trabalho: ouça diálogos, monte frases, pratique a fala e use o inglês em situações reais.',
-      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'EnBank',
+      facts: ['150 exercícios', '3 níveis', '54h'], total: 150, bankName: 'EnBank',
       summary: 'das apresentações e pedidos no café às viagens, à conversa social e ao inglês do trabalho: reuniões, e-mails, apresentação de dados, entrevistas e negociação',
     },
     {
@@ -85,7 +85,7 @@
       nome: 'Estatística Aplicada', short: 'Estatística', tag: 'Análise de dados',
       color: { a: '#a5b4fc', b: '#6366f1' },            // índigo
       desc: 'Da estatística descritiva aos testes A/B, regressão e previsão, com dados reais e cálculos feitos na hora para decidir melhor.',
-      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'ESBank',
+      facts: ['150 exercícios', '3 níveis', '54h'], total: 150, bankName: 'ESBank',
       summary: 'da estatística descritiva (médias, dispersão, quartis e gráficos) à probabilidade, distribuições, intervalos de confiança, testes de hipótese, testes A/B, regressão e previsão de séries temporais',
       related: [{ id: 'python', label: 'Ferramenta para as análises' }, { id: 'sixsigma', label: 'Aplicação em melhoria de processos' }, { id: 'powerbi', label: 'Ferramenta para os painéis' }],
     },
@@ -94,7 +94,7 @@
       nome: 'Storytelling com Dados', short: 'Storytelling', tag: 'Comunicação',
       color: { a: '#fdba74', b: '#f97316' },            // laranja
       desc: 'Transforme análises em decisões: contexto, escolha do gráfico, clareza visual, narrativa, painéis executivos e apresentações que convencem.',
-      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'DVBank',
+      facts: ['150 exercícios', '3 níveis', '54h'], total: 150, bankName: 'DVBank',
       summary: 'do contexto e da grande ideia à escolha do gráfico, clareza visual (Gestalt, atributos pré-atentivos e cor), títulos que concluem, arco narrativo, KPIs e comparações honestas, até dashboards executivos, apresentações, recomendações e ética',
       related: [{ id: 'powerbi', label: 'Ferramenta para os painéis' }, { id: 'estatistica', label: 'Base para comparações honestas' }],
     },
@@ -103,7 +103,7 @@
       nome: 'Apps com Lovable', short: 'Lovable', tag: 'Criação com IA',
       color: { a: '#f0abfc', b: '#d946ef' },            // fúcsia
       desc: 'Crie apps completos conversando com a IA: prompts que funcionam, design, banco de dados, login, segurança, integrações e lançamento.',
-      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'LVBank',
+      facts: ['150 exercícios', '3 níveis', '54h'], total: 150, bankName: 'LVBank',
       summary: 'do primeiro prompt e dos modos Plan e Build ao design, banco de dados no Lovable Cloud, login, regras de acesso, segredos, integrações, depuração, GitHub, créditos e lançamento com qualidade e LGPD',
       related: [{ id: 'claude', label: 'IA para planejar e revisar' }, { id: 'sql', label: 'Base para o banco de dados' }],
     },
@@ -112,7 +112,7 @@
       nome: 'Claude no Trabalho', short: 'Claude', tag: 'Inteligência Artificial',
       color: { a: '#f4b98c', b: '#d97757' },            // terracota
       desc: 'Use o Claude de verdade no trabalho: prompts claros, análise de dados, Projetos, artefatos, pesquisa, conectores, Claude Code e API.',
-      facts: ['150 exercícios', '3 níveis', '50h'], total: 150, bankName: 'CLBank',
+      facts: ['150 exercícios', '3 níveis', '54h'], total: 150, bankName: 'CLBank',
       summary: 'dos fundamentos e da escolha de modelos a prompts claros com exemplos e tags, Projetos, artefatos, análise de dados, SQL e DAX, pesquisa, conectores e MCP, skills, raciocínio, avaliação de prompts, Claude Code e a API com ferramentas e custos',
       related: [{ id: 'lovable', label: 'Construir apps com IA' }, { id: 'python', label: 'Base para a API e automações' }],
     },

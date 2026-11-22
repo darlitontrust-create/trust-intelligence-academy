@@ -193,7 +193,7 @@
         '<div class="ov-left"><section class="card glass"><header class="card-h"><h2>Evolução de XP (todas as trilhas)</h2><span class="muted sm">XP acumulado</span></header>' + global.Dashboard.evolutionChart({ progress: { history: hist } }) + '</section>' +
         '<section class="card glass hm-card">' + global.Dashboard.heatmap(hist, { style: '--hm-a:#a46bff;--hm-b:#7a5cff' }) + '</section></div>' +
         // à direita: mesma altura da coluna da esquerda; a lista de atividades usa o espaço que sobrar
-        '<section class="card glass ov-right"><div class="ov-right-in"><header class="card-h"><h2>XP por trilha</h2></header><ul class="ov-xp">' + sum.map(function (s) {
+        '<section class="card glass ov-right"><div class="ov-right-in"><header class="card-h"><h2>XP por trilha</h2></header><ul class="ov-xp">' + sum.slice().sort(function (a, b) { return b.xp - a.xp; }).map(function (s) {
           return '<li' + tv(s.t) + '><span>' + dot(s.t) + esc(s.t.short) + '</span>' + bar(s.xp, Math.max.apply(null, sum.map(function (x) { return x.xp; })) || 1, 'ov-col') + '<b>' + fmt(s.xp) + '</b></li>';
         }).join('') + '</ul>' +
         '<h3 class="card-k ov-sub">Atividade recente</h3>' +

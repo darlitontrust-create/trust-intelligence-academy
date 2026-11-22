@@ -94,7 +94,13 @@
       if (tgt && tgt.matches && tgt.matches('input, textarea, select') && !panel.contains(tgt)) return; // não atrapalha o campo da resposta
       const map = { '*': '×', '/': '÷', '-': '−', '.': ',', 'x': '×' };
       if (/^[0-9+()%,^]$/.test(e.key) || map[e.key]) { e.preventDefault(); press(map[e.key] || e.key); }
-      else if (e.key === 'Enter' || e.key === '=') { if (tgt && tgt.closest && tgt.closest('button') && panel.contains(tgt)) return; e.preventDefault(); press('eq'); }
+      else if (e.key === 'Enter' || e.key === '=') {
+        // Enter sempre calcula, mesmo com o foco num botão da calculadora (antes repetia o último botão clicado);
+        // fora da calculadora (ex.: botão Fechar ou campos da página) o Enter mantém o comportamento normal
+        const btn = tgt && tgt.closest && tgt.closest('button');
+        if (btn && (!panel.contains(btn) || !btn.closest('.calc-keys'))) return;
+        e.preventDefault(); e.stopPropagation(); press('eq');
+      }
       else if (e.key === 'Backspace') { e.preventDefault(); press('back'); }
       else if (e.key === 'Escape') { e.preventDefault(); close(); }
       else if (e.key === 'Delete') { e.preventDefault(); press('clear'); }

@@ -163,7 +163,7 @@
         stat('XP total', fmt(p.xp), 'de ' + fmt(G.MAX_XP) + ' XP', 'sparkle') +
         stat('Nível atual', esc(lvl.nome.split(' ')[0]), 'Faixa ' + tier.nome, 'map') +
         stat('Exercícios', solved + '<small>/150</small>', (150 - solved) + ' restantes', 'check') +
-        stat('Concluído', Math.round(pct * 1000) / 10 + '%', 'Carga estimada ' + Math.round(solved * 20 / 60) + 'h de 50h', 'clock') +
+        stat('Concluído', Math.round(pct * 1000) / 10 + '%', 'Carga estimada ' + Math.round(solved * 54 / 150) + 'h de 54h', 'clock') +
         (global.Skills ? stat('Skills', global.Skills.count(tr) + '<small>/3</small>', 'Desafios de Skills', 'flag') : '') +
       '</section>' +
       (global.Skills ? global.Skills.trackStrip(st) : '') +

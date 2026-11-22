@@ -11,7 +11,7 @@
      etapa → faixa lateral com hexágono do tema, estrelas da etapa e medalha
      nível → escudo com louros, estrelas e faixa
      final → escudo dourado com coroa, raios, louros e o logo
-   Carga horária estimada: exercícios × 20 min.
+   Carga horária estimada (arredondada): etapas 5 h, 6 h e 7 h; nível 18 h; curso 54 h.
    • Imagem em 2× (3200 × 2260) para não pixelar ao ampliar; aviso de
      curso livre na margem inferior; o código é identificador, não verificação.
    Ações: Baixar PDF (jsPDF), Imprimir, Compartilhar, LinkedIn (adicionar
@@ -53,6 +53,10 @@
   logoImg.src = 'assets/logo-256.png';
 
   /* ------------------------------ Catálogo ------------------------------ */
+  /** Carga horária fixa e arredondada: as etapas ficam mais complexas com a evolução
+      (5 h, 6 h e 7 h); cada nível soma 18 h e o curso completo, 54 h. Vale também
+      para certificados já conquistados, porque o catálogo é recalculado a cada abertura. */
+  const HOURS = { stage: [5, 6, 7], level: 18, final: 54 };
   function hoursTxt(n) {
     const m = n * MIN_PER_EX, h = Math.floor(m / 60), r = m % 60;
     return r ? h + 'h' + String(r).padStart(2, '0') + 'min' : h + ' horas';
@@ -102,7 +106,7 @@
         out.push({
           id: 'stage-' + lv + '-' + (i + 1), type: 'stage', level: lv, stage: i + 1, tone: TONES[lv], track: tr, medal: MEDALS[lv], lessons: lessonKeys(exs),
           title: p.nome, kicker: 'Certificado de Etapa', scope: (SS ? 'Formação no conteúdo · ' : '') + 'Nível ' + TONES[lv].name + ' · Etapa ' + (i + 1) + ' de 3',
-          exCount: exs.length, range: range, topics: topicsOf(exs), hours: hoursTxt(exs.length),
+          exCount: exs.length, range: range, topics: topicsOf(exs), hours: HOURS.stage[i] + ' horas',
           xp: exs.reduce(function (s, e) { return s + (st.progress.solved[e.id] ? st.progress.solved[e.id].xp : 0); }, 0),
           role: p.nome, have: have, need: p.need, date: promoDate(st, p.key),
         });
@@ -112,7 +116,7 @@
       out.push({
         id: 'level-' + lv, type: 'level', level: lv, tone: TONES[lv], track: tr, medal: MEDALS[lv], lessons: lessonKeys(list),
         title: SS ? BELTS[lv] : 'Nível ' + TONES[lv].name, kicker: 'Certificado de Nível', scope: SS ? 'Formação no conteúdo de ' + BELTS[lv] + (lv === 1 ? ' (inclui White Belt)' : '') + ' · Nível ' + lv + ' de 3' : tr.nome + ' · Nível ' + lv + ' de 3',
-        exCount: list.length, topics: topicsOf(list), hours: hoursTxt(list.length),
+        exCount: list.length, topics: topicsOf(list), hours: HOURS.level + ' horas',
         xp: list.reduce(function (s, e) { return s + (st.progress.solved[e.id] ? st.progress.solved[e.id].xp : 0); }, 0),
         role: last.nome, have: have, need: 50, date: promoDate(st, last.key),
       });
@@ -122,7 +126,7 @@
     out.push({
       id: 'final', type: 'final', level: 3, tone: TONES.final, track: tr, medal: MEDALS[3], lessons: lessonKeys(BANK.EXERCISES),
       title: 'Certificado de Conclusão em ' + tr.nome, kicker: 'Certificado Final', scope: SS ? 'Formação completa: White, Yellow, Green e Black Belt' : tr.nome + ' · Trilha completa · 3 níveis',
-      exCount: 150, topics: topicsOf(BANK.EXERCISES), hours: '50 horas', xp: st.progress.xp,
+      exCount: 150, topics: topicsOf(BANK.EXERCISES), hours: HOURS.final + ' horas', xp: st.progress.xp,
       role: G.FINAL.nome, have: total, need: 150, date: st.progress.completedAt,
     });
     withExam(st, out[out.length - 1]);
@@ -788,7 +792,7 @@
     [['Conclusão', new Date(cert.date || Date.now()).toLocaleDateString('pt-BR')], ['Exercícios', '150'], ['Prova final', examTxt(cert)], ['Promoção final', cert.role], ['XP total', fmt(cert.xp) + ' XP']].forEach(function (st, i) {
       stat(c, x + i * (sw + 12), sy, sw, 92, st[0], st[1], i === 3 || i === 2 ? '#ffd27a' : '#ffffff');
     });
-    txt(c, 'Carga Horária Estimada: 50 horas', x + maxW / 2, 902, '600 24px ' + F.sans, lin(c, x + maxW / 2 - 220, 0, x + maxW / 2 + 220, 0, [[0, cert.track.color.a], [0.5, '#ffd27a'], [1, '#a46bff']]), 'center', 1, 'rgba(255,210,122,0.4)', 14);
+    txt(c, 'Carga Horária Estimada: ' + HOURS.final + ' horas', x + maxW / 2, 902, '600 24px ' + F.sans, lin(c, x + maxW / 2 - 220, 0, x + maxW / 2 + 220, 0, [[0, cert.track.color.a], [0.5, '#ffd27a'], [1, '#a46bff']]), 'center', 1, 'rgba(255,210,122,0.4)', 14);
     signature(c, x + maxW * 0.25, 1002, 'Coordenação Pedagógica', 'Trust Intelligence Academy', '#ffd27a');
     signature(c, x + maxW * 0.75, 1002, 'Trust Intelligence Academy', 'Academia de dados, BI e IA', '#ffd27a');
   }

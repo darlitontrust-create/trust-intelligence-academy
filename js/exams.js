@@ -29,27 +29,58 @@
     const les = pack().LESSONS[key];
     return (les && les.quiz || []).map(function (q) { return { key: key, lesson: les.titulo, raw: q }; });
   }
-  /** Distribui o sorteio entre as aulas (uma por vez, em rodízio). */
-  function roundRobin(keys, n, out, seen) {
-    const buckets = shuffle(keys).map(function (k) { return shuffle(questionsOf(k)).filter(function (q) { return !seen[q.raw[0]]; }); }).filter(function (b) { return b.length; });
-    while (out.length < n && buckets.some(function (b) { return b.length; })) {
-      for (let i = 0; i < buckets.length && out.length < n; i++) {
-        const q = buckets[i].pop();
-        if (q) { seen[q.raw[0]] = 1; out.push(q); }
-      }
-    }
+
+  /* ---- Sem repetição dentro da tentativa ----
+     Duas questões contam como "iguais" quando têm o mesmo enunciado (ignorando
+     maiúsculas, acentos e espaços), enunciados quase idênticos ou a mesma
+     resposta correta longa. Primeiro tenta montar só com questões distintas;
+     se faltar questão, completa apenas com enunciados diferentes. */
+  function normTxt(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').replace(/[\s.?!:]+$/, '').trim(); }
+  function words(s) { return normTxt(s).split(/[^a-z0-9%/*+<>=_-]+/).filter(function (w) { return w.length > 2; }); }
+  function similar(a, b) {
+    const A = words(a), B = words(b); if (!A.length || !B.length) return false;
+    const setB = {}; B.forEach(function (w) { setB[w] = 1; });
+    const setA = {}; A.forEach(function (w) { setA[w] = 1; });
+    const inter = Object.keys(setA).filter(function (w) { return setB[w]; }).length;
+    const uni = Object.keys(Object.assign({}, setA, setB)).length;
+    return uni > 3 && inter / uni >= 0.8;
   }
-  /** Monta uma prova para o certificado (completa com aulas anteriores se faltar questão). */
+  /** Escolhe até n questões de `cands` (já na ordem de preferência) sem repetir. qOf/aOf leem enunciado e resposta. */
+  function distinct(cands, n, qOf, aOf, taken) {
+    const out = taken || [], usedQ = {}, usedA = {};
+    out.forEach(function (c) { usedQ[normTxt(qOf(c))] = 1; usedA[normTxt(aOf(c))] = 1; });
+    cands.forEach(function (c) {
+      if (out.length >= n) return;
+      const q = normTxt(qOf(c)), a = normTxt(aOf(c));
+      if (usedQ[q] || (a.length > 12 && usedA[a])) return;
+      if (out.some(function (o) { return similar(qOf(o), qOf(c)); })) return;
+      usedQ[q] = 1; usedA[a] = 1; out.push(c);
+    });
+    // completa, se preciso, só com enunciados diferentes
+    cands.forEach(function (c) {
+      if (out.length >= n || out.indexOf(c) >= 0) return;
+      const q = normTxt(qOf(c)); if (usedQ[q]) return;
+      usedQ[q] = 1; out.push(c);
+    });
+    return out;
+  }
+
+  /** Ordem de sorteio: uma questão de cada aula por vez (rodízio), para variar os temas. */
+  function roundRobin(keys) {
+    const buckets = shuffle(keys).map(function (k) { return shuffle(questionsOf(k)); }).filter(function (b) { return b.length; }), seq = [];
+    while (buckets.some(function (b) { return b.length; })) buckets.forEach(function (b) { const q = b.pop(); if (q) seq.push(q); });
+    return seq;
+  }
+  /** Monta uma prova para o certificado (completa com aulas do nível e da trilha se faltar questão), sem repetir questões. */
   function build(cert) {
-    const out = [], seen = {};
-    roundRobin(cert.lessons, N, out, seen);
-    if (out.length < N) {
-      // completa com as aulas do mesmo nível e, depois, de toda a trilha
-      const bank = global.ExerciseBank.EXERCISES;
-      const lv = bank.filter(function (e) { return e.level === cert.level; }).map(function (e) { return global.Lessons.forExercise(e).key; });
-      roundRobin(lv.filter(function (k, i) { return lv.indexOf(k) === i && cert.lessons.indexOf(k) < 0; }), N, out, seen);
-    }
-    if (out.length < N) roundRobin(Object.keys(pack().LESSONS), N, out, seen);
+    const bank = global.ExerciseBank.EXERCISES;
+    const lvKeys = bank.filter(function (e) { return e.level === cert.level; }).map(function (e) { return global.Lessons.forExercise(e).key; })
+      .filter(function (k, i, a) { return a.indexOf(k) === i && cert.lessons.indexOf(k) < 0; });
+    const all = Object.keys(pack().LESSONS).filter(function (k) { return cert.lessons.indexOf(k) < 0 && lvKeys.indexOf(k) < 0; });
+    const qOf = function (q) { return q.raw[0]; }, aOf = function (q) { return q.raw[1]; };
+    let out = distinct(roundRobin(cert.lessons), N, qOf, aOf);
+    if (out.length < N) out = distinct(roundRobin(lvKeys), N, qOf, aOf, out);
+    if (out.length < N) out = distinct(roundRobin(all), N, qOf, aOf, out);
     return shuffle(out).map(function (q) {
       const r = q.raw;
       const opts = shuffle([{ t: r[1], ok: true }, { t: r[2] }, { t: r[3] }, { t: r[4] }]);

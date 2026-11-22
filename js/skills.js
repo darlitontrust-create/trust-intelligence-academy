@@ -49,15 +49,47 @@
     }
     return buckets.filter(function (b) { return b.length; });
   }
-  /** Sorteio em rodízio entre as aulas, sem repetir enunciado. */
+
+  /* ---- Sem repetição dentro da tentativa ----
+     Duas questões contam como "iguais" quando têm o mesmo enunciado (ignorando
+     maiúsculas, acentos e espaços), enunciados quase idênticos ou a mesma
+     resposta correta longa. Primeiro tenta montar só com questões distintas;
+     se faltar questão, completa apenas com enunciados diferentes. */
+  function normTxt(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').replace(/[\s.?!:]+$/, '').trim(); }
+  function words(s) { return normTxt(s).split(/[^a-z0-9%/*+<>=_-]+/).filter(function (w) { return w.length > 2; }); }
+  function similar(a, b) {
+    const A = words(a), B = words(b); if (!A.length || !B.length) return false;
+    const setB = {}; B.forEach(function (w) { setB[w] = 1; });
+    const setA = {}; A.forEach(function (w) { setA[w] = 1; });
+    const inter = Object.keys(setA).filter(function (w) { return setB[w]; }).length;
+    const uni = Object.keys(Object.assign({}, setA, setB)).length;
+    return uni > 3 && inter / uni >= 0.8;
+  }
+  /** Escolhe até n questões de `cands` (já na ordem de preferência) sem repetir. qOf/aOf leem enunciado e resposta. */
+  function distinct(cands, n, qOf, aOf, taken) {
+    const out = taken || [], usedQ = {}, usedA = {};
+    out.forEach(function (c) { usedQ[normTxt(qOf(c))] = 1; usedA[normTxt(aOf(c))] = 1; });
+    cands.forEach(function (c) {
+      if (out.length >= n) return;
+      const q = normTxt(qOf(c)), a = normTxt(aOf(c));
+      if (usedQ[q] || (a.length > 12 && usedA[a])) return;
+      if (out.some(function (o) { return similar(qOf(o), qOf(c)); })) return;
+      usedQ[q] = 1; usedA[a] = 1; out.push(c);
+    });
+    // completa, se preciso, só com enunciados diferentes
+    cands.forEach(function (c) {
+      if (out.length >= n || out.indexOf(c) >= 0) return;
+      const q = normTxt(qOf(c)); if (usedQ[q]) return;
+      usedQ[q] = 1; out.push(c);
+    });
+    return out;
+  }
+
+  /** Sorteio em rodízio entre as aulas, sem repetir questões dentro da tentativa. */
   function build(trackId, cfg) {
-    const buckets = shuffle(pool(trackId, cfg.lv)).map(shuffle), out = [], seen = {};
-    while (out.length < cfg.n && buckets.some(function (b) { return b.length; })) {
-      for (let i = 0; i < buckets.length && out.length < cfg.n; i++) {
-        const q = buckets[i].pop();
-        if (q && !seen[q.q]) { seen[q.q] = 1; out.push(q); }
-      }
-    }
+    const buckets = shuffle(pool(trackId, cfg.lv)).map(shuffle), seq = [];
+    while (buckets.some(function (b) { return b.length; })) buckets.forEach(function (b) { const q = b.pop(); if (q) seq.push(q); });
+    const out = distinct(seq, cfg.n, function (q) { return q.q; }, function (q) { return q.ok; });
     return shuffle(out).map(function (q) {
       const opts = shuffle([{ t: q.ok, ok: true }].concat(q.bad.map(function (t) { return { t: t }; })));
       return { q: q.q, opts: opts, exp: q.exp, topic: q.topic, correct: opts.findIndex(function (o) { return o.ok; }), answer: null };
