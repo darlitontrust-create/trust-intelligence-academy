@@ -80,7 +80,7 @@
         }
         const figs = global.Library.figuresOf ? global.Library.figuresOf(t, it.exs) : [];
         for (const f of figs) {
-          const img = await shot(stage, '<div class="deck-shot"><div class="gq-data">' + f.html + '</div></div>', 640);
+          const img = await shot(stage, '<div class="deck-shot"><div class="gq-data">' + f.html + '</div></div>', /<table/i.test(f.html) && !/<svg/i.test(f.html) ? 520 : 640);
           if (img) { img.title = f.ex.n; img.sub = 'Exercício ' + f.ex.pos + ' · Nível ' + LV[f.ex.level]; v.figs.push(img); }
         }
         out[k] = v;
