@@ -53,6 +53,30 @@
     await new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); });
     const node = stage.firstElementChild;
     if (!node || !node.offsetHeight) return null;
+    // sem rolagem: tudo cresce até mostrar o conteúdo inteiro
+    node.querySelectorAll('*').forEach(function (el) {
+      const cs = getComputedStyle(el);
+      if (/(auto|scroll|hidden)/.test(cs.overflow + cs.overflowX + cs.overflowY) && el.tagName !== 'svg') { el.style.setProperty('overflow', 'visible', 'important'); }
+      if (cs.maxHeight !== 'none') el.style.setProperty('max-height', 'none', 'important');
+      if (cs.maxWidth !== 'none' && el.tagName !== 'IMG') el.style.setProperty('max-width', 'none', 'important');
+    });
+    // tabelas: primeira coluna (rótulos) à esquerda, valores centralizados
+    node.querySelectorAll('table').forEach(function (tb) {
+      tb.style.setProperty('width', '100%', 'important');
+      tb.querySelectorAll('tr').forEach(function (tr) {
+        Array.prototype.forEach.call(tr.children, function (c, i) {
+          const first = i === 0 && tr.children.length > 1 && !/^[\s\d.,%R$+\-−()]+$/.test(c.textContent.trim());
+          c.style.setProperty('text-align', first ? 'left' : 'center', 'important');
+          // textos curtos e números ficam numa linha só; frases longas quebram para a tabela não ficar estreita demais
+          c.style.setProperty('white-space', c.textContent.trim().length > 22 ? 'normal' : 'nowrap', 'important');
+          if (c.textContent.trim().length > 22) c.style.setProperty('min-width', '150px', 'important');
+        });
+      });
+    });
+    await new Promise(function (r) { requestAnimationFrame(r); });
+    // se uma tabela larga passar da largura, a área cresce junto (nada fica cortado)
+    const inner = Math.max.apply(null, [node.scrollWidth].concat(Array.prototype.map.call(node.querySelectorAll('table'), function (t) { return t.scrollWidth + 40; })));
+    if (inner > node.offsetWidth) { stage.style.width = inner + 'px'; await new Promise(function (r) { requestAnimationFrame(r); }); }
     const w = node.offsetWidth, h = node.offsetHeight;
     try {
       const data = await global.htmlToImage.toPng(node, { pixelRatio: 2, backgroundColor: '#121829', skipFonts: true, cacheBust: false, width: w, height: h });
@@ -80,7 +104,7 @@
         }
         const figs = global.Library.figuresOf ? global.Library.figuresOf(t, it.exs) : [];
         for (const f of figs) {
-          const img = await shot(stage, '<div class="deck-shot"><div class="gq-data">' + f.html + '</div></div>', /<table/i.test(f.html) && !/<svg/i.test(f.html) ? 520 : 640);
+          const img = await shot(stage, '<div class="deck-shot"><div class="gq-data">' + f.html + '</div></div>', /<table/i.test(f.html) && !/<svg/i.test(f.html) ? 440 : 600);
           if (img) { img.title = f.ex.n; img.sub = 'Exercício ' + f.ex.pos + ' · Nível ' + LV[f.ex.level]; v.figs.push(img); }
         }
         out[k] = v;
@@ -157,12 +181,21 @@
       const parts = kw && title.indexOf(':') > 0 ? [{ text: title.split(':')[0], options: { color: A, italic: true } }, { text: ':' + title.split(':').slice(1).join(':'), options: { color: C.ink } }] : [{ text: title, options: { color: C.ink } }];
       s.addText(parts, { objectName: '!!title', x: 0.8, y: 0.72, w: 11.2, h: 0.75, fontFace: SERIF, fontSize: fitSize(title, 11.2, 0.75, 32, 22), valign: 'middle', margin: 0 });
     }
+    /* grade dos slides: margens, colunas e respiro iguais em todos os slides */
+    const X0 = 0.8, X1 = W - 0.8, GAP = 0.25, TOP = 1.65, BOT = 5.65, RES_Y = 5.9, END = 6.55;
+    const LW = 7.45, RX = X0 + LW + GAP, RW = X1 - RX;      // coluna esquerda e direita
+    /** Parágrafo: justificado quando é longo. */
+    function para(s, txt, x, y, w, h, o) {
+      const t2 = plain(txt), fs = fitSize(t2, w, h, o.max || 18, o.min || 10);
+      s.addText(o.runs || t2, Object.assign({ x: x, y: y, w: w, h: h, fontFace: FONT, fontSize: fs, color: o.color || C.ink, valign: o.valign || 'top', margin: 0, align: t2.length > 110 ? 'justify' : 'left', paraSpaceAfter: 4 }, o.extra || {}));
+      return fs;
+    }
     function box(s, x, y, w, h, fill, lineC) { s.addShape(P.ShapeType.roundRect, { x: x, y: y, w: w, h: h, rectRadius: 0.12, fill: { color: fill || C.panel }, line: { color: lineC || C.line, width: 0.75 } }); }
     function label(s, txt, x, y, w, color) { s.addText(txt.toUpperCase(), { x: x, y: y, w: w, h: 0.3, fontFace: FONT, fontSize: 10, bold: true, color: color || C.ink3, charSpacing: 2, margin: 0 }); }
     function list(s, items, x, y, w, h, o) {
       if (!items.length) return;
       const txt = items.join('\n');
-      const fs = fitSize(txt, w - 0.3, h - items.length * 0.09, (o && o.max) || 16, 10);   // desconta o recuo do marcador e o espaço entre itens
+      const fs = fitSize(txt, w - 0.3, h - items.length * 0.09, Math.min((o && o.max) || 16, 17), 10);   // desconta o recuo do marcador e o espaço entre itens
       s.addText(items.map(function (b) { return { text: b, options: { bullet: { indent: 16 }, paraSpaceAfter: 6 } }; }), { x: x, y: y, w: w, h: h, fontFace: FONT, fontSize: fs, color: (o && o.color) || C.ink2, valign: 'top', margin: 0.05 });
     }
     function code(s, txt, x, y, w, h, name) {
@@ -172,7 +205,7 @@
       s.addShape(P.ShapeType.ellipse, { x: x + 0.56, y: y + 0.17, w: 0.12, h: 0.12, fill: { color: '34D399' }, line: { type: 'none' } });
       if (name) s.addText(name, { x: x + 0.8, y: y + 0.08, w: w - 1, h: 0.3, fontFace: MONO, fontSize: 9, color: C.ink3, margin: 0 });
       const t2 = plain(txt);
-      s.addText(t2, { x: x + 0.15, y: y + 0.45, w: w - 0.3, h: h - 0.55, fontFace: MONO, fontSize: fitSize(t2, w - 0.3, h - 0.55, 20, 9, true), color: 'E8EBF6', valign: 'top', margin: 0.05, paraSpaceAfter: 2 });
+      s.addText(t2, { x: x + 0.15, y: y + 0.45, w: w - 0.3, h: h - 0.55, fontFace: MONO, fontSize: fitSize(t2, w - 0.3, h - 0.55, 17, 9, true), color: 'E8EBF6', valign: 'top', margin: 0.05, paraSpaceAfter: 2 });
     }
     function picture(s, img, x, y, w, h) {
       const k = Math.min(w / img.w, h / img.h), iw = img.w * k, ih = img.h * k;
@@ -186,12 +219,12 @@
       else if (e.q) { s.addText('“' + plain(e.q) + '”', { x: x + 0.25, y: yy, w: w - 0.5, h: 0.9, fontFace: FONT, fontSize: fitSize(e.q, w - 0.5, 0.9, 18, 11), italic: true, color: C.ink, valign: 'top', margin: 0 }); yy += 1.0; }
       const rest = y + h - yy - 0.15;
       s.addText([{ text: 'Por quê: ', options: { bold: true, color: 'FBBF24' } }, { text: plain(e.y || ''), options: { color: C.ink2, breakLine: true } }, { text: 'Faça assim: ', options: { bold: true, color: '34D399' } }, { text: plain(e.x || ''), options: { color: C.ink2 } }],
-        { x: x + 0.25, y: yy, w: w - 0.5, h: rest, fontFace: FONT, fontSize: fitSize((e.y || '') + '\n' + (e.x || ''), w - 0.5, rest, 20, 10), valign: 'top', margin: 0, paraSpaceAfter: 6 });
+        { x: x + 0.25, y: yy, w: w - 0.5, h: rest, fontFace: FONT, fontSize: fitSize((e.y || '') + '\n' + (e.x || ''), w - 0.5, rest, 17, 10), valign: 'top', margin: 0, paraSpaceAfter: 6, align: 'justify' });
     }
     function resumo(s, txt, y) {
       if (!txt) return;
-      box(s, 0.8, y, W - 1.6, 0.62, C.panel2, A);
-      s.addText([{ text: 'Em resumo   ', options: { bold: true, color: A } }, { text: plain(txt), options: { color: C.ink } }], { x: 1, y: y, w: W - 2, h: 0.62, fontFace: FONT, fontSize: fitSize(txt, W - 4, 0.62, 15, 11), valign: 'middle', margin: 0 });
+      box(s, X0, y, X1 - X0, 0.62, C.panel2, A);
+      s.addText([{ text: 'Em resumo   ', options: { bold: true, color: A } }, { text: plain(txt), options: { color: C.ink } }], { x: X0 + 0.25, y: y, w: X1 - X0 - 0.5, h: 0.62, fontFace: FONT, fontSize: fitSize(txt, W - 4, 0.62, 15, 11), valign: 'middle', margin: 0 });
     }
     function flowRow(s, f, y) {
       if (!f || f.length < 2) return;
@@ -256,127 +289,133 @@
         const n = ix.order.indexOf(k) + 1, kick = 'Nível ' + LV[g.lv] + ' · Etapa ' + g.stage + ' · Aula ' + n;
         const title = plain(les.titulo);
 
-        // 1) Conceito
+        // 1) Conceito — ideia + analogia à esquerda, objetivos à direita; as duas colunas terminam em BOT
         let s = P.addSlide(); frame(s);
         head(s, kick + ' · Conceito', title, les.kw);
-        // a ideia ocupa o espaço que precisa; a analogia vem logo abaixo e o resumo fecha o slide
-        label(s, 'A ideia', 0.8, 1.65, 7);
-        const ideaFs = fitSize(les.ideia, 7.3, 2.65, 22, 11), ideaH = Math.min(2.65, estH(les.ideia, 7.3, ideaFs) + 0.15);
-        s.addText(plain(les.ideia), { x: 0.8, y: 1.95, w: 7.3, h: ideaH, fontFace: FONT, fontSize: ideaFs, color: C.ink, valign: 'top', margin: 0, paraSpaceAfter: 4 });
+        let ay = BOT;
         if (les.analogia) {
-          const ay = 1.95 + ideaH + 0.3, ah = Math.max(1.1, 5.7 - ay);
-          box(s, 0.8, ay, 7.3, ah, C.panel2, A);
-          s.addText([{ text: 'Para lembrar  ', options: { bold: true, color: A } }, { text: plain(les.analogia), options: { italic: true, color: C.ink2 } }], { x: 1.0, y: ay + 0.1, w: 6.9, h: ah - 0.2, fontFace: FONT, fontSize: fitSize(les.analogia, 6.9, ah - 0.2, 20, 10), valign: 'middle', margin: 0 });
+          const afs = fitSize(les.analogia, LW - 0.5, 1.4, 16, 10), ah = Math.min(1.7, Math.max(0.95, estH('Para lembrar ' + les.analogia, LW - 0.5, afs) + 0.35));
+          ay = BOT - ah;
+          box(s, X0, ay, LW, ah, C.panel2, A);
+          para(s, les.analogia, X0 + 0.25, ay + 0.12, LW - 0.5, ah - 0.24, { max: 16, valign: 'middle', runs: [{ text: 'Para lembrar  ', options: { bold: true, color: A } }, { text: plain(les.analogia), options: { italic: true, color: C.ink2 } }] });
+          ay -= GAP;
         }
-        box(s, 8.5, 1.65, 4.05, 4.05, C.panel);
-        label(s, px.o && px.o.length ? 'Você vai saber' : 'Pontos-chave', 8.75, 1.85, 3.6, A);
-        const hasU = px.u && px.u.length;
-        list(s, bullets(px.o && px.o.length ? px.o : les.notas), 8.75, 2.25, 3.6, hasU ? 1.95 : 3.3, { max: 22 });
-        if (hasU) { label(s, 'Onde se usa', 8.75, 4.3, 3.6, A); list(s, bullets(px.u), 8.75, 4.65, 3.6, 0.95, { max: 15 }); }
-        resumo(s, px.r || (px.v && px.v.r) || les.notas[0], 5.9);
+        label(s, 'A ideia', X0, TOP, LW);
+        para(s, les.ideia, X0, TOP + 0.35, LW, ay - TOP - 0.35, { max: 20 });
+        box(s, RX, TOP, RW, BOT - TOP, C.panel);
+        const hasU = px.u && px.u.length, goals = bullets(px.o && px.o.length ? px.o : les.notas);
+        label(s, px.o && px.o.length ? 'Você vai saber' : 'Pontos-chave', RX + 0.25, TOP + 0.2, RW - 0.5, A);
+        list(s, goals, RX + 0.25, TOP + 0.55, RW - 0.5, hasU ? 2.0 : BOT - TOP - 0.75, { max: 16 });
+        if (hasU) { label(s, 'Onde se usa', RX + 0.25, TOP + 2.7, RW - 0.5, A); list(s, bullets(px.u), RX + 0.25, TOP + 3.05, RW - 0.5, BOT - TOP - 3.2, { max: 15 }); }
+        resumo(s, px.r || (px.v && px.v.r) || les.notas[0], RES_Y);
         s.addNotes(plain(les.ideia) + '\n\n' + plain(les.analogia || ''));
 
-        // 2) Como fazer
+        // 2) Como fazer — código (+ “Pratique” se sobrar espaço) à esquerda, anotações à direita, mesma altura
         s = P.addSlide(); frame(s);
         head(s, kick + ' · ' + (pack.syntaxTitle || 'Sintaxe'), title, les.kw);
-        const hasFlow = px.f && px.f.length > 2, area = hasFlow ? 3.75 : 4.85;
-        // a caixa de código acompanha o tamanho da sintaxe; sobrando espaço, entra um exercício para praticar
-        const synFs = fitSize(plain(les.sintaxe), 7.1, area - 0.55, 20, 9, true);
-        const ch = Math.min(area, Math.max(2.2, estH(plain(les.sintaxe), 7.1, synFs, true) + 0.85));
-        code(s, les.sintaxe, 0.8, 1.65, 7.4, ch, (pack.syntaxTitle || 'Sintaxe').toLowerCase());
-        const prat = it.exs[0];
-        if (area - ch >= 1.15 && prat) {
-          const py = 1.65 + ch + 0.15, ph = area - ch - 0.15;
-          box(s, 0.8, py, 7.4, ph, C.panel2, B);
-          s.addText([{ text: 'Pratique  ', options: { bold: true, color: B } }, { text: plain(prat.n) + (prat.g ? ' — ' + plain(prat.g) : ''), options: { color: C.ink2 } }],
-            { x: 1.0, y: py + 0.08, w: 7.0, h: ph - 0.16, fontFace: FONT, fontSize: fitSize(plain(prat.n + ' ' + (prat.g || '')), 7.0, ph - 0.16, 17, 10), valign: 'middle', margin: 0 });
-        }
-        box(s, 8.5, 1.65, 4.05, area, C.panel);
-        label(s, 'Anote', 8.75, 1.85, 3.6, A);
-        list(s, bullets(les.notas), 8.75, 2.25, 3.6, area - 0.75, { max: 20 });
-        if (hasFlow) flowRow(s, px.f, 5.95);
+        const hasFlow = px.f && px.f.length > 2, bottom = hasFlow ? 5.2 : END, area = bottom - TOP;
+        const synFs = fitSize(plain(les.sintaxe), LW - 0.3, area - 0.55, 17, 9, true);
+        const need = Math.max(1.9, estH(plain(les.sintaxe), LW - 0.3, synFs, true) + 0.85), prat = it.exs[0];
+        if (prat && area - need - GAP >= 1.0) {
+          const ph = Math.min(1.5, area - need - GAP), ch = area - ph - GAP;
+          code(s, les.sintaxe, X0, TOP, LW, ch, (pack.syntaxTitle || 'Sintaxe').toLowerCase());
+          const py = TOP + ch + GAP;
+          box(s, X0, py, LW, ph, C.panel2, B);
+          para(s, prat.n + ' ' + (prat.g || ''), X0 + 0.25, py + 0.12, LW - 0.5, ph - 0.24, { max: 16, valign: 'middle', runs: [{ text: 'Pratique  ', options: { bold: true, color: B } }, { text: plain(prat.n) + (prat.g ? ' — ' + plain(prat.g) : ''), options: { color: C.ink2 } }] });
+        } else code(s, les.sintaxe, X0, TOP, LW, area, (pack.syntaxTitle || 'Sintaxe').toLowerCase());
+        box(s, RX, TOP, RW, area, C.panel);
+        label(s, 'Anote', RX + 0.25, TOP + 0.2, RW - 0.5, A);
+        list(s, bullets(les.notas), RX + 0.25, TOP + 0.55, RW - 0.5, area - 0.75, { max: 16 });
+        if (hasFlow) flowRow(s, px.f, 5.85);
         s.addNotes(plain(les.notas.join('\n')));
 
-        // 3) Lado a lado (quando a aula tem comparação)
+        // 3) Lado a lado — duas colunas idênticas
         if (px.v) {
           s = P.addSlide(); frame(s);
           head(s, kick + ' · Lado a lado', plain(px.v.t), true);
-          if (px.v.s) s.addText(plain(px.v.s), { x: 0.8, y: 1.45, w: 11, h: 0.35, fontFace: FONT, fontSize: 14, color: C.ink3, margin: 0 });
+          if (px.v.s) s.addText(plain(px.v.s), { x: X0, y: 1.45, w: X1 - X0, h: 0.35, fontFace: FONT, fontSize: 14, color: C.ink3, margin: 0 });
+          const y0 = 1.95, cw = (X1 - X0 - GAP) / 2;
           [px.v.a, px.v.b].forEach(function (col, i) {
             if (!col) return;
-            const x = 0.8 + i * 6.0, w = 5.75, tone = i ? B : A;
-            box(s, x, 1.95, w, 3.75, C.panel, tone);
-            s.addShape(P.ShapeType.rect, { x: x, y: 1.95, w: w, h: 0.08, fill: { color: tone }, line: { type: 'none' } });
-            s.addText(plain(col.h), { x: x + 0.25, y: 2.1, w: w - 0.5, h: 0.5, fontFace: MONO, fontSize: 20, bold: true, color: tone, margin: 0 });
-            s.addText(plain(col.d || ''), { x: x + 0.25, y: 2.6, w: w - 0.5, h: 0.5, fontFace: FONT, fontSize: fitSize(plain(col.d || ''), w - 0.5, 0.5, 17, 11), color: C.ink2, margin: 0 });
-            list(s, bullets(col.u), x + 0.25, 3.15, w - 0.5, 1.15, { max: 20 });
-            if (col.c) { box(s, x + 0.25, 4.4, w - 0.5, 1.1, C.code, '262E48'); s.addText(plain(col.c), { x: x + 0.4, y: 4.42, w: w - 0.8, h: 1.06, fontFace: MONO, fontSize: fitSize(col.c, w - 0.8, 1.06, 18, 9, true), color: 'E8EBF6', valign: 'middle', margin: 0 }); }
+            const x = X0 + i * (cw + GAP), tone = i ? B : A, hasC = !!col.c;
+            box(s, x, y0, cw, BOT - y0, C.panel, tone);
+            s.addShape(P.ShapeType.rect, { x: x, y: y0, w: cw, h: 0.08, fill: { color: tone }, line: { type: 'none' } });
+            s.addText(plain(col.h), { x: x + 0.25, y: y0 + 0.2, w: cw - 0.5, h: 0.45, fontFace: MONO, fontSize: fitSize(plain(col.h), cw - 0.5, 0.45, 20, 12, true), bold: true, color: tone, margin: 0 });
+            s.addText(plain(col.d || ''), { x: x + 0.25, y: y0 + 0.7, w: cw - 0.5, h: 0.45, fontFace: FONT, fontSize: fitSize(plain(col.d || ''), cw - 0.5, 0.45, 15, 10), color: C.ink2, margin: 0 });
+            const cy = BOT - 0.25 - 1.0;
+            list(s, bullets(col.u), x + 0.25, y0 + 1.25, cw - 0.5, (hasC ? cy - GAP : BOT - 0.25) - (y0 + 1.25), { max: 16 });
+            if (hasC) { box(s, x + 0.25, cy, cw - 0.5, 1.0, C.code, '262E48'); s.addText(plain(col.c), { x: x + 0.4, y: cy, w: cw - 0.8, h: 1.0, fontFace: MONO, fontSize: fitSize(col.c, cw - 0.8, 1.0, 15, 9, true), color: 'E8EBF6', valign: 'middle', margin: 0 }); }
           });
-          resumo(s, px.v.r, 5.9);
+          resumo(s, px.v.r, RES_Y);
         }
 
-        // 4) Exemplo (código + visual ao vivo) e cuidados
+        // 4) Exemplo (código + visual ao vivo) e cuidados — todos os blocos terminam em BOT
         const ex = les.exemplo || {}, V = (assets.vis && assets.vis[k]) || {};
         const exCode = V.code || (typeof ex.c === 'string' ? ex.c : (ex.fig && ex.fig.code) || '');
         const vis = V.ex, res = px.r || (px.v && px.v.r) || les.notas[0];
-        const cuidados = function (s2, x, y, w, h) { box(s2, x, y, w, h, C.panel, 'F87171'); label(s2, 'Cuidados', x + 0.25, y + 0.2, w - 0.5, 'F87171'); list(s2, bullets(les.cuidados), x + 0.25, y + 0.6, w - 0.5, h - 0.8, { max: 22 }); };
+        const cuidados = function (s2, x, y, w, h) { box(s2, x, y, w, h, C.panel, 'F87171'); label(s2, 'Cuidados', x + 0.25, y + 0.2, w - 0.5, 'F87171'); list(s2, bullets(les.cuidados), x + 0.25, y + 0.55, w - 0.5, h - 0.75, { max: 17 }); };
+        const visBox = function (s2, x, y, w, h) { box(s2, x, y, w, h, C.panel); picture(s2, vis, x + 0.2, y + 0.2, w - 0.4, h - 0.4); };
         s = P.addSlide(); frame(s);
         head(s, kick + ' · Exemplo', title, les.kw);
-        if (ex.p) s.addText(plain(ex.p), { x: 0.8, y: 1.5, w: 11.5, h: 0.4, fontFace: FONT, fontSize: 14, color: C.ink2, margin: 0 });
+        const y1 = ex.p ? 1.95 : TOP, hh = BOT - y1;
+        if (ex.p) s.addText(plain(ex.p), { x: X0, y: 1.5, w: X1 - X0, h: 0.35, fontFace: FONT, fontSize: 14, color: C.ink2, margin: 0 });
         const shortCode = exCode && lines(exCode) <= 7 && exCode.split('\n').every(function (l) { return l.length <= 46; });
+        let cuidadosShown = !vis;
         if (exCode && vis && shortCode && vis.w / vis.h < 3.4) {
-          // código curto numa coluna estreita; o visual fica com a maior parte do slide
-          code(s, exCode, 0.8, 1.95, 4.4, 3.75, 'exemplo');
-          box(s, 5.4, 1.95, W - 6.2, 3.75, C.panel);
-          picture(s, vis, 5.55, 2.1, W - 6.5, 3.45);
+          // código curto em cima e cuidados embaixo, na coluna estreita; visual grande ao lado
+          const cfs = fitSize(plain(exCode), 4.1, hh - 0.55, 15, 9, true), ch = Math.min(hh - 1.6, Math.max(1.3, estH(plain(exCode), 4.1, cfs, true) + 0.8));
+          code(s, exCode, X0, y1, 4.4, ch, 'exemplo');
+          cuidados(s, X0, y1 + ch + GAP, 4.4, hh - ch - GAP);
+          cuidadosShown = true;
+          visBox(s, X0 + 4.4 + GAP, y1, X1 - X0 - 4.4 - GAP, hh);
         } else if (exCode && vis && lines(exCode) <= 7 && vis.w / vis.h >= 3.4) {
-          // código curto em cima, visual grande embaixo
-          const ch = Math.min(2.3, Math.max(1.15, 0.7 + lines(exCode) * 0.27));
-          code(s, exCode, 0.8, 1.95, W - 1.6, ch, 'exemplo');
-          const vy = 1.95 + ch + 0.15, vh = 5.75 - vy;
-          box(s, 0.8, vy, W - 1.6, vh, C.panel);
-          picture(s, vis, 0.95, vy + 0.1, W - 1.9, vh - 0.2);
+          const ch = Math.min(2.1, Math.max(1.1, 0.7 + lines(exCode) * 0.27));
+          code(s, exCode, X0, y1, X1 - X0, ch, 'exemplo');
+          visBox(s, X0, y1 + ch + GAP, X1 - X0, hh - ch - GAP);
         } else if (exCode && vis) {
-          code(s, exCode, 0.8, 1.95, 6.0, 3.75, 'exemplo');
-          box(s, 7.0, 1.95, 5.55, 3.75, C.panel);
-          picture(s, vis, 7.15, 2.1, 5.25, 3.45);
+          const cw2 = (X1 - X0 - GAP) / 2;
+          code(s, exCode, X0, y1, cw2, hh, 'exemplo');
+          visBox(s, X0 + cw2 + GAP, y1, cw2, hh);
         } else if (vis) {
-          box(s, 0.8, 1.95, 7.4, 3.75, C.panel);
-          picture(s, vis, 0.95, 2.1, 7.1, 3.45);
-          cuidados(s, 8.5, 1.95, 4.05, 3.75);
+          visBox(s, X0, y1, LW, hh);
+          cuidados(s, RX, y1, RW, hh);
         } else if (exCode) {
-          code(s, exCode, 0.8, 1.95, 7.4, 3.75, 'exemplo');
-          cuidados(s, 8.5, 1.95, 4.05, 3.75);
+          code(s, exCode, X0, y1, LW, hh, 'exemplo');
+          cuidados(s, RX, y1, RW, hh);
         } else {
-          cuidados(s, 0.8, 1.95, W - 1.6, 3.75);
+          cuidados(s, X0, y1, X1 - X0, hh);
         }
-        resumo(s, res, 5.9);
+        resumo(s, res, RES_Y);
         s.addNotes('Exemplo: ' + plain(ex.p || '') + '\n\nCuidados:\n' + bullets(les.cuidados).join('\n'));
 
         // 4b) Cuidados em slide próprio quando o exemplo ocupou o slide inteiro
-        if (exCode && vis) {
+        if (exCode && vis && (!cuidadosShown || px.e)) {
           s = P.addSlide(); frame(s);
-          head(s, kick + ' · Cuidados', title, les.kw);
-          if (px.e) { cuidados(s, 0.8, 1.65, 5.95, 4.05); errBox(s, px.e, 6.95, 1.65, 5.6, 4.05); }
+          head(s, kick + (cuidadosShown ? ' · Erro comum' : ' · Cuidados'), title, les.kw);
+          const cw3 = (X1 - X0 - GAP) / 2;
+          if (cuidadosShown) {
+            box(s, X0, TOP, cw3, BOT - TOP, C.panel, A); label(s, 'Pontos-chave', X0 + 0.25, TOP + 0.2, cw3 - 0.5, A);
+            list(s, bullets(les.notas), X0 + 0.25, TOP + 0.55, cw3 - 0.5, BOT - TOP - 0.75, { max: 17 });
+          } else cuidados(s, X0, TOP, cw3, BOT - TOP);
+          if (px.e) errBox(s, px.e, X0 + cw3 + GAP, TOP, cw3, BOT - TOP);
           else {
-            cuidados(s, 0.8, 1.65, 5.95, 4.05);
-            box(s, 6.95, 1.65, 5.6, 4.05, C.panel, A); label(s, 'Pontos-chave', 7.2, 1.85, 5.1, A);
-            list(s, bullets(les.notas), 7.2, 2.25, 5.1, 3.3, { max: 20 });
+            box(s, X0 + cw3 + GAP, TOP, cw3, BOT - TOP, C.panel, A); label(s, 'Pontos-chave', X0 + cw3 + GAP + 0.25, TOP + 0.2, cw3 - 0.5, A);
+            list(s, bullets(les.notas), X0 + cw3 + GAP + 0.25, TOP + 0.55, cw3 - 0.5, BOT - TOP - 0.75, { max: 17 });
           }
-          resumo(s, res, 5.9);
+          resumo(s, res, RES_Y);
         }
 
-        // 5) Visuais dos exercícios da aula (até 2 por slide)
+        // 5) Visuais dos exercícios da aula (até 2 por slide, caixas com a mesma altura)
         const figs = V.figs || [];
         for (let i = 0; i < figs.length; i += 2) {
           s = P.addSlide(); frame(s);
           head(s, kick + ' · Visuais dos exercícios', title, les.kw);
-          const pair = figs.slice(i, i + 2), cw = pair.length === 2 ? (W - 1.6 - 0.3) / 2 : W - 1.6;
+          const pair = figs.slice(i, i + 2), cw = pair.length === 2 ? (X1 - X0 - GAP) / 2 : X1 - X0;
           pair.forEach(function (f, j) {
-            const x = 0.8 + j * (cw + 0.3);
-            box(s, x, 1.65, cw, 4.95, C.panel);
-            s.addText([{ text: plain(f.title), options: { bold: true, color: C.ink, breakLine: true } }, { text: f.sub, options: { color: C.ink3, fontSize: 11 } }], { x: x + 0.25, y: 1.78, w: cw - 0.5, h: 0.7, fontFace: FONT, fontSize: 15, valign: 'top', margin: 0 });
-            picture(s, f, x + 0.2, 2.55, cw - 0.4, 3.9);
+            const x = X0 + j * (cw + GAP);
+            box(s, x, TOP, cw, END - TOP, C.panel);
+            s.addText([{ text: plain(f.title), options: { bold: true, color: C.ink, breakLine: true } }, { text: f.sub, options: { color: C.ink3, fontSize: 11 } }], { x: x + 0.25, y: TOP + 0.15, w: cw - 0.5, h: 0.65, fontFace: FONT, fontSize: 15, valign: 'top', margin: 0 });
+            picture(s, f, x + 0.25, TOP + 0.95, cw - 0.5, END - TOP - 1.2);
           });
         }
       });
