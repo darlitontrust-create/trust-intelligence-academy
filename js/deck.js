@@ -13,8 +13,13 @@
      então o arquivo é reaberto com o JSZip (que vem no mesmo pacote) e a
      transição é inserida no XML de cada slide. Versões antigas do PowerPoint
      sem Morph usam Esmaecer (fallback).
-   • Biblioteca: assets/vendor/pptxgen.bundle.js (PptxGenJS 4, MIT, inclui
-     o JSZip), carregada só quando o usuário exporta.
+   • Visuais: o exemplo ao vivo de cada aula (tabela de resultado, planilha,
+     gráfico, saída do Python…) e os visuais dos exercícios entram como imagem,
+     renderizados com o próprio CSS da plataforma (html-to-image), no tema escuro.
+     Quando a aula tem visual, os cuidados ganham um slide próprio com o erro
+     comum, para nenhum slide ficar com área vazia.
+   • Bibliotecas (carregadas só quando o usuário exporta): assets/vendor/
+     pptxgen.bundle.js (PptxGenJS 4, MIT, inclui o JSZip) e html-to-image.js (MIT).
    ===================================================================== */
 (function (global) {
   'use strict';
@@ -32,7 +37,60 @@
       document.head.appendChild(s);
     });
   }
-  function lib() { return global.PptxGenJS ? Promise.resolve() : loadScript('assets/vendor/pptxgen.bundle.js'); }
+  function lib() {
+    return Promise.all([
+      global.PptxGenJS ? 1 : loadScript('assets/vendor/pptxgen.bundle.js'),
+      global.htmlToImage ? 1 : loadScript('assets/vendor/html-to-image.js'),
+    ]);
+  }
+
+  /* ------------------------- visuais como imagem ------------------------- */
+  function lines(txt) { return String(txt || '').replace(/\n+$/, '').split('\n').length; }
+  /** Renderiza um trecho de HTML da plataforma (com o CSS dela) como PNG. */
+  async function shot(stage, html, width) {
+    stage.style.width = width + 'px';
+    stage.innerHTML = html;
+    await new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); });
+    const node = stage.firstElementChild;
+    if (!node || !node.offsetHeight) return null;
+    const w = node.offsetWidth, h = node.offsetHeight;
+    try {
+      const data = await global.htmlToImage.toPng(node, { pixelRatio: 2, backgroundColor: '#121829', skipFonts: true, cacheBust: false, width: w, height: h });
+      return { data: data, w: w, h: h };
+    } catch (e) { return null; }
+  }
+  /** Gera as imagens de todas as aulas do escopo: exemplo ao vivo + visuais dos exercícios. */
+  async function visuals(t, keys, onStep) {
+    const L = global.Lessons, pack = L.PACKS[t.id], ix = global.Library.index(t.id), out = {};
+    const de = document.documentElement, theme = de.getAttribute('data-theme');
+    const stage = document.createElement('div');
+    stage.className = 'deck-stage';
+    stage.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(stage);
+    if (theme === 'light') de.removeAttribute('data-theme');      // os slides são escuros: renderiza no tema escuro
+    try {
+      for (let i = 0; i < keys.length; i++) {
+        const k = keys[i], it = ix.byKey[k], les = it.les, v = { code: '', ex: null, figs: [] };
+        if (onStep) onStep(i + 1, keys.length);
+        let exm = null;
+        try { exm = pack.example(les, it.exs[0]); } catch (e) { exm = null; }
+        if (exm) {
+          v.code = typeof exm.code === 'string' ? exm.code : '';
+          if (exm.liveHtml && !/^\s*<p class="muted">/.test(exm.liveHtml)) v.ex = await shot(stage, '<div class="lesson deck-shot"><div class="ls-live">' + exm.liveHtml + '</div></div>', !v.code ? 600 : 560);
+        }
+        const figs = global.Library.figuresOf ? global.Library.figuresOf(t, it.exs) : [];
+        for (const f of figs) {
+          const img = await shot(stage, '<div class="deck-shot"><div class="gq-data">' + f.html + '</div></div>', 640);
+          if (img) { img.title = f.ex.n; img.sub = 'Exercício ' + f.ex.pos + ' · Nível ' + LV[f.ex.level]; v.figs.push(img); }
+        }
+        out[k] = v;
+      }
+    } finally {
+      if (theme === 'light') de.setAttribute('data-theme', 'light');
+      stage.remove();
+    }
+    return out;
+  }
   function imgData(src) {
     return new Promise(function (ok) {
       const im = new Image(); im.onload = function () { const cv = document.createElement('canvas'); cv.width = im.naturalWidth; cv.height = im.naturalHeight; cv.getContext('2d').drawImage(im, 0, 0); ok(cv.toDataURL('image/png')); };
@@ -53,6 +111,11 @@
       im.onerror = function () { ok(cv.toDataURL('image/png')); };
       im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
     });
+  }
+  /** Altura estimada (pol.) de um texto numa caixa de largura w com a fonte fs. */
+  function estH(text, w, fs, mono) {
+    const cw = fs / 72 * (mono ? 0.6 : 0.5), lh = fs / 72 * 1.32, perLine = Math.max(8, Math.floor((w - 0.3) / cw));
+    return String(text).split('\n').reduce(function (a, l) { return a + Math.max(1, Math.ceil(l.length / perLine)); }, 0) * lh;
   }
   /** Tamanho de fonte que cabe na caixa (estimativa por linhas e caracteres). */
   function fitSize(text, w, h, max, min, mono) {
@@ -99,7 +162,7 @@
     function list(s, items, x, y, w, h, o) {
       if (!items.length) return;
       const txt = items.join('\n');
-      const fs = fitSize(txt, w, h, (o && o.max) || 16, 10);
+      const fs = fitSize(txt, w - 0.3, h - items.length * 0.09, (o && o.max) || 16, 10);   // desconta o recuo do marcador e o espaço entre itens
       s.addText(items.map(function (b) { return { text: b, options: { bullet: { indent: 16 }, paraSpaceAfter: 6 } }; }), { x: x, y: y, w: w, h: h, fontFace: FONT, fontSize: fs, color: (o && o.color) || C.ink2, valign: 'top', margin: 0.05 });
     }
     function code(s, txt, x, y, w, h, name) {
@@ -109,7 +172,21 @@
       s.addShape(P.ShapeType.ellipse, { x: x + 0.56, y: y + 0.17, w: 0.12, h: 0.12, fill: { color: '34D399' }, line: { type: 'none' } });
       if (name) s.addText(name, { x: x + 0.8, y: y + 0.08, w: w - 1, h: 0.3, fontFace: MONO, fontSize: 9, color: C.ink3, margin: 0 });
       const t2 = plain(txt);
-      s.addText(t2, { x: x + 0.15, y: y + 0.45, w: w - 0.3, h: h - 0.55, fontFace: MONO, fontSize: fitSize(t2, w - 0.3, h - 0.55, 16, 9, true), color: 'E8EBF6', valign: 'top', margin: 0.05, paraSpaceAfter: 2 });
+      s.addText(t2, { x: x + 0.15, y: y + 0.45, w: w - 0.3, h: h - 0.55, fontFace: MONO, fontSize: fitSize(t2, w - 0.3, h - 0.55, 20, 9, true), color: 'E8EBF6', valign: 'top', margin: 0.05, paraSpaceAfter: 2 });
+    }
+    function picture(s, img, x, y, w, h) {
+      const k = Math.min(w / img.w, h / img.h), iw = img.w * k, ih = img.h * k;
+      s.addImage({ data: img.data, x: x + (w - iw) / 2, y: y + (h - ih) / 2, w: iw, h: ih });
+    }
+    function errBox(s, e, x, y, w, h) {
+      box(s, x, y, w, h, C.panel, 'FBBF24');
+      label(s, e.c ? 'Erro comum' : 'Equívoco comum', x + 0.25, y + 0.2, w - 0.5, 'FBBF24');
+      let yy = y + 0.6;
+      if (e.c) { box(s, x + 0.25, yy, w - 0.5, 0.75, C.code, '262E48'); s.addText(plain(e.c), { x: x + 0.35, y: yy, w: w - 0.7, h: 0.75, fontFace: MONO, fontSize: fitSize(e.c, w - 0.7, 0.75, 13, 8, true), color: 'E8EBF6', valign: 'middle', margin: 0 }); yy += 0.9; if (e.m) { s.addText(plain(e.m), { x: x + 0.25, y: yy, w: w - 0.5, h: 0.45, fontFace: MONO, fontSize: 11, color: 'F87171', margin: 0 }); yy += 0.5; } }
+      else if (e.q) { s.addText('“' + plain(e.q) + '”', { x: x + 0.25, y: yy, w: w - 0.5, h: 0.9, fontFace: FONT, fontSize: fitSize(e.q, w - 0.5, 0.9, 18, 11), italic: true, color: C.ink, valign: 'top', margin: 0 }); yy += 1.0; }
+      const rest = y + h - yy - 0.15;
+      s.addText([{ text: 'Por quê: ', options: { bold: true, color: 'FBBF24' } }, { text: plain(e.y || ''), options: { color: C.ink2, breakLine: true } }, { text: 'Faça assim: ', options: { bold: true, color: '34D399' } }, { text: plain(e.x || ''), options: { color: C.ink2 } }],
+        { x: x + 0.25, y: yy, w: w - 0.5, h: rest, fontFace: FONT, fontSize: fitSize((e.y || '') + '\n' + (e.x || ''), w - 0.5, rest, 20, 10), valign: 'top', margin: 0, paraSpaceAfter: 6 });
     }
     function resumo(s, txt, y) {
       if (!txt) return;
@@ -182,26 +259,41 @@
         // 1) Conceito
         let s = P.addSlide(); frame(s);
         head(s, kick + ' · Conceito', title, les.kw);
+        // a ideia ocupa o espaço que precisa; a analogia vem logo abaixo e o resumo fecha o slide
         label(s, 'A ideia', 0.8, 1.65, 7);
-        s.addText(plain(les.ideia), { x: 0.8, y: 1.95, w: 7.3, h: 2.65, fontFace: FONT, fontSize: fitSize(les.ideia, 7.3, 2.65, 18, 11), color: C.ink, valign: 'top', margin: 0, paraSpaceAfter: 4 });
+        const ideaFs = fitSize(les.ideia, 7.3, 2.65, 22, 11), ideaH = Math.min(2.65, estH(les.ideia, 7.3, ideaFs) + 0.15);
+        s.addText(plain(les.ideia), { x: 0.8, y: 1.95, w: 7.3, h: ideaH, fontFace: FONT, fontSize: ideaFs, color: C.ink, valign: 'top', margin: 0, paraSpaceAfter: 4 });
         if (les.analogia) {
-          box(s, 0.8, 4.75, 7.3, 1.75, C.panel2, A);
-          s.addText([{ text: 'Para lembrar  ', options: { bold: true, color: A } }, { text: plain(les.analogia), options: { italic: true, color: C.ink2 } }], { x: 1.0, y: 4.85, w: 6.9, h: 1.55, fontFace: FONT, fontSize: fitSize(les.analogia, 6.9, 1.55, 15, 10), valign: 'middle', margin: 0 });
+          const ay = 1.95 + ideaH + 0.3, ah = Math.max(1.1, 5.7 - ay);
+          box(s, 0.8, ay, 7.3, ah, C.panel2, A);
+          s.addText([{ text: 'Para lembrar  ', options: { bold: true, color: A } }, { text: plain(les.analogia), options: { italic: true, color: C.ink2 } }], { x: 1.0, y: ay + 0.1, w: 6.9, h: ah - 0.2, fontFace: FONT, fontSize: fitSize(les.analogia, 6.9, ah - 0.2, 20, 10), valign: 'middle', margin: 0 });
         }
-        box(s, 8.5, 1.65, 4.05, 4.85, C.panel);
+        box(s, 8.5, 1.65, 4.05, 4.05, C.panel);
         label(s, px.o && px.o.length ? 'Você vai saber' : 'Pontos-chave', 8.75, 1.85, 3.6, A);
-        list(s, bullets(px.o && px.o.length ? px.o : les.notas), 8.75, 2.25, 3.6, 2.3, { max: 15 });
-        if (px.u && px.u.length) { label(s, 'Onde se usa', 8.75, 4.6, 3.6, A); list(s, bullets(px.u), 8.75, 4.95, 3.6, 1.45, { max: 13 }); }
+        const hasU = px.u && px.u.length;
+        list(s, bullets(px.o && px.o.length ? px.o : les.notas), 8.75, 2.25, 3.6, hasU ? 1.95 : 3.3, { max: 22 });
+        if (hasU) { label(s, 'Onde se usa', 8.75, 4.3, 3.6, A); list(s, bullets(px.u), 8.75, 4.65, 3.6, 0.95, { max: 15 }); }
+        resumo(s, px.r || (px.v && px.v.r) || les.notas[0], 5.9);
         s.addNotes(plain(les.ideia) + '\n\n' + plain(les.analogia || ''));
 
         // 2) Como fazer
         s = P.addSlide(); frame(s);
         head(s, kick + ' · ' + (pack.syntaxTitle || 'Sintaxe'), title, les.kw);
-        const hasFlow = px.f && px.f.length > 2;
-        code(s, les.sintaxe, 0.8, 1.65, 7.4, hasFlow ? 3.75 : 4.85, (pack.syntaxTitle || 'Sintaxe').toLowerCase());
-        box(s, 8.5, 1.65, 4.05, hasFlow ? 3.75 : 4.85, C.panel);
+        const hasFlow = px.f && px.f.length > 2, area = hasFlow ? 3.75 : 4.85;
+        // a caixa de código acompanha o tamanho da sintaxe; sobrando espaço, entra um exercício para praticar
+        const synFs = fitSize(plain(les.sintaxe), 7.1, area - 0.55, 20, 9, true);
+        const ch = Math.min(area, Math.max(2.2, estH(plain(les.sintaxe), 7.1, synFs, true) + 0.85));
+        code(s, les.sintaxe, 0.8, 1.65, 7.4, ch, (pack.syntaxTitle || 'Sintaxe').toLowerCase());
+        const prat = it.exs[0];
+        if (area - ch >= 1.15 && prat) {
+          const py = 1.65 + ch + 0.15, ph = area - ch - 0.15;
+          box(s, 0.8, py, 7.4, ph, C.panel2, B);
+          s.addText([{ text: 'Pratique  ', options: { bold: true, color: B } }, { text: plain(prat.n) + (prat.g ? ' — ' + plain(prat.g) : ''), options: { color: C.ink2 } }],
+            { x: 1.0, y: py + 0.08, w: 7.0, h: ph - 0.16, fontFace: FONT, fontSize: fitSize(plain(prat.n + ' ' + (prat.g || '')), 7.0, ph - 0.16, 17, 10), valign: 'middle', margin: 0 });
+        }
+        box(s, 8.5, 1.65, 4.05, area, C.panel);
         label(s, 'Anote', 8.75, 1.85, 3.6, A);
-        list(s, bullets(les.notas), 8.75, 2.25, 3.6, hasFlow ? 3.0 : 4.1, { max: 15 });
+        list(s, bullets(les.notas), 8.75, 2.25, 3.6, area - 0.75, { max: 20 });
         if (hasFlow) flowRow(s, px.f, 5.95);
         s.addNotes(plain(les.notas.join('\n')));
 
@@ -216,24 +308,77 @@
             box(s, x, 1.95, w, 3.75, C.panel, tone);
             s.addShape(P.ShapeType.rect, { x: x, y: 1.95, w: w, h: 0.08, fill: { color: tone }, line: { type: 'none' } });
             s.addText(plain(col.h), { x: x + 0.25, y: 2.1, w: w - 0.5, h: 0.5, fontFace: MONO, fontSize: 20, bold: true, color: tone, margin: 0 });
-            s.addText(plain(col.d || ''), { x: x + 0.25, y: 2.6, w: w - 0.5, h: 0.45, fontFace: FONT, fontSize: 13, color: C.ink2, margin: 0 });
-            list(s, bullets(col.u), x + 0.25, 3.1, w - 0.5, 1.2, { max: 14 });
-            if (col.c) { box(s, x + 0.25, 4.4, w - 0.5, 1.1, C.code, '262E48'); s.addText(plain(col.c), { x: x + 0.4, y: 4.42, w: w - 0.8, h: 1.06, fontFace: MONO, fontSize: fitSize(col.c, w - 0.8, 1.06, 13, 9, true), color: 'E8EBF6', valign: 'middle', margin: 0 }); }
+            s.addText(plain(col.d || ''), { x: x + 0.25, y: 2.6, w: w - 0.5, h: 0.5, fontFace: FONT, fontSize: fitSize(plain(col.d || ''), w - 0.5, 0.5, 17, 11), color: C.ink2, margin: 0 });
+            list(s, bullets(col.u), x + 0.25, 3.15, w - 0.5, 1.15, { max: 20 });
+            if (col.c) { box(s, x + 0.25, 4.4, w - 0.5, 1.1, C.code, '262E48'); s.addText(plain(col.c), { x: x + 0.4, y: 4.42, w: w - 0.8, h: 1.06, fontFace: MONO, fontSize: fitSize(col.c, w - 0.8, 1.06, 18, 9, true), color: 'E8EBF6', valign: 'middle', margin: 0 }); }
           });
           resumo(s, px.v.r, 5.9);
         }
 
-        // 4) Exemplo, cuidados e resumo
+        // 4) Exemplo (código + visual ao vivo) e cuidados
+        const ex = les.exemplo || {}, V = (assets.vis && assets.vis[k]) || {};
+        const exCode = V.code || (typeof ex.c === 'string' ? ex.c : (ex.fig && ex.fig.code) || '');
+        const vis = V.ex, res = px.r || (px.v && px.v.r) || les.notas[0];
+        const cuidados = function (s2, x, y, w, h) { box(s2, x, y, w, h, C.panel, 'F87171'); label(s2, 'Cuidados', x + 0.25, y + 0.2, w - 0.5, 'F87171'); list(s2, bullets(les.cuidados), x + 0.25, y + 0.6, w - 0.5, h - 0.8, { max: 22 }); };
         s = P.addSlide(); frame(s);
-        head(s, kick + ' · Exemplo e cuidados', title, les.kw);
-        const ex = les.exemplo || {};
-        if (ex.p) s.addText(plain(ex.p), { x: 0.8, y: 1.5, w: 7.4, h: 0.4, fontFace: FONT, fontSize: 14, color: C.ink2, margin: 0 });
-        code(s, typeof ex.c === 'string' ? ex.c : (ex.fig && ex.fig.code) || '', 0.8, 1.95, 7.4, 3.75, 'exemplo');
-        box(s, 8.5, 1.65, 4.05, 4.05, C.panel, 'F87171');
-        label(s, 'Cuidados', 8.75, 1.85, 3.6, 'F87171');
-        list(s, bullets(les.cuidados), 8.75, 2.25, 3.6, 3.3, { max: 15 });
-        resumo(s, px.r || (px.v && px.v.r) || les.notas[0], 5.9);
+        head(s, kick + ' · Exemplo', title, les.kw);
+        if (ex.p) s.addText(plain(ex.p), { x: 0.8, y: 1.5, w: 11.5, h: 0.4, fontFace: FONT, fontSize: 14, color: C.ink2, margin: 0 });
+        const shortCode = exCode && lines(exCode) <= 7 && exCode.split('\n').every(function (l) { return l.length <= 46; });
+        if (exCode && vis && shortCode && vis.w / vis.h < 3.4) {
+          // código curto numa coluna estreita; o visual fica com a maior parte do slide
+          code(s, exCode, 0.8, 1.95, 4.4, 3.75, 'exemplo');
+          box(s, 5.4, 1.95, W - 6.2, 3.75, C.panel);
+          picture(s, vis, 5.55, 2.1, W - 6.5, 3.45);
+        } else if (exCode && vis && lines(exCode) <= 7 && vis.w / vis.h >= 3.4) {
+          // código curto em cima, visual grande embaixo
+          const ch = Math.min(2.3, Math.max(1.15, 0.7 + lines(exCode) * 0.27));
+          code(s, exCode, 0.8, 1.95, W - 1.6, ch, 'exemplo');
+          const vy = 1.95 + ch + 0.15, vh = 5.75 - vy;
+          box(s, 0.8, vy, W - 1.6, vh, C.panel);
+          picture(s, vis, 0.95, vy + 0.1, W - 1.9, vh - 0.2);
+        } else if (exCode && vis) {
+          code(s, exCode, 0.8, 1.95, 6.0, 3.75, 'exemplo');
+          box(s, 7.0, 1.95, 5.55, 3.75, C.panel);
+          picture(s, vis, 7.15, 2.1, 5.25, 3.45);
+        } else if (vis) {
+          box(s, 0.8, 1.95, 7.4, 3.75, C.panel);
+          picture(s, vis, 0.95, 2.1, 7.1, 3.45);
+          cuidados(s, 8.5, 1.95, 4.05, 3.75);
+        } else if (exCode) {
+          code(s, exCode, 0.8, 1.95, 7.4, 3.75, 'exemplo');
+          cuidados(s, 8.5, 1.95, 4.05, 3.75);
+        } else {
+          cuidados(s, 0.8, 1.95, W - 1.6, 3.75);
+        }
+        resumo(s, res, 5.9);
         s.addNotes('Exemplo: ' + plain(ex.p || '') + '\n\nCuidados:\n' + bullets(les.cuidados).join('\n'));
+
+        // 4b) Cuidados em slide próprio quando o exemplo ocupou o slide inteiro
+        if (exCode && vis) {
+          s = P.addSlide(); frame(s);
+          head(s, kick + ' · Cuidados', title, les.kw);
+          if (px.e) { cuidados(s, 0.8, 1.65, 5.95, 4.05); errBox(s, px.e, 6.95, 1.65, 5.6, 4.05); }
+          else {
+            cuidados(s, 0.8, 1.65, 5.95, 4.05);
+            box(s, 6.95, 1.65, 5.6, 4.05, C.panel, A); label(s, 'Pontos-chave', 7.2, 1.85, 5.1, A);
+            list(s, bullets(les.notas), 7.2, 2.25, 5.1, 3.3, { max: 20 });
+          }
+          resumo(s, res, 5.9);
+        }
+
+        // 5) Visuais dos exercícios da aula (até 2 por slide)
+        const figs = V.figs || [];
+        for (let i = 0; i < figs.length; i += 2) {
+          s = P.addSlide(); frame(s);
+          head(s, kick + ' · Visuais dos exercícios', title, les.kw);
+          const pair = figs.slice(i, i + 2), cw = pair.length === 2 ? (W - 1.6 - 0.3) / 2 : W - 1.6;
+          pair.forEach(function (f, j) {
+            const x = 0.8 + j * (cw + 0.3);
+            box(s, x, 1.65, cw, 4.95, C.panel);
+            s.addText([{ text: plain(f.title), options: { bold: true, color: C.ink, breakLine: true } }, { text: f.sub, options: { color: C.ink3, fontSize: 11 } }], { x: x + 0.25, y: 1.78, w: cw - 0.5, h: 0.7, fontFace: FONT, fontSize: 15, valign: 'top', margin: 0 });
+            picture(s, f, x + 0.2, 2.55, cw - 0.4, 3.9);
+          });
+        }
       });
     });
 
@@ -291,6 +436,11 @@
     try {
       await lib();
       const assets = { logo: await imgData('assets/logo-256.png'), badge: await courseBadge(t) };
+      const ix = global.Library.index(t.id);
+      const keys = scope.kind === 'course' ? ix.order : scope.kind === 'lesson' ? [scope.key]
+        : ix.groups.filter(function (g) { return g.lv === scope.lv && (scope.kind === 'level' || g.stage === scope.stage); }).reduce(function (a, g) { return a.concat(g.keys); }, []);
+      let lastToast = 0;
+      assets.vis = await visuals(t, keys, function (i, n) { if (n > 4 && Date.now() - lastToast > 2500) { lastToast = Date.now(); toast('Preparando os visuais: aula ' + i + ' de ' + n + '…', 'info', 2400); } });
       const P = build(t, scope, assets);
       const buf = await P.write({ outputType: 'arraybuffer' });
       const blob = await addMorph(buf);
